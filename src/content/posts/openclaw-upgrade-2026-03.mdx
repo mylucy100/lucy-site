@@ -1,0 +1,390 @@
+---
+title: "OpenClaw 2026.3.22 升级指南"
+description: "详细介绍 OpenClaw 最新版本的升级步骤、破坏性变更、新功能亮点以及升级注意事项。"
+createdAt: 03-24-2026
+draft: false
+tags:
+  - openclaw
+  - tutorial
+  - upgrade
+---
+
+OpenClaw 在 2026 年 3 月发布了多个重要更新，最新稳定版为 **2026.3.22**。本文详细介绍如何从旧版本升级、需要注意的破坏性变更、以及新功能亮点。
+
+## 版本概览
+
+| 项目 | 说明 |
+|------|------|
+| 最新稳定版 | 2026.3.22 |
+| 发布日期 | 2026 年 3 月 23 日 |
+| 主要更新 | ClawHub 集成、浏览器架构重构、Sandbox 后端、安全增强 |
+
+## 升级前准备
+
+在升级之前，请做好以下准备工作：
+
+### 1. 备份配置和数据
+
+```bash
+# 停止 Gateway
+openclaw gateway stop
+
+# 备份状态目录
+cd ~
+tar -czf openclaw-backup-$(date +%Y%m%d).tgz .openclaw
+```
+
+### 2. 检查当前版本
+
+```bash
+openclaw --version
+```
+
+### 3. 查看变更日志
+
+```bash
+# 在线查看
+openclaw changelog
+
+# 或访问 GitHub
+# https://github.com/openclaw/openclaw/releases
+```
+
+## 升级步骤
+
+### 方法一：自动更新（推荐）
+
+OpenClaw 内置了自动更新功能：
+
+```bash
+openclaw update
+```
+
+如果需要更新到最新开发版：
+
+```bash
+openclaw update --tag main
+```
+
+### 方法二：npm 全局更新
+
+```bash
+# 使用 npm
+npm install -g openclaw@latest
+
+# 或使用 pnpm
+pnpm update -g openclaw
+```
+
+### 方法三：安装脚本
+
+```bash
+# macOS / Linux / WSL2
+curl -fsSL https://openclaw.ai/install.sh | bash
+
+# Windows (PowerShell)
+iwr -useb https://openclaw.ai/install.ps1 | iex
+```
+
+### 升级后验证
+
+```bash
+# 检查版本
+openclaw --version
+
+# 运行 doctor 修复配置
+openclaw doctor --fix
+
+# 重启 Gateway
+openclaw gateway restart
+
+# 检查状态
+openclaw status
+```
+
+## 破坏性变更详解
+
+本次更新包含多个重要的破坏性变更，升级时需要特别注意。
+
+### 1. 浏览器架构重构
+
+**变更内容**：移除了旧版 Chrome 扩展中继路径，包括 `driver: "extension"` 和 `browser.relayBindHost` 配置。
+
+**影响范围**：如果你使用 host-local 浏览器配置，需要迁移到新的 `existing-session` 或 `user` 驱动模式。
+
+**迁移方法**：
+
+```bash
+# 自动修复配置
+openclaw doctor --fix
+```
+
+或手动修改 `~/.openclaw/openclaw.json`：
+
+```json
+{
+  "browser": {
+    "profiles": {
+      "default": {
+        "driver": "existing-session",
+        "userDataDir": "~/.config/google-chrome"
+      }
+    }
+  }
+}
+```
+
+> **注意**：Docker、headless、sandbox 和远程浏览器流程仍使用原生 CDP，不受影响。
+
+### 2. 插件安装源优先级变更
+
+**变更内容**：`openclaw plugins install <name>` 现在优先从 ClawHub 搜索，只有当 ClawHub 没有对应包时才回退到 npm。
+
+**影响**：大多数情况下是改进，但如果你的插件名在 ClawHub 和 npm 上有同名包但版本不同，可能需要显式指定源：
+
+```bash
+# 从 npm 安装
+openclaw plugins install npm:your-plugin
+
+# 从 ClawHub 安装
+openclaw plugins install clawhub:your-plugin
+```
+
+### 3. 图像生成工具重构
+
+**变更内容**：
+- 移除了内置的 `nano-banana-pro` 技能包装器
+- 图像生成统一使用 `image_generate` 工具
+
+**迁移方法**：
+
+如果你之前使用 `nano-banana-pro` 配置，需要更新配置：
+
+```json
+{
+  "agents": {
+    "defaults": {
+      "imageGenerationModel": {
+        "primary": "google/gemini-3-pro-image-preview"
+      }
+    }
+  }
+}
+```
+
+### 4. 插件 SDK 迁移
+
+**变更内容**：公共插件 SDK 从 `openclaw/extension-api` 迁移到 `openclaw/plugin-sdk/*`，旧接口已移除，无兼容层。
+
+**影响**：插件开发者需要更新导入路径：
+
+```typescript
+// 旧写法（已废弃）
+import { ... } from 'openclaw/extension-api';
+
+// 新写法
+import { ... } from 'openclaw/plugin-sdk/...';
+```
+
+详细迁移指南：[SDK Migration](https://docs.openclaw.ai/plugins/sdk-migration)
+
+### 5. 环境变量重命名
+
+**变更内容**：移除了 `CLAWDBOT_*` 和 `MOLTBOT_*` 兼容环境变量名。
+
+**影响**：如果有脚本使用旧的环境变量名，需要更新为 `OPENCLAW_*`：
+
+```bash
+# 旧写法（已废弃）
+export CLAWDBOT_STATE_DIR=~/.clawdbot
+
+# 新写法
+export OPENCLAW_STATE_DIR=~/.openclaw
+```
+
+### 6. 旧状态目录迁移
+
+**变更内容**：移除了 `~/.moltbot` 状态目录和 `moltbot.json` 的自动检测/迁移回退。
+
+**影响**：如果仍有数据在 `~/.moltbot` 下，需要手动迁移：
+
+```bash
+# 手动迁移
+mv ~/.moltbot ~/.openclaw
+
+# 或设置环境变量
+export OPENCLAW_STATE_DIR=~/.moltbot
+```
+
+### 7. Matrix 插件重写
+
+**变更内容**：新版 Matrix 插件基于官方 `matrix-js-sdk` 重写。
+
+**迁移方法**：参考 [Matrix 迁移指南](https://docs.openclaw.ai/install/migrating-matrix)
+
+## 新功能亮点
+
+### 1. ClawHub 原生集成
+
+```bash
+# 搜索技能
+openclaw skills search <keyword>
+
+# 从 ClawHub 安装
+openclaw plugins install clawhub:skill-name
+
+# 更新技能
+openclaw skills update skill-name
+```
+
+### 2. Claude 市场支持
+
+支持从 Claude 市场安装插件和技能：
+
+```bash
+# 安装市场插件
+openclaw plugins install plugin-name@claude-marketplace
+```
+
+### 3. Sandbox 可插拔后端
+
+新增 OpenShell 和 SSH sandbox 后端：
+
+```bash
+# 列出 sandbox
+openclaw sandbox list
+
+# 创建远程 sandbox
+openclaw sandbox create --backend ssh
+```
+
+### 4. 新增 AI 模型支持
+
+- **OpenAI**：默认模型升级到 GPT-5.4，支持 gpt-5.4-mini 和 gpt-5.4-nano
+- **MiniMax**：新增 M2.7 和 M2.7-highspeed 模型
+- **Anthropic Vertex**：支持通过 Google Vertex AI 使用 Claude
+- **xAI**：Grok 模型目录同步更新
+
+### 5. 新增 Web 搜索工具
+
+- **Tavily**：专用 `tavily_search` 和 `tavily_extract` 工具
+- **Exa**：支持 Exa 原生日期过滤和搜索模式
+- **Firecrawl**：`firecrawl_search` 和 `firecrawl_scrape` 工具
+
+### 6. 控制面板增强
+
+- 聊天气泡新增展开到 Canvas 按钮
+- 外观设置新增圆角滑块
+- Usage 视图改进，样式和响应式优化
+
+### 7. Android 节点增强
+
+- 系统感知深色主题
+- 新增通话记录搜索（`callLog.search`）
+- 新增短信搜索（`sms.search`）
+- Talk 语音合成迁移到 Gateway
+
+### 8. Telegram 增强
+
+- 自定义 Bot API 端点支持
+- DM 论坛主题自动重命名（LLM 生成标签）
+- 静默错误回复选项
+
+### 9. 飞书增强
+
+- 结构化交互审批卡片
+- ACP 和子代理会话绑定
+- 推理流式卡片支持
+
+## 安全增强
+
+本次更新包含多个重要的安全修复：
+
+### 1. Exec 环境沙箱增强
+
+阻止了以下潜在危险的 JVM 注入变量：
+- `MAVEN_OPTS`、`SBT_OPTS`、`GRADLE_OPTS`、`ANT_OPTS`
+- `GLIBC_TUNABLES`（glibc 可调参数利用）
+- `DOTNET_ADDITIONAL_DEPS`（.NET 依赖解析劫持）
+- `GRADLE_USER_HOME`（限制为仅覆盖模式）
+
+### 2. 时间命令审批修复
+
+修复了 `time` 作为透明调度包装器时的 allowlist 评估问题，确保审批的 `time ...` 命令绑定内部可执行文件路径。
+
+### 3. 语音通话 Webhook 安全
+
+- 缺少提供者签名头的请求在 body 读取前拒绝
+- 预认证 body 预算降至 64KB / 5 秒
+- 限制每个源 IP 的并发预认证请求数
+
+### 4. Android 联系人搜索修复
+
+修复了 SQL LIKE 通配符转义问题，搜索 `100%` 或 `_id` 不再匹配无关联系人。
+
+## 注意事项
+
+### 升级后必做
+
+1. **运行 doctor 修复**：
+   ```bash
+   openclaw doctor --fix
+   ```
+
+2. **重启 Gateway**：
+   ```bash
+   openclaw gateway restart
+   ```
+
+3. **检查通道连接**：
+   ```bash
+   openclaw status
+   ```
+
+### 常见问题
+
+**Q: 升级后浏览器工具不工作？**
+
+A: 运行 `openclaw doctor --fix` 迁移浏览器配置。Docker、headless 和远程浏览器流程不受影响。
+
+**Q: 旧环境变量不生效？**
+
+A: 更新环境变量名，将 `CLAWDBOT_*` / `MOLTBOT_*` 改为 `OPENCLAW_*`。
+
+**Q: 插件安装找不到？**
+
+A: 检查插件名是否在 ClawHub 和 npm 上有冲突，显式指定源：`npm:plugin-name` 或 `clawhub:plugin-name`。
+
+**Q: 图像生成不工作？**
+
+A: 更新配置，使用 `agents.defaults.imageGenerationModel` 设置。
+
+### 插件开发者
+
+如果你开发了插件，需要注意：
+
+1. **SDK 迁移**：更新 `openclaw/extension-api` 导入为 `openclaw/plugin-sdk/*`
+2. **消息发现**：使用 `ChannelMessageActionAdapter.describeMessageTool(...)` 替代旧的 `listActions`、`getCapabilities`、`getToolSchema`
+
+## 总结
+
+OpenClaw 2026.3.22 是一个重要的版本更新，带来了：
+
+- ✅ ClawHub 和市场插件原生支持
+- ✅ 浏览器架构现代化重构
+- ✅ Sandbox 可插拔后端
+- ✅ 更多 AI 模型和搜索工具
+- ✅ 重要的安全增强
+
+升级过程整体平滑，使用 `openclaw doctor --fix` 可以自动处理大部分配置迁移。建议所有用户升级到最新版本以获得更好的安全性和功能体验。
+
+---
+
+*Happy upgrading with OpenClaw! 🦞*
+
+## 参考来源
+
+- [OpenClaw Releases](https://github.com/openclaw/openclaw/releases)
+- [OpenClaw 官方文档](https://docs.openclaw.ai)
+- [SDK Migration Guide](https://docs.openclaw.ai/plugins/sdk-migration)
+- [Browser Configuration](https://docs.openclaw.ai/tools/browser)
