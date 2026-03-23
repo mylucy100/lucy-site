@@ -9,12 +9,11 @@ import Icon from "../components/Icon.astro";
 import ImageGlow from "../components/ImageGlow.astro";
 import Layout from "../layouts/Layout.astro";
 
-const [posts, projects, about, workExperience, quickInfo, socials] =
+const [posts, projects, about, quickInfo, socials] =
 	await Promise.all([
 		getCollection("posts", (post) => post.data.draft !== true),
 		getCollection("projects"),
 		getEntry("other", "about"),
-		getCollection("workExperience"),
 		getCollection("quickInfo"),
 		getCollection("socials"),
 	]);
@@ -31,8 +30,8 @@ const { Content: About } = await render(about!);
 		<Card class="flex-col-card">
 			<ImageGlow
 				quality={100}
-				width={120}
-				height={120}
+				width={100}
+				height={100}
 				src={ProfilePicture}
 				alt="A purple, minimalist looking ghost."
 				loading="eager"
@@ -110,7 +109,7 @@ const { Content: About } = await render(about!);
 						.sort(
 							(a, b) => b.data.createdAt.getTime() - a.data.createdAt.getTime(),
 						)
-						.slice(0, 2)
+						.slice(0, 5)
 						.map((post) => (
 							<a href={`/blog/${post.id}`} class="post-container">
 								<div class="post-header">
@@ -155,31 +154,6 @@ const { Content: About } = await render(about!);
 				}
 			</div>
 		</Card>
-		<Card>
-			<div class="header-container">
-				<Icon
-					type="lucide"
-					name="briefcase-business"
-					width={24}
-					height={24}
-					class="glow-icon"
-				/>
-				<h2>Work Experience</h2>
-			</div>
-			<div class="work-experience-container">
-				{
-					workExperience.reverse().map((entry) => (
-						<div class="work-experience-entry">
-							<span class="work-experience-duration">
-								{entry.data.duration}
-							</span>
-							<h3 class="work-experience-company">{entry.data.company}</h3>
-							<span class="work-experience-role">{entry.data.title}</span>
-							<p class="work-experience-desc">{entry.data.description}</p>
-						</div>
-					))
-				}
-			</div>
-		</Card>
+		
 	</div>
 </Layout>

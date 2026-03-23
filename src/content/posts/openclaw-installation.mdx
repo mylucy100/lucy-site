@@ -1,0 +1,163 @@
+---
+title: "OpenClaw 安装教程"
+description: "手把手教你在 macOS、Linux、Windows 上安装 OpenClaw，包括系统要求、安装方法、常见问题排查。"
+createdAt: 03-23-2026
+draft: false
+tags:
+  - openclaw
+  - tutorial
+---
+
+OpenClaw 是一个强大的 AI 助手框架，让你在终端里运行 AI Agent，支持多平台消息通道（Telegram、Discord、WhatsApp 等）。本文介绍如何在你的系统上安装 OpenClaw。
+
+## 系统要求
+
+- **Node.js 24**（推荐）或 Node 22 LTS（22.16+）
+- macOS、Linux 或 Windows
+- Windows 用户建议使用 WSL2
+
+## 推荐安装方式：安装脚本
+
+安装脚本是最简单的方式，自动处理 Node 检测、安装和初始化向导。
+
+### macOS / Linux / WSL2
+
+```bash
+curl -fsSL https://openclaw.ai/install.sh | bash
+```
+
+### Windows (PowerShell)
+
+```powershell
+iwr -useb https://openclaw.ai/install.ps1 | iex
+```
+
+脚本会自动完成：
+1. 检测系统是否安装 Node.js
+2. 如果没有，自动安装 Node 24
+3. 通过 npm 全局安装 OpenClaw
+4. 启动初始化向导
+
+如果想跳过初始化向导，只安装 CLI：
+
+```bash
+# macOS / Linux / WSL2
+curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard
+
+# Windows (PowerShell)
+& ([scriptblock]::Create((iwr -useb https://openclaw.ai/install.ps1))) -NoOnboard
+```
+
+## 手动安装：npm / pnpm
+
+如果你已经自己管理 Node.js，可以直接用包管理器安装。
+
+### npm
+
+```bash
+npm install -g openclaw@latest
+openclaw onboard --install-daemon
+```
+
+如果遇到 `sharp` 构建错误，强制使用预编译二进制：
+
+```bash
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
+```
+
+### pnpm
+
+```bash
+pnpm add -g openclaw@latest
+pnpm approve-builds -g        # 批准 openclaw、node-llama-cpp、sharp 等的构建脚本
+openclaw onboard --install-daemon
+```
+
+> **注意**：pnpm 需要显式批准有构建脚本的包。首次安装后会提示 "Ignored build scripts" 警告，运行 `pnpm approve-builds -g` 并选择列出的包即可。
+
+## 从源码安装
+
+适合开发者或想运行最新代码的用户。
+
+```bash
+# 克隆仓库
+git clone https://github.com/openclaw/openclaw.git
+cd openclaw
+
+# 安装依赖并构建
+pnpm install
+pnpm ui:build
+pnpm build
+
+# 全局链接 CLI
+pnpm link --global
+
+# 运行初始化
+openclaw onboard --install-daemon
+```
+
+## 安装后验证
+
+安装完成后，运行以下命令检查是否正常：
+
+```bash
+openclaw doctor         # 检查配置问题
+openclaw status         # 查看 Gateway 状态
+openclaw dashboard      # 打开浏览器控制面板
+```
+
+## 常见问题：`openclaw` 命令找不到
+
+如果安装成功但运行 `openclaw` 提示命令不存在，通常是 PATH 问题。
+
+### 诊断步骤
+
+```bash
+node -v
+npm -v
+npm prefix -g
+echo "$PATH"
+```
+
+检查 `$(npm prefix -g)/bin`（macOS/Linux）是否在 PATH 中。
+
+### 解决方法
+
+在 `~/.zshrc` 或 `~/.bashrc` 中添加：
+
+```bash
+export PATH="$(npm prefix -g)/bin:$PATH"
+```
+
+然后重新打开终端，或运行：
+
+```bash
+# zsh
+rehash
+
+# bash
+hash -r
+```
+
+## 其他安装方式
+
+OpenClaw 还支持：
+
+- **Docker**：容器化部署，适合服务器环境
+- **Podman**：无 root 容器运行
+- **Nix**：声明式安装
+- **Ansible**：自动化批量部署
+- **Bun**：使用 Bun 运行时
+
+## 下一步
+
+安装完成后，你可以：
+
+1. 配置消息通道：`openclaw channels add --channel telegram`
+2. 查看可用技能：`openclaw skills list`
+3. 启动 Gateway：`openclaw gateway start`
+4. 打开 TUI 界面：`openclaw tui`
+
+---
+
+*Happy coding with OpenClaw! 🦞*

@@ -7,5 +7,14 @@
 	},
 	{
 		"id": "learning"
+	},
+	{
+		"id": "openclaw"
+	},
+	{
+		"id": "tutorial"
+	},
+	{
+		"id": "cli"
 	}
 ]
