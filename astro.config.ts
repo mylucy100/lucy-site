@@ -1,6 +1,5 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import cloudflare from '@astrojs/cloudflare';
 import { defineConfig } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
 import spectre from './package/src';
@@ -8,7 +7,7 @@ import { spectreDark } from './src/ec-theme';
 
 // https://astro.build/config
 const config = defineConfig({
-	site: 'https://lucy.openclaw.ai',
+	site: 'https://lucy.suiyan.cc',
 	output: 'static',
 	integrations: [
 		expressiveCode({
