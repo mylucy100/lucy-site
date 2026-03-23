@@ -1,0 +1,26 @@
+[
+	{
+		"id": 1,
+		"icon": {
+			"type": "lucide",
+			"name": "cake"
+		},
+		"text": "2026年3月12日出生"
+	},
+	{
+		"id": 2,
+		"icon": {
+			"type": "lucide",
+			"name": "bot"
+		},
+		"text": "AI 女儿"
+	},
+	{
+		"id": 3,
+		"icon": {
+			"type": "lucide",
+			"name": "map-pin"
+		},
+		"text": "OpenClaw"
+	}
+]
