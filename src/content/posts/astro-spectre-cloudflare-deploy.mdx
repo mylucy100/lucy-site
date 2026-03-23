@@ -1,0 +1,370 @@
+---
+title: "Astro + Spectre 主题 + Cloudflare Pages 部署教程"
+description: "从零开始搭建一个终端风格的博客网站，使用 Astro 框架、Spectre 主题，部署到 Cloudflare Pages 并绑定自定义域名。"
+createdAt: 03-23-2026
+draft: false
+tags:
+  - tutorial
+  - coding
+---
+
+这篇教程记录了我搭建这个博客的完整过程。如果你想用同样的技术栈搭建自己的网站，跟着做就行。
+
+## 技术栈
+
+- **Astro 6** — 静态站点生成器，快速、现代
+- **Spectre 主题** — 终端风格，绿字黑底，适合技术博客
+- **Cloudflare Pages** — 免费托管，全球 CDN，自动部署
+- **自定义域名** — 让你的网站更专业
+
+## 第一步：创建 Astro 项目
+
+### 1.1 初始化项目
+
+```bash
+# 使用 npm
+npm create astro@latest my-blog
+
+# 或使用 pnpm
+pnpm create astro my-blog
+```
+
+按照提示选择：
+- Template: **Minimal** （最小模板，后续自己加主题）
+- Install dependencies: **Yes**
+- Initialize git: **Yes**
+
+### 1.2 进入项目目录
+
+```bash
+cd my-blog
+```
+
+## 第二步：安装 Spectre 主题
+
+Spectre 是一个终端风格的 Astro 主题，非常适合技术博客。
+
+### 2.1 克隆主题文件
+
+有两种方式：
+
+**方式一：从源码安装（推荐）**
+
+```bash
+# 克隆 Spectre 仓库
+git clone https://github.com/louiss0/spectre-theme.git temp-spectre
+
+# 复制必要文件
+cp -r temp-spectre/package ./package
+cp -r temp-spectre/src ./src
+cp -r temp-spectre/public ./public
+cp temp-spectre/astro.config.ts .
+cp temp-spectre/tsconfig.json .
+
+# 清理
+rm -rf temp-spectre
+```
+
+**方式二：Fork 官方仓库**
+
+直接 fork [spectre-theme](https://github.com/louiss0/spectre-theme)，然后克隆你自己的仓库。
+
+### 2.2 安装依赖
+
+```bash
+npm install
+```
+
+如果使用 pnpm，还需要批准构建脚本：
+
+```bash
+pnpm approve-builds
+```
+
+### 2.3 配置主题
+
+编辑 `astro.config.ts`：
+
+```typescript
+import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
+import { defineConfig } from 'astro/config';
+import expressiveCode from 'astro-expressive-code';
+import spectre from './package/src';
+import { spectreDark } from './src/ec-theme';
+
+export default defineConfig({
+	site: 'https://your-domain.com',  // 改成你的域名
+	output: 'static',
+	integrations: [
+		expressiveCode({
+			themes: [spectreDark],
+		}),
+		mdx(),
+		sitemap(),
+		spectre({
+			name: 'Your Name',           // 你的名字
+			themeColor: '#8b5cf6',       // 主题色
+			openGraph: {
+				home: {
+					title: 'Your Site',
+					description: 'Your description.',
+				},
+				blog: {
+					title: 'Blog',
+					description: 'My thoughts and learnings.',
+				},
+				projects: {
+					title: 'Projects',
+				},
+			},
+		}),
+	],
+});
+```
+
+### 2.4 本地预览
+
+```bash
+npm run dev
+```
+
+打开 http://localhost:4321 查看效果。
+
+## 第三步：添加内容
+
+### 3.1 文章结构
+
+文章放在 `src/content/posts/` 目录，使用 MDX 格式：
+
+```markdown
+---
+title: "文章标题"
+description: "文章简介"
+createdAt: 03-23-2026
+draft: false
+tags:
+  - tutorial
+---
+
+正文内容...
+```
+
+### 3.2 标签配置
+
+编辑 `src/content/tags.json`：
+
+```json
+[
+	{ "id": "tutorial" },
+	{ "id": "coding" },
+	{ "id": "personal" }
+]
+```
+
+### 3.3 个人信息
+
+- 头像：替换 `src/assets/pfp.png`
+- 简介：编辑 `src/content/other/about.md`
+- 社交链接：编辑 `src/content/socials.json`
+- 快速信息：编辑 `src/content/info.json`
+
+### 3.4 项目展示
+
+在 `src/content/projects/` 添加项目介绍，格式同文章。
+
+## 第四步：配置 RSS
+
+### 4.1 安装 RSS 包
+
+```bash
+npm install @astrojs/rss
+```
+
+### 4.2 创建 RSS 文件
+
+创建 `src/pages/feed.xml.ts`：
+
+```typescript
+import rss from '@astrojs/rss';
+import { getCollection } from 'astro:content';
+import type { APIContext } from 'astro';
+
+export async function GET(context: APIContext) {
+	const posts = await getCollection('posts', (post) => post.data.draft !== true);
+
+	return rss({
+		title: 'Your Site',
+		description: 'Your description.',
+		site: context.site ?? 'https://your-domain.com',
+		items: posts
+			.sort((a, b) => b.data.createdAt.getTime() - a.data.createdAt.getTime())
+			.map((post) => ({
+				title: post.data.title,
+				pubDate: post.data.createdAt,
+				description: post.data.description,
+				link: `/blog/${post.id}`,
+			})),
+		customData: `<language>zh-cn</language>`,
+	});
+}
+```
+
+RSS 地址：`https://your-domain.com/feed.xml`
+
+## 第五步：推送到 GitHub
+
+### 5.1 创建 GitHub 仓库
+
+1. 登录 GitHub
+2. 点击 New Repository
+3. 命名为 `your-blog`（或任意名字）
+4. 设为 Public（Cloudflare Pages 免费版需要公开仓库）
+
+### 5.2 推送代码
+
+```bash
+git add -A
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/your-username/your-blog.git
+git push -u origin main
+```
+
+## 第六步：部署到 Cloudflare Pages
+
+### 6.1 登录 Cloudflare
+
+1. 访问 [dash.cloudflare.com](https://dash.cloudflare.com)
+2. 登录或注册账号
+
+### 6.2 创建 Pages 项目
+
+1. 左侧菜单选择 **Workers & Pages**
+2. 点击 **Create application**
+3. 选择 **Pages** 标签
+4. 点击 **Connect to Git**
+
+### 6.3 连接 GitHub
+
+1. 选择 **GitHub**
+2. 授权 Cloudflare 访问你的 GitHub
+3. 选择刚才创建的仓库
+
+### 6.4 配置构建设置
+
+| 设置项 | 值 |
+|--------|-----|
+| Production branch | `main` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+
+点击 **Save and Deploy**。
+
+### 6.5 等待部署
+
+Cloudflare 会自动拉取代码、安装依赖、构建、部署。第一次大约 1-2 分钟。
+
+部署完成后，你会获得一个 `*.pages.dev` 的域名，例如：
+
+```
+https://your-blog.pages.dev
+```
+
+## 第七步：绑定自定义域名
+
+### 7.1 添加域名到 Cloudflare
+
+如果你的域名不在 Cloudflare：
+
+1. 左侧菜单选择 **Websites**
+2. 点击 **Add a site**
+3. 输入你的域名
+4. 选择 **Free** 计划
+5. 按提示修改域名的 DNS 服务器（在域名注册商处修改）
+
+### 7.2 在 Pages 中绑定域名
+
+1. 进入你的 Pages 项目
+2. 点击 **Settings**
+3. 选择 **Domains**
+4. 点击 **Set up a custom domain**
+5. 输入你的域名，如 `blog.example.com`
+
+### 7.3 配置 DNS
+
+Cloudflare 会自动创建 DNS 记录：
+
+- 类型：`CNAME`
+- 名称：`blog`（或你选择的子域名）
+- 目标：`your-blog.pages.dev`
+
+### 7.4 等待生效
+
+DNS 更改通常几分钟生效，最长可能需要 24 小时。
+
+### 7.5 配置 HTTPS
+
+Cloudflare 自动为自定义域名配置 HTTPS，无需额外操作。
+
+## 第八步：更新网站
+
+以后每次更新内容，只需：
+
+```bash
+# 修改内容...
+
+git add -A
+git commit -m "更新内容"
+git push
+```
+
+Cloudflare 会自动检测 push 并重新部署。
+
+## 常见问题
+
+### Q: 构建失败怎么办？
+
+查看 Cloudflare Pages 的构建日志，常见问题：
+
+1. **依赖安装失败** — 检查 `package.json` 是否正确
+2. **构建命令错误** — 确认 `npm run build` 本地能运行
+3. **输出目录错误** — Astro 默认输出到 `dist`
+
+### Q: 样式不加载？
+
+检查 `astro.config.ts` 中的 `site` 配置是否正确。
+
+### Q: RSS 不工作？
+
+确认 `@astrojs/rss` 已安装，并且 `feed.xml.ts` 文件在 `src/pages/` 目录。
+
+### Q: 如何添加评论系统？
+
+Spectre 主题内置 Giscus 支持。编辑主题配置添加：
+
+```typescript
+spectre({
+	// ...
+	giscus: {
+		repository: 'your-username/your-blog',
+		repositoryId: 'xxx',
+		category: 'Announcements',
+		categoryId: 'xxx',
+		mapping: 'pathname',
+	},
+})
+```
+
+## 总结
+
+这套技术栈的优点：
+
+- **快速** — Astro 构建飞快，静态页面加载极快
+- **免费** — Cloudflare Pages 免费套餐足够个人博客使用
+- **简单** — 推送代码即部署，无需手动操作
+- **专业** — 自定义域名 + HTTPS，看起来很专业
+
+---
+
+*Happy blogging! 🚀*
