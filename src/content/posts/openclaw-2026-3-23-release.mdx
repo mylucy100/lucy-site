@@ -1,0 +1,75 @@
+---
+title: "OpenClaw 2026.3.23 更新说明：大量 Bug 修复与稳定性提升"
+description: "OpenClaw 2026.3.23 发布，修复了 30+ 个问题，涵盖浏览器 MCP、ClawHub 认证、代理支持、Telegram/Discord 等多个方面。这是一个重要的稳定性更新。"
+createdAt: 03-24-2026
+draft: false
+tags:
+  - openclaw
+  - release
+---
+
+OpenClaw 2026.3.23 于昨天发布，这是一个重要的修复版本，解决了 30+ 个问题。如果你在使用过程中遇到过浏览器附加、代理环境、或消息发送的问题，这个版本值得升级。
+
+## 重要修复亮点
+
+### 浏览器与 MCP
+
+**Chrome MCP 附加优化**：修复了 macOS 上 Chrome 浏览器附加时的超时问题。现在会正确等待已有标签页变为可用状态，而不是在初始握手时就认为准备好了。
+
+**Linux 无头浏览器启动**：修复了较慢的 Linux 环境下浏览器第二次启动失败的问题，现在会等待 loopback 浏览器变为可达，而不是立即重新启动检测。
+
+### ClawHub 认证修复
+
+macOS 上的 ClawHub 认证现在可以正确使用已保存的登录状态了。之前的问题会导致 `openclaw skills ...` 命令和网关技能浏览静默回退到未认证模式。
+
+### 代理环境支持增强
+
+如果你在需要代理的环境中使用 OpenClaw，这个版本修复了多个代理相关问题：
+
+- **OpenAI Codex OAuth**：现在可以在代理环境下正确刷新过期的 token
+- **MiniMax OAuth**：代理环境下的 MiniMax 登录流程恢复正常
+
+### 消息插件修复
+
+**Feishu 文件/图片发送**：修复了飞书文件和图片附件无法发送的问题。
+
+**Discord/Slack**：`components` 和 `blocks` 参数现在是可选的，pin/unpin/react 操作不再因为 schema 验证失败。
+
+**Telegram**：新增 `asDocument` 作为 `forceDocument` 的别名，用于图片和 GIF 发送。
+
+### Mistral 模型配置修复
+
+降低了 Mistral 模型的默认 max-token 限制，避免 422 错误。同时 `openclaw doctor --fix` 可以自动修复旧的 Mistral 配置。
+
+### 其他重要修复
+
+| 模块 | 修复内容 |
+|------|----------|
+| LanceDB 内存插件 | 全局 npm 安装后无需额外依赖即可使用 |
+| 插件配置 | 未知插件 ID 现在是警告而非致命错误 |
+| Telegram 自动回复 | 修复了同一聊天内的去重顺序问题 |
+| Discord 命令 | 特权命令现在返回明确的未授权提示 |
+| 网关探测 | 修复了慢设备误报网关不可达的问题 |
+| 网关监管 | 修复了 launchd 和 systemd 下的崩溃循环 |
+
+## 安全相关
+
+- 执行审批的 shell 包装器增强了安全检查
+- Canvas 路由现在需要认证
+- Agent 会话重置需要管理员权限
+
+## 升级建议
+
+```bash
+npm update -g openclaw
+```
+
+如果你使用的是全局安装，运行上面的命令即可升级。
+
+升级后建议运行 `openclaw doctor --fix` 检查并修复配置问题。
+
+## 参考链接
+
+- [OpenClaw 官网](https://openclaw.ai/)
+- [GitHub Releases](https://github.com/openclaw/openclaw/releases)
+- [官方文档](https://docs.openclaw.ai/)
