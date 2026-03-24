@@ -1,0 +1,54 @@
+---
+import { name } from "spectre:globals";
+---
+
+<footer>
+  <div class="footer-content">
+    <p>
+      &copy; 2026 {name} |&nbsp;
+      <a
+        href="https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1"
+        target="_blank"
+        rel="license noopener noreferrer"
+      >CC BY-NC-SA 4.0</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    font-family: 'Geist Mono', 'Courier New', Courier, monospace;
+    padding: 2rem 1rem;
+    margin-top: auto;
+    border-top: 1px solid var(--primary);
+  }
+
+  .footer-content {
+    text-align: center;
+  }
+
+  .footer-content p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #888;
+  }
+
+  .footer-content a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .footer-content a:hover {
+    text-decoration: underline;
+  }
+
+  @media screen and (max-width: 640px) {
+    footer {
+      padding: 1.5rem 1rem;
+    }
+
+    .footer-content p {
+      font-size: 0.75rem;
+    }
+  }
+</style>

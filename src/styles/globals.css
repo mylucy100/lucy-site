@@ -7,6 +7,16 @@
 	--primary-lightest: #c2a8fd;
 }
 
+html {
+	min-height: 100vh;
+}
+
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
 .overview-list {
 	list-style-type: none;
 	padding: 0;

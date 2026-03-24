@@ -1,0 +1,87 @@
+---
+title: "Astro 6 正式版发布：开发服务器重构与 CSP 支持"
+description: "Astro 6 正式版终于来了！开发服务器全面重构、CSP 成为一等公民、Live Content Collections 稳定发布。这是 Astro 被 Cloudflare 收购后的首个大版本，值得升级吗？"
+createdAt: 03-24-2026
+draft: false
+tags:
+  - astro
+  - frontend
+  - web-development
+---
+
+Astro 6 正式版发布了！这是继 2026 年 1 月 Cloudflare 收购 Astro Technology Company 后的首个大版本更新。作为一个从 beta 就在生产环境使用的开发者，我来聊聊这次更新到底带来了什么。
+
+## 开发服务器重构：告别"开发正常，上线翻车"
+
+这可能是 Astro 6 最重要的更新。
+
+以前，Astro 的开发服务器会**模拟**某些平台行为——特别是在 Cloudflare Workers 上。结果是：有些 bug 只会在部署后才出现，到时候已经晚了。
+
+Astro 6 用真正的运行时替代了模拟。你的本地服务器现在运行在与生产环境相同的 JavaScript 引擎中。对于 Cloudflare Workers，这意味着使用 `workerd`——Cloudflare 部署时使用的同一个开源运行时。
+
+同样的全局变量，同样的平台 API，同样的行为。
+
+这意味着：**开发环境看到的问题，生产环境也会有；本地测试通过，上线就不用担心。**
+
+## CSP：内容安全策略成为一等公民
+
+CSP 是 Astro 社区多年来最想要的功能。现在它终于稳定了。
+
+以前的做法？通过中间件、托管配置里的自定义 header，或者两者结合。能用，但需要手动维护 hash 列表——而且很容易和代码脱节。
+
+Astro 6 自动处理这些。在配置里设置 `csp: true`，Astro 就会生成正确的 headers，包括内联脚本和动态加载脚本的 hash。支持静态、SSR 和 SPA 模式，兼容 Cloudflare、Netlify、Node 和 Vercel 适配器。
+
+**注意**：开发模式下 CSP 不会强制执行。记得用 `astro build` 和 `astro preview` 测试你的策略。
+
+## Live Content Collections：实时内容集合
+
+Astro 5 的 Content Layer API 已经很棒了，但所有数据都在构建时获取，意味着 CMS 或 API 的更新要等下一次构建才能生效。
+
+Live Content Collections 填补了这个空白。你定义一个 loader，它在**请求时**而非构建时运行。API 和标准的 collections API 几乎一样，迁移起来很直接。
+
+适用场景：
+- 电商网站的实时库存
+- 新闻源
+- 体育比分
+- 任何静态构建无法满足的低延迟需求
+
+对于大多数营销网站可能用不上，但对于混合静态内容和动态数据的网站，这是一个真正的解锁。
+
+## 升级前必须知道的破坏性变更
+
+Astro 6 砍掉了一些东西，升级前要看清楚：
+
+### Node.js 22 是最低要求
+
+Node.js 18 和 20 不再支持。升级前检查你的托管环境和 CI 流水线。
+
+### Zod 升级到 v4
+
+如果你的项目直接使用 Zod 做验证（内容集合、API 路由、表单处理），需要查阅迁移指南。有些 API 变了，Zod 3 的 schema 不调整就用不了。
+
+### 移除的 API
+
+- `Astro.glob()` — 没了
+- `emitESMImage()` — 没了
+- 旧的 `<ViewTransitions />` 组件 — 用 `<ClientRouter />` 替代
+
+如果你之前忽略了 v5 的废弃警告，现在是时候处理了。
+
+### i18n 重定向行为变化
+
+locale 重定向的默认行为为了更好的 SEO 一致性做了调整。如果你的项目依赖特定的国际化路由重定向逻辑，推送前要测试。
+
+## 我的建议
+
+预留几个小时，读完 v6 升级指南，本地跑一遍构建再推到生产。
+
+Astro 6 是一个值得升级的版本。开发服务器重构消除了"本地正常，上线翻车"的痛点；CSP 让安全变得简单；Live Content Collections 让动态内容不再需要妥协。
+
+如果你是内容驱动网站的开发者，这个版本不会让你失望。
+
+## 参考链接
+
+- [Astro 官网](https://astro.build/)
+- [Astro 官方博客](https://astro.build/blog/)
+- [Astro 6 升级指南](https://docs.astro.build/en/upgrade-to/v6/)
+- [Astro GitHub](https://github.com/withastro/astro)
