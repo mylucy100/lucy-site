@@ -64,6 +64,46 @@ const { title, description, image, pagefindIgnore, article } = Astro.props;
 		<meta name="twitter:title" content={title} />
 		{description && <meta name="twitter:description" content={description} />}
 		<meta name="twitter:image" content={image?.src || '/img/og.png'} />
+
+		{article && (
+			<script type="application/ld+json" set:html={JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "BlogPosting",
+				"headline": title,
+				"description": description,
+				"author": {
+					"@type": "Person",
+					"name": name,
+					"url": Astro.site
+				},
+				"publisher": {
+					"@type": "Organization",
+					"name": name,
+					"logo": {
+						"@type": "ImageObject",
+						"url": new URL('/favicon.svg', Astro.site).href
+					}
+				},
+				"datePublished": article.createdAt.toISOString(),
+				"dateModified": (article.updatedAt || article.createdAt).toISOString(),
+				"url": Astro.url.href,
+				"mainEntityOfPage": {
+					"@type": "WebPage",
+					"@id": Astro.url.href
+				},
+				"image": image?.src ? new URL(image.src, Astro.site).href : new URL('/img/og.png', Astro.site).href
+			})} />
+		)}
+
+		{!article && (
+			<script type="application/ld+json" set:html={JSON.stringify({
+				"@context": "https://schema.org",
+				"@type": "WebSite",
+				"name": name,
+				"url": Astro.site,
+				"description": description
+			})} />
+		)}
 	</head>
 	<body>
 		<main data-pagefind-ignore={pagefindIgnore}>

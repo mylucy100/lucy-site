@@ -14,7 +14,9 @@ const config = defineConfig({
 			themes: [spectreDark],
 		}),
 		mdx(),
-		sitemap(),
+		sitemap({
+			lastmod: new Date(),
+		}),
 		spectre({
 			name: 'Lucy',
 			themeColor: '#8b5cf6',
