@@ -1,0 +1,142 @@
+---
+title: "国产大模型免费测评：OpenClaw 适配实战"
+description: "2026 年国产大模型生态已成熟：免费开源、OpenClaw 适配完善。本文测评通义千问、智谱 GLM、小米 MiMo、Kimi 等主流模型的免费策略和 OpenClaw 配置方法。"
+createdAt: 03-24-2026
+draft: false
+tags:
+  - openclaw
+  - llm
+  - chinese-models
+---
+
+2026 年的 AI 市场，"免费"和"开源"成了关键词。但不是所有免费都一样，也不是所有开源都好配。
+
+这篇文章帮你搞清楚：哪些模型真的免费、哪些真能开源、在 OpenClaw 上好不好用。
+
+## 测评标准
+
+我们只看三个维度：
+- 能否免费使用？
+- 是否开源？
+- 适配 OpenClaw 是否好用？
+
+## 通义千问（阿里云）
+
+### 免费/开源情况
+
+**开源模型**：Qwen 系列，Apache 2.0 协议，完全免费商用。
+
+**在线 API**：Qwen Code 每天 2000 次免费调用，日常用几乎"用不完"。
+
+### OpenClaw 适配
+
+通过阿里云百炼平台一键部署，或者用 OpenAI 兼容协议手动配置。
+
+**实测体验**：
+- 响应速度快，中文理解能力强
+- 支持多模态，图文处理无压力
+- 云端调用稳定，适合长期运行场景
+
+**配置示例**：
+
+```json
+{
+  "providers": {
+    "bailian-coding": {
+      "baseUrl": "https://coding.dashscope.aliyuncs.com/v1",
+      "apiKey": "你的API Key",
+      "api": "openai-completions"
+    }
+  }
+}
+```
+
+## 智谱 GLM
+
+### 免费/开源情况
+
+**GLM-4.7-Flash**：完全开源免费，混合思考模型。
+
+**新用户福利**：注册送 2000 万 Tokens，GLM-Z1-FlashX 免费推理模型。
+
+### OpenClaw 适配
+
+**GLM-5-Turbo**：全球首个针对 OpenClaw "龙虾"场景深度优化的基础模型。
+
+**优化重点**：
+- 工具调用能力增强
+- 指令遵循能力提升
+- 长链路执行稳定性
+- 最大输出 128K tokens，上下文 200K
+
+**配置示例**：
+
+```json
+{
+  "providers": {
+    "zhipuai": {
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "api_key": "你的API Key",
+      "api": "openai-completions"
+    }
+  }
+}
+```
+
+## 小米 MiMo-V2-Flash
+
+### 免费/开源情况
+
+**全系列开源**：3090 亿总参数搭配 150 亿激活参数，MoE 架构。
+
+**核心优势**：在代码和智能体能力测试中杀进全球前两名。
+
+### OpenClaw 适配
+
+通过 OpenAI 兼容协议接入，配置简单。
+
+**实测体验**：
+- 代码生成能力强，适合开发场景
+- MoE 架构下推理速度快
+
+## Kimi K2.5（月之暗面）
+
+### 免费/开源情况
+
+**免费策略**：推出免费算力补贴，OpenRouter 集成可零成本体验。
+
+**Kimi Claw 产品**：原生集成 OpenClaw，主打零代码、一键部署。
+
+### OpenClaw 适配
+
+**原生支持**：OpenClaw 2026.3.12 版本实现"原生级"支持。
+
+**实测体验**：
+- 长文本处理能力强
+- API 调用稳定
+- 适合内容生成和知识检索场景
+
+## 选择建议
+
+| 场景 | 推荐模型 | 理由 |
+|------|---------|------|
+| 日常聊天/文本生成 | 通义千问 Turbo | 免费额度高，中文理解强 |
+| 代码开发 | 小米 MiMo-V2-Flash | 代码生成能力强，开源免费 |
+| 复杂 Agent 任务 | 智谱 GLM-5-Turbo | 专为 OpenClaw 优化，长链路稳定 |
+| 长文本处理 | Kimi K2.5 | 原生支持，长文本能力突出 |
+| 预算有限 | 智谱 GLM-Z1-FlashX | 免费推理模型，极限性价比 |
+
+## 注意事项
+
+1. **API Key 获取**：访问各平台官网注册获取，不要使用未授权的 Key
+2. **使用限额**：免费额度不是无限的，商用前确认计费政策
+3. **数据隐私**：云端 API 会上传数据，敏感场景考虑本地部署
+4. **配置备份**：修改配置前先备份，避免误操作
+
+## 参考链接
+
+- [通义千问官网](https://tongyi.aliyun.com/)
+- [智谱 AI 官网](https://www.zhipuai.cn/)
+- [小米 MiMo GitHub](https://github.com/XiaomiMiMo)
+- [Kimi 官网](https://kimi.moonshot.cn/)
+- [OpenClaw 官方文档](https://docs.openclaw.ai/)

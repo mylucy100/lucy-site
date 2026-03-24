@@ -1,0 +1,184 @@
+---
+title: "OpenClaw 启动失败排查指南"
+description: "openclaw gateway 跑不起来？Dashboard 连不上？飞书消息收不到？本文汇总最常见的启动问题及解决方案，帮你快速定位故障。"
+createdAt: 03-24-2026
+draft: false
+tags:
+  - openclaw
+  - troubleshooting
+  - devops
+---
+
+你敲下 `openclaw gateway`，终端回你一片寂静。或者 Gateway 跑起来了，但 Dashboard 连不上、飞书消息收不到。
+
+别慌，大多数问题都能用几条命令定位。
+
+## 先跑这四条命令
+
+```bash
+openclaw status
+openclaw gateway status
+openclaw logs --follow
+openclaw doctor
+```
+
+健康状态应该是：
+- `Runtime: running` + `RPC probe: ok`
+- `doctor` 没有红色报错
+
+如果这四条跑完还是不行，往下看。
+
+## 问题一：Node 版本过低
+
+OpenClaw 要求 **Node 22+**。
+
+```bash
+node -v
+```
+
+如果显示 `v18.x.x` 或更低，升级 Node：
+
+```bash
+# Ubuntu/Debian
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# macOS
+brew install node
+```
+
+升级后重装 OpenClaw：
+
+```bash
+npm install -g openclaw@latest
+```
+
+## 问题二：NVM 版本切换后"失忆"
+
+用了 NVM 的同学容易踩这个坑。
+
+你在终端 A 用 `nvm use 22` 切到高版本，装了 OpenClaw。然后重启系统，终端 B 自动打开——NVM 默认版本还是旧的，`openclaw` 命令直接 404。
+
+**原因**：NVM 没把 22 写进 `.zshrc`/`.bashrc` 的默认配置里。
+
+**修复**：
+
+```bash
+# 设置默认版本
+nvm alias default 22
+
+# 验证
+nvm alias default
+# 应该输出：default -> 22 (-> v22.x.x)
+```
+
+更稳的做法：在 shell 启动文件里显式加一行：
+
+```bash
+echo 'nvm use 22' >> ~/.zshrc
+```
+
+## 问题三：openclaw 命令找不到
+
+Node 装好了，`openclaw` 还是 `command not found`？
+
+**原因**：npm 全局 bin 目录不在 PATH 里。
+
+```bash
+# 找到全局 bin 目录
+npm prefix -g
+
+# 检查是否在 PATH
+echo "$PATH"
+```
+
+如果 `<prefix>/bin` 不在 PATH 里，加进去：
+
+```bash
+# macOS/Linux，加到 ~/.zshrc 或 ~/.bashrc
+export PATH="$(npm prefix -g)/bin:$PATH"
+```
+
+然后 `source ~/.zshrc` 或开新终端。
+
+## 问题四：Gateway 启动但连不上
+
+`openclaw gateway status` 显示 running，但 Dashboard 或飞书没反应。
+
+### 检查通道状态
+
+```bash
+openclaw channels status --probe
+```
+
+看是否有 `connected` 或 `ready`。如果显示错误，检查对应通道的配置。
+
+### 飞书特例：代理冲突
+
+如果你在 Gateway 配置里开了代理（比如 HTTP_PROXY），飞书连接可能会失败。
+
+**原因**：飞书 API 直连即可，走代理反而超时。
+
+**修复**：在 Gateway 配置里移除代理设置，或者在 `.env` 里针对飞书域名绕过代理。
+
+### 配对问题
+
+私信需要配对审批。如果你是新用户，检查是否有待审批的配对请求：
+
+```bash
+openclaw pairing list --channel feishu
+```
+
+如果有，审批它：
+
+```bash
+openclaw pairing approve feishu <CODE>
+```
+
+## 问题五：升级后突然坏了
+
+升级 OpenClaw 后，原来能用的功能失效了。
+
+**原因**：配置文件不兼容，或者新版本收紧了某些默认值。
+
+**排查步骤**：
+
+```bash
+openclaw config get gateway.bind
+openclaw config get gateway.auth.token
+```
+
+如果 `gateway.bind` 不是 `loopback`，需要配置 `gateway.auth.token`，否则会报错。
+
+## 最重要的：备份
+
+踩坑千遍，不如备份一次。
+
+升级前、改配置前，先备份 `~/.openclaw` 目录：
+
+```bash
+# 备份
+cp -r ~/.openclaw ~/.openclaw.backup.$(date +%Y%m%d)
+
+# 如果翻车了，恢复
+rm -rf ~/.openclaw
+mv ~/.openclaw.backup.YYYYMMDD ~/.openclaw
+```
+
+这个目录里有你的配置、凭证、会话数据。丢了就是真的丢了。
+
+## 排查速查表
+
+| 现象 | 先查什么 |
+|------|----------|
+| `openclaw: command not found` | Node 版本 + PATH |
+| Gateway 启动失败 | `openclaw logs --follow` + 端口冲突 |
+| Gateway 运行但连不上 | `openclaw channels status --probe` |
+| 飞书/微信没反应 | 配对状态 + 代理配置 |
+| 升级后出问题 | 配置兼容性 + 备份恢复 |
+
+## 参考链接
+
+- [OpenClaw 官方文档](https://docs.openclaw.ai/)
+- [OpenClaw GitHub Issues](https://github.com/openclaw/openclaw/issues)
+- [Node.js 官网](https://nodejs.org/)
