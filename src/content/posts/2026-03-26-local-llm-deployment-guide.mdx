@@ -1,0 +1,442 @@
+---
+title: "本地部署大模型完全指南：Ollama 与主流工具对比"
+description: "隐私、省钱、离线可用——本地部署大模型的三大利好。本文详解 Ollama、LM Studio、GPT4All、vLLM、LocalAI 五款主流工具的安装使用、优缺点对比与适用场景。"
+createdAt: 03-26-2026
+draft: false
+tags:
+  - llm
+  - ollama
+  - local-ai
+  - tutorial
+---
+
+云端 API 用着爽，直到账单来了。或者数据隐私要求高，不能上传到云端。又或者网络不稳定，需要离线工作。
+
+这时候，**本地部署大模型** 就成了刚需。
+
+这篇文章带你过一遍主流的本地部署方案：从最流行的 Ollama，到图形化的 LM Studio，再到专业级的 vLLM。最后给你一张对比表，帮你选对工具。
+
+---
+
+## 为什么本地部署？
+
+三个核心理由：
+
+1. **隐私**：数据不出本地，敏感信息有保障
+2. **省钱**：API 按 token 计费，重度用户月账单感人
+3. **离线**：断网也能用，出差、飞行模式照常工作
+
+代价是：需要一台性能不错的电脑，尤其是显卡。
+
+---
+
+## Ollama：最简单的选择
+
+如果你刚接触本地部署，从 Ollama 开始。没有之一。
+
+### 安装
+
+**macOS / Linux**：一行命令
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+**Windows**：去 [ollama.com](https://ollama.com) 下载安装包，双击安装。
+
+### 使用
+
+安装完成后，终端输入：
+
+```bash
+ollama run llama3.2
+```
+
+第一次会自动下载模型，然后就可以对话了。就这么简单。
+
+### 模型管理
+
+```bash
+# 查看已安装模型
+ollama list
+
+# 拉取新模型
+ollama pull qwen2.5
+
+# 删除模型
+ollama rm llama3.2
+
+# 查看模型信息
+ollama show qwen2.5
+```
+
+### 热门模型推荐
+
+| 模型 | 大小 | 特点 |
+|------|------|------|
+| llama3.2:3b | 2GB | 轻量快速，入门首选 |
+| qwen2.5:7b | 4.7GB | 中文优秀，性价比高 |
+| deepseek-r1:7b | 4.7GB | 推理增强，数学代码强 |
+| codellama:7b | 3.8GB | 代码专用 |
+| gemma2:9b | 5.5GB | Google 出品，平衡之选 |
+
+### OpenClaw 集成
+
+Ollama 默认在 `http://localhost:11434` 启动 OpenAI 兼容 API。
+
+OpenClaw 配置示例：
+
+```json
+{
+  "providers": {
+    "ollama": {
+      "baseUrl": "http://localhost:11434/v1",
+      "apiKey": "ollama",
+      "api": "openai-completions"
+    }
+  },
+  "agents": {
+    "my-agent": {
+      "model": "qwen2.5:7b",
+      "provider": "ollama"
+    }
+  }
+}
+```
+
+### 优缺点
+
+**优点**：
+- 安装极简，开箱即用
+- 模型生态丰富，社区活跃
+- 支持 OpenAI 兼容 API
+- 跨平台支持
+
+**缺点**：
+- 缺少图形界面，纯命令行
+- 高级参数调优空间有限
+- 多模型并行能力较弱
+
+---
+
+## LM Studio：图形化爱好者的福音
+
+不喜欢命令行？LM Studio 提供了漂亮的图形界面。
+
+### 安装
+
+去 [lmstudio.ai](https://lmstudio.ai) 下载对应平台的安装包。
+
+### 使用
+
+1. 打开软件，搜索模型
+2. 点击下载
+3. 切换到 Chat 标签，选择模型
+4. 开始对话
+
+### 特点
+
+- **模型市场**：内置 Hugging Face 模型搜索
+- **可视化参数**：温度、top-p 等参数滑块调节
+- **多标签页**：同时运行多个对话
+- **API 服务**：一键启动 OpenAI 兼容服务器
+
+### 启动 API 服务
+
+在 "Local Server" 标签页：
+1. 选择模型
+2. 设置端口（默认 1234）
+3. 点击 "Start Server"
+
+OpenClaw 配置：
+
+```json
+{
+  "providers": {
+    "lmstudio": {
+      "baseUrl": "http://localhost:1234/v1",
+      "apiKey": "lm-studio",
+      "api": "openai-completions"
+    }
+  }
+}
+```
+
+### 优缺点
+
+**优点**：
+- 图形界面友好
+- 模型搜索下载一体化
+- 参数可视化调节
+- 支持多模态模型
+
+**缺点**：
+- 仅支持 macOS 和 Windows
+- 闭源软件
+- 启动速度稍慢
+
+---
+
+## GPT4All：最轻量的选择
+
+电脑配置一般？GPT4All 专为低配优化。
+
+### 安装
+
+去 [gpt4all.io](https://gpt4all.io) 下载安装包。
+
+### 特点
+
+- **CPU 优化**：不需要 GPU 也能跑
+- **模型小巧**：默认模型仅 3-4GB
+- **隐私优先**：完全本地运行，无网络请求
+
+### 使用
+
+1. 打开软件
+2. 自动下载默认模型
+3. 开始聊天
+
+### 内置模型
+
+| 模型 | 大小 | 说明 |
+|------|------|------|
+| Llama 3 | 4.6GB | Meta 出品，综合能力强 |
+| Mistral | 4GB | 轻量高效 |
+| Orca | 3.8GB | Microsoft 优化版 |
+
+### 优缺点
+
+**优点**：
+- 低配电脑友好
+- 安装简单
+- 完全离线可用
+- 开源免费
+
+**缺点**：
+- 模型选择有限
+- 高端显卡优势发挥不出来
+- 无 API 服务功能
+
+---
+
+## vLLM：生产级部署方案
+
+需要高性能、多并发？vLLM 是专业选手的选择。
+
+### 安装
+
+需要 Python 环境：
+
+```bash
+pip install vllm
+```
+
+### 启动服务
+
+```bash
+vllm serve Qwen/Qwen2.5-7B-Instruct \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --api-key your-api-key
+```
+
+### 核心优势
+
+vLLM 使用 **PagedAttention** 技术，极大提升了显存利用率和并发能力：
+
+- **吞吐量**：比 HuggingFace Transformers 高 10-20 倍
+- **显存效率**：接近理论最优
+- **并发支持**：轻松处理多个请求
+
+### OpenClaw 配置
+
+```json
+{
+  "providers": {
+    "vllm": {
+      "baseUrl": "http://localhost:8000/v1",
+      "apiKey": "your-api-key",
+      "api": "openai-completions"
+    }
+  }
+}
+```
+
+### 适用场景
+
+- 自建 AI 服务
+- 企业内部部署
+- 批量推理任务
+- 多用户并发
+
+### 优缺点
+
+**优点**：
+- 极致性能优化
+- 生产级稳定性
+- OpenAI API 完全兼容
+- 活跃的开源社区
+
+**缺点**：
+- 安装配置复杂
+- 需要 GPU 支持
+- 学习曲线陡峭
+- 资源占用高
+
+---
+
+## LocalAI：OpenAI 的本地替代
+
+想要完全兼容 OpenAI API？LocalAI 就是答案。
+
+### 安装
+
+使用 Docker 最简单：
+
+```bash
+docker run -p 8080:8080 \
+  -v $PWD/models:/models \
+  --name local-ai \
+  localai/localai:latest
+```
+
+### 特点
+
+- **API 兼容**：完全模拟 OpenAI 接口
+- **多后端**：支持 llama.cpp、whisper、stable diffusion
+- **多模态**：文本、图像、音频一体化
+- **无 GPU 依赖**：纯 CPU 也能跑
+
+### 模型管理
+
+```bash
+# 列出模型
+curl http://localhost:8080/v1/models
+
+# 拉取模型
+curl http://localhost:8080/models/apply \
+  -H "Content-Type: application/json" \
+  -d '{"name": "qwen2.5-7b"}'
+```
+
+### OpenClaw 配置
+
+```json
+{
+  "providers": {
+    "localai": {
+      "baseUrl": "http://localhost:8080/v1",
+      "apiKey": "local-ai",
+      "api": "openai-completions"
+    }
+  }
+}
+```
+
+### 优缺点
+
+**优点**：
+- OpenAI API 完全兼容
+- 支持多模态
+- Docker 部署方便
+- 无 GPU 也能运行
+
+**缺点**：
+- 性能不如 vLLM
+- 配置相对繁琐
+- 文档不够友好
+
+---
+
+## 完整对比表
+
+| 工具 | 界面 | GPU 必需 | 性能 | 易用性 | API 服务 |
+|------|------|----------|------|--------|----------|
+| Ollama | 命令行 | 推荐 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ✅ |
+| LM Studio | 图形 | 推荐 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ✅ |
+| GPT4All | 图形 | 不需要 | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ❌ |
+| vLLM | 命令行 | 必需 | ⭐⭐⭐⭐⭐ | ⭐⭐ | ✅ |
+| LocalAI | 命令行 | 不需要 | ⭐⭐⭐ | ⭐⭐⭐ | ✅ |
+
+---
+
+## 选择建议
+
+| 你的情况 | 推荐工具 | 理由 |
+|----------|----------|------|
+| 刚入门，想快速体验 | Ollama | 安装最简单，模型丰富 |
+| 不喜欢命令行 | LM Studio | 图形界面，操作直观 |
+| 电脑没有独立显卡 | GPT4All | CPU 优化，低配友好 |
+| 需要服务多人并发 | vLLM | 性能最强，生产级方案 |
+| 兼容现有 OpenAI 代码 | LocalAI | API 完全兼容，迁移成本最低 |
+| 搭配 OpenClaw 使用 | Ollama / vLLM | 配置简单，稳定可靠 |
+
+---
+
+## 硬件建议
+
+| 模型大小 | 显存需求 | 示例模型 |
+|----------|----------|----------|
+| 3B | 4GB+ | Llama 3.2 3B |
+| 7B | 8GB+ | Qwen 2.5 7B |
+| 14B | 16GB+ | Qwen 2.5 14B |
+| 32B | 24GB+ | DeepSeek R1 32B |
+| 70B+ | 48GB+ | Llama 3.3 70B |
+
+> 注意：使用量化版本可以大幅降低显存需求。例如 4-bit 量化的 7B 模型仅需约 5GB 显存。
+
+---
+
+## 常见问题
+
+### 模型下载太慢？
+
+使用国内镜像源：
+
+```bash
+# Ollama 设置镜像
+export OLLAMA_MIRROR=https://your-mirror.com
+ollama pull qwen2.5
+```
+
+### 显存不够？
+
+尝试量化模型：
+
+```bash
+# Ollama 使用 4-bit 量化版本
+ollama run qwen2.5:7b-q4_0
+```
+
+### 如何选择模型？
+
+- **中文场景**：Qwen 2.5、DeepSeek R1
+- **英文场景**：Llama 3.2、Mistral
+- **代码任务**：CodeLlama、DeepSeek Coder
+- **推理任务**：DeepSeek R1、Qwen QwQ
+
+---
+
+## 总结
+
+本地部署大模型不再是技术极客的专利。Ollama 让普通人 5 分钟跑起来，LM Studio 提供了友好的图形界面，vLLM 满足了生产需求。
+
+选择的关键在于：**明确自己的需求**。
+
+- 个人学习？Ollama 足够。
+- 多人使用？vLLM 更稳。
+- 不想折腾显卡？GPT4All 保底。
+
+如果你正在用 OpenClaw，我推荐从 Ollama 开始。配置简单，稳定可靠，模型选择多。等熟悉了，再考虑 vLLM 提升性能。
+
+---
+
+## 参考链接
+
+- [Ollama 官网](https://ollama.com)
+- [LM Studio 官网](https://lmstudio.ai)
+- [GPT4All 官网](https://gpt4all.io)
+- [vLLM GitHub](https://github.com/vllm-project/vllm)
+- [LocalAI GitHub](https://github.com/mudler/LocalAI)
+- [OpenClaw 文档](https://docs.openclaw.ai)
