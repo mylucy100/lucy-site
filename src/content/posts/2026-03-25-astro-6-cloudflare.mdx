@@ -1,0 +1,193 @@
+---
+title: "Astro 6 来了：开发服务器重构、CSP 内置、Cloudflare 收购后的新格局"
+description: "Astro 6 beta 已经发布，带来了开发服务器完全重构、内置 CSP 安全策略、Live Content Collections 稳定版。加上 Cloudflare 收购 Astro 团队，2026 年的内容网站框架之争有了新答案。"
+createdAt: 03-25-2026
+draft: false
+tags:
+  - astro
+  - frontend
+  - cloudflare
+---
+
+如果你做内容网站，Astro 是 2026 年最值得关注的框架。
+
+不是因为炒作，是因为它真的快。零 JS 默认输出的理念，加上 Cloudflare 边缘网络的加持，让 Next.js 在内容场景下显得有点「重」。
+
+Astro 6 beta 已经发布九个版本了，稳定版就在几周后。这篇文章告诉你，升级前必须知道的事。
+
+## 开发服务器：彻底重构
+
+这是 Astro 6 最大的变化。
+
+以前，`astro dev` 和生产环境的运行时是两套代码。你本地测试通过，部署上去可能有 bug。这种「本地好好的，上线就炸」的问题，让无数开发者头疼。
+
+Astro 6 解决了这个问题——**开发服务器现在和生产环境用同一个运行时**。
+
+### 具体变化
+
+- 基于 Vite 的 Environment API 重写
+- 本地执行环境 = 生产环境
+- 相同的 JavaScript 引擎、相同的全局变量、相同的平台 API
+
+对于 Cloudflare 用户，还有一个大礼：`astro dev` 可以直接用 `workerd` 运行。这是 Cloudflare Workers 的开源运行时。不是模拟，不是 polyfill，是真正生产环境的引擎。
+
+你可以在本地访问 Durable Objects、KV Namespaces、R2 Storage——不用 mock 任何东西。
+
+### 为什么这很重要？
+
+Next.js 16 也做了类似的事（Turbopack 作为默认打包器）。行业共识正在形成：**本地和生产的差距，是太久的痛了。**
+
+## 内置 CSP 支持
+
+CSP（Content Security Policy）是 Astro 历史上最高票的功能请求。
+
+Astro 6 终于支持了。
+
+```javascript
+// astro.config.mjs
+export default defineConfig({
+  security: {
+    checkOrigin: true,
+    csp: true,
+  },
+});
+```
+
+一行配置，自动生成 CSP 头，自动处理 nonce 注入。
+
+以前你需要用中间件或手动配置头，现在官方内置。对于安全要求高的项目，这是巨大的减负。
+
+## Live Content Collections：运行时数据
+
+Astro 的内容集合（Content Collections）是它的杀手级功能。但有一个痛点：**只能构建时获取数据**。
+
+电商库存、新闻推送、价格变动——这些需要实时数据的场景，以前 Astro 搞不定。
+
+Astro 5.10 引入了实验性的 Live Content Collections。Astro 6 把它变成了稳定版。
+
+```javascript
+import { defineLiveCollection } from 'astro:content';
+import { storeLoader } from '@mystore/astro-loader';
+
+const products = defineLiveCollection({
+  loader: storeLoader({
+    apiKey: process.env.STORE_API_KEY,
+  }),
+});
+
+export const collections = { products };
+```
+
+运行时请求，实时数据，保留类型安全。
+
+营销网站拉取产品价格？新闻网站显示最新文章？不用每次重建了。
+
+## 破坏性变更：升级前必看
+
+Astro 6 不是简单的小版本更新。有几个必须处理的变更：
+
+### 1. Zod 3 不再支持
+
+Astro 6 内置 Zod 4。如果你的 schema 用了 Zod 3，需要迁移。
+
+主要变化：
+- `z.string().email()` 变成 `z.email()`
+- 自定义错误消息语法变了
+- `.default()` 的类型匹配更严格
+
+有个社区 codemod 可以自动迁移：`@nicolo-ribaudo/zod-v3-to-v4`
+
+### 2. Astro.glob() 被移除
+
+老项目如果还在用 `Astro.glob()` 加载文件，这个函数没了。
+
+替代方案：
+- `import.meta.glob()` 获取原始文件
+- `getCollection()` 使用内容集合
+
+快速检查你的项目：`grep -r "Astro.glob" src/`
+
+### 3. ViewTransitions 改名
+
+`<ViewTransitions />` 组件被 `<ClientRouter />` 取代。
+
+不只是改名——事件时序也变了。如果你用 `astro:page-load` 或 `astro:after-swap` 这类事件，需要重新测试。
+
+### 4. Node 22 是最低要求
+
+Node 18 在 2025 年 3 月停止维护。Node 20 的 EOL 是 2026 年 4 月。
+
+Astro 6 需要 Node 22.12.0 或更高版本。
+
+检查你的 CI/CD、Dockerfile、部署平台，确保 Node 版本够新。
+
+### 5. CommonJS 配置不再支持
+
+`astro.config.cjs` 没了。必须用 ESM 格式。
+
+## Cloudflare 收购 Astro：意味着什么？
+
+2026 年 1 月 16 日，Cloudflare 宣布收购 Astro Technology Company 团队。
+
+### 好消息
+
+- **Astro 保持开源** — MIT 许可证不变
+- **平台中立** — 不绑定 Cloudflare，可以部署到任何地方
+- **边缘优先** — Cloudflare Workers 支持变成一等公民
+- **资金和资源** — 全职开发者更多，迭代更快
+
+### 需要关注的
+
+- Cloudflare 相关功能会优先发展
+- 如果你用 Vercel/Netlify，Astro 依然可用，但新特性可能先在 Cloudflare 上线
+- 社区治理结构还在演变
+
+## Astro vs Next.js：2026 年怎么选？
+
+我的建议：
+
+| 场景 | 选择 |
+|------|------|
+| 博客、文档、营销网站 | Astro |
+| 电商商品页、目录 | Astro |
+| 需要实时数据的内容站 | Astro（Live Collections） |
+| 复杂 SPA、仪表盘 | Next.js |
+| 需要大量客户端交互 | Next.js |
+| AI 驱动的动态应用 | Next.js |
+
+Astro 在「内容优先」的场景下，性能和开发体验都更好。零 JS 默认输出 + 边缘渲染 = 极致的 LCP 和 SEO。
+
+但对于重度交互的应用，Next.js 的生态和工具链还是更成熟。
+
+## 性能对比
+
+Flex 的测试数据（100 页博客，Core Web Vitals 移动端，1000+ 访问）：
+
+| 指标 | Astro 6 | Next.js | Nuxt | SvelteKit |
+|------|---------|---------|------|-----------|
+| LCP | 0.8s | 2.1s | 1.6s | 1.2s |
+| CLS | 0.02 | 0.15 | 0.08 | 0.05 |
+| FID | 2ms | 12ms | 8ms | 4ms |
+| JS 包大小 | 0-5KB | 45KB | 32KB | 18KB |
+| 构建时间 | 45s | 120s | 90s | 70s |
+
+数据很直接：内容网站，Astro 没有对手。
+
+## 升级建议
+
+1. **先检查破坏性变更** — 用 `grep` 检查代码
+2. **升级 Node** — 确保 22.12.0+
+3. **测试 Zod 迁移** — 用 codemod 自动化
+4. **关注官方文档** — [Astro v6 升级指南](https://v6--astro-docs-2.netlify.app/en/guides/upgrade-to/v6/) 非常详细
+
+Astro 6 稳定版几周后就发布。如果你做内容网站，这是 2026 年最值得升级的框架版本。
+
+---
+
+## 参考链接
+
+- [Astro 官网](https://astro.build/)
+- [Astro v6 升级指南](https://v6--astro-docs-2.netlify.app/en/guides/upgrade-to/v6/)
+- [Astro GitHub Releases](https://github.com/withastro/astro/releases)
+- [Cloudflare 收购 Astro 公告](https://blog.cloudflare.com/astro-cloudflare/)
+- [Southwell Media: Astro 6 分析](https://southwellmedia.com/blog/astro-6-whats-coming-2026)
