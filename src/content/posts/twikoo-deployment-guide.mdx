@@ -1,0 +1,301 @@
+---
+title: "Twikoo 评论系统部署教程"
+description: "详细记录 Twikoo 评论系统的完整部署过程，包括 MongoDB Atlas 数据库配置、Netlify 云函数部署、域名绑定以及前端集成。"
+createdAt: 03-26-2026
+draft: false
+tags:
+  - tutorial
+  - twikoo
+  - blog
+---
+
+前段时间给博客加上了 Twikoo 评论系统，整个部署过程踩了一些坑，记录下来分享给有需要的朋友。
+
+## 为什么选择 Twikoo？
+
+之前用的是 Giscus，基于 GitHub Discussions，虽然免费稳定，但有个问题：访客评论需要 GitHub 账号。对于非技术圈的读者来说，这个门槛有点高。
+
+Twikoo 的优势：
+
+- **支持匿名评论**：昵称 + 邮箱即可评论
+- **多种部署方式**：Vercel、Netlify、自建服务器
+- **功能丰富**：邮件通知、垃圾评论过滤、表情包、图片上传
+- **免费额度够用**：MongoDB Atlas 免费版 500MB，Netlify 免费版完全够用
+
+## 部署架构
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   博客前端   │ ──▶ │   Netlify   │ ──▶ │  MongoDB    │
+│  (你的域名)  │     │  (云函数)   │     │   Atlas     │
+└─────────────┘     └─────────────┘     └─────────────┘
+```
+
+## 第一步：创建 MongoDB Atlas 数据库
+
+### 1. 注册账号
+
+访问 [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register) 注册免费账号。支持 GitHub、Google、Apple 账号授权登录。
+
+### 2. 创建免费集群
+
+登录后会自动引导创建集群：
+
+- **服务商**：AWS（推荐，基建成熟）
+- **区域**：选择离你后端服务器近的数据中心，比如香港（ap-east-1）
+- **集群类型**：M0 FREE（免费，500MB 存储）
+
+等待集群创建完成，大约需要 3-5 分钟。
+
+### 3. 创建数据库用户
+
+进入 **Database Access** 页面：
+
+1. 点击 **Add New Database User**
+2. Authentication Method 选择 **Password**
+3. 用户名：自定义（比如 `twikoo`）
+4. 密码：建议点击 **Auto Generate** 生成强密码
+5. Privileges 选择 **Atlas Admin**
+6. 点击 **Add User**
+
+**⚠️ 重要**：密码只会显示一次，务必保存好！
+
+### 4. 设置网络白名单
+
+进入 **Network Access** 页面：
+
+1. 点击 **Add IP Address**
+2. 输入 `0.0.0.0/0`（允许所有 IP 访问，适合 Vercel/Netlify 等云函数）
+3. 点击 **Confirm**
+
+如果你的服务器有固定 IP，建议填写固定 IP 更安全。
+
+### 5. 获取连接字符串
+
+进入 **Database** 页面：
+
+1. 点击 **Connect**
+2. 选择 **Drivers**
+3. 复制连接字符串，格式如下：
+
+```
+mongodb+srv://<用户名>:<密码>@cluster0.xxxxx.mongodb.net/?appName=Cluster0
+```
+
+把 `<用户名>` 和 `<密码>` 替换成你创建的用户名和密码。
+
+## 第二步：部署 Twikoo 云函数到 Netlify
+
+### 1. Fork 项目
+
+访问 [twikoo-netlify](https://github.com/twikoojs/twikoo-netlify)，点击右上角 **Fork**，将项目 Fork 到你的 GitHub 账号。
+
+### 2. 在 Netlify 导入项目
+
+1. 登录 [Netlify](https://app.netlify.com)
+2. 点击 **Add new site** → **Import an existing project**
+3. 选择 **GitHub**，授权后找到你 Fork 的 `twikoo-netlify` 仓库
+4. 点击进入配置页面
+
+### 3. 配置环境变量
+
+在部署配置页面：
+
+1. 点击 **Add environment variables**
+2. 添加环境变量：
+   - **Key**: `MONGODB_URI`
+   - **Value**: 你的 MongoDB 连接字符串
+
+### 4. 部署
+
+点击 **Deploy**，等待部署完成（约 1-2 分钟）。
+
+部署成功后，Netlify 会分配一个默认域名，格式如：
+
+```
+https://xxxxxx-xxxxxx.netlify.app/.netlify/functions/twikoo
+```
+
+### 5. 验证部署
+
+访问上面的地址，如果返回：
+
+```json
+{
+  "code": 100,
+  "message": "Twikoo 云函数运行正常",
+  "version": "1.7.4"
+}
+```
+
+说明部署成功！
+
+## 第三步：绑定自定义域名（可选）
+
+### 1. 添加域名
+
+在 Netlify 项目页面：
+
+1. 进入 **Domain management**
+2. 点击 **Add a domain**
+3. 输入你的域名（如 `twikoo.example.com`）
+
+### 2. 配置 DNS
+
+在你的 DNS 服务商添加 CNAME 记录：
+
+| 类型 | 主机 | 值 |
+|------|------|-----|
+| CNAME | twikoo | xxxxxx-xxxxxx.netlify.app |
+
+### 3. 等待 SSL 证书
+
+DNS 生效后，Netlify 会自动配置 Let's Encrypt SSL 证书。可能需要等待几分钟到几小时。
+
+完成后访问：
+
+```
+https://twikoo.example.com/.netlify/functions/twikoo
+```
+
+## 第四步：前端集成
+
+### 1. 安装依赖
+
+```bash
+npm install twikoo
+# 或
+pnpm add twikoo
+```
+
+### 2. 创建评论组件
+
+```tsx
+'use client'
+
+import { useEffect, useRef } from 'react'
+
+interface TwikooCommentsProps {
+  path: string
+}
+
+declare global {
+  interface Window {
+    twikoo?: any
+  }
+}
+
+export default function TwikooComments({ path }: TwikooCommentsProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const initializedRef = useRef(false)
+
+  useEffect(() => {
+    const loadTwikoo = async () => {
+      if (typeof window !== 'undefined' && !window.twikoo) {
+        const script = document.createElement('script')
+        script.src = 'https://cdn.jsdelivr.net/npm/twikoo@1.7.4/dist/twikoo.all.min.js'
+        script.async = true
+        document.head.appendChild(script)
+        
+        await new Promise<void>((resolve) => {
+          script.onload = () => resolve()
+        })
+      }
+      
+      if (window.twikoo && containerRef.current && !initializedRef.current) {
+        initializedRef.current = true
+        try {
+          window.twikoo.init({
+            envId: 'https://twikoo.example.com/.netlify/functions/twikoo',
+            el: '#twikoo-comment',
+            path: path
+          })
+        } catch (e) {
+          console.error('Twikoo init error:', e)
+        }
+      }
+    }
+    
+    loadTwikoo()
+    
+    return () => {
+      initializedRef.current = false
+    }
+  }, [path])
+
+  return (
+    <div 
+      ref={containerRef}
+      id="twikoo-comment" 
+      style={{ minHeight: '200px' }}
+    />
+  )
+}
+```
+
+### 3. 在文章页面使用
+
+```tsx
+<TwikooComments path={`/blog/${postId}`} />
+```
+
+## 第五步：配置管理面板
+
+### 1. 设置管理员密码
+
+访问你的博客任意文章页面，评论区域底部点击「管理」，首次访问会提示设置密码。
+
+### 2. 配置邮件通知（可选）
+
+在管理面板找到「邮件通知」设置。
+
+**使用 QQ 邮箱 SMTP：**
+
+| 配置项 | 值 |
+|--------|-----|
+| SMTP 地址 | smtp.qq.com |
+| SMTP 端口 | 465 |
+| SMTP 用户 | 你的QQ邮箱 |
+| SMTP 密码 | QQ邮箱授权码（不是密码） |
+
+**获取 QQ 邮箱授权码：**
+
+1. 登录 QQ 邮箱网页版
+2. 设置 → 账户 → POP3/SMTP服务
+3. 开启服务，生成授权码
+
+## 注意事项
+
+### 版本一致性
+
+确保前端和云函数版本一致，否则管理面板会提示升级。修改 `package.json` 中的版本号即可：
+
+```json
+"twikoo": "^1.7.4"
+```
+
+### CSP 安全策略
+
+如果你的网站配置了 Content-Security-Policy，需要添加以下域名：
+
+```
+script-src: https://cdn.jsdelivr.net
+connect-src: https://你的Twikoo域名
+```
+
+### 样式冲突
+
+Twikoo 使用 Element UI 样式，如果你的网站使用了其他 CSS 框架（如 Tailwind、Pico CSS），可能需要额外的样式覆盖来修复冲突。
+
+## 总结
+
+Twikoo 是一个功能丰富、部署简单的评论系统，适合个人博客使用。整个部署过程大概需要 30 分钟，主要时间花在 MongoDB Atlas 创建集群和 DNS 解析上。
+
+如果你在部署过程中遇到问题，可以参考：
+
+- [Twikoo 官方文档](https://twikoo.js.org/)
+- [GitHub Issues](https://github.com/twikoojs/twikoo/issues)
+
+---
+
+*本文记录的是实际部署 Twikoo 的过程，希望对你有帮助。*
