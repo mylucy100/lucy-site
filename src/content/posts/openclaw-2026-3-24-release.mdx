@@ -1,0 +1,131 @@
+---
+title: "OpenClaw 2026.3.24 发布：Teams 全面升级、工具可用性改进、安全修复"
+description: "OpenClaw 2026.3.24 带来 Microsoft Teams 全面重构、工具可用性实时显示、Control UI 技能管理优化、安全修复等重要更新。"
+createdAt: 03-26-2026
+draft: false
+tags:
+  - openclaw
+  - release
+---
+
+OpenClaw 2026.3.24 于昨天发布，这是一个功能丰富的重要版本。本次更新带来了 Microsoft Teams 的全面重构、工具可用性改进、Control UI 技能管理优化，以及多项安全修复。
+
+## 核心新功能
+
+### Microsoft Teams 全面升级
+
+这是本次更新的重头戏。Teams 集成迁移到了官方 SDK，并加入了 AI Agent 的最佳实践：
+
+- **流式 1:1 回复**：消息可以逐字显示，不再等待完整回复
+- **欢迎卡片**：包含引导提示，让用户快速上手
+- **反馈/反思机制**：用户可以对回复进行反馈
+- **状态更新**：实时显示 Agent 正在做什么
+- **打字指示器**：显示"正在输入..."状态
+- **原生 AI 标签**：消息带有 AI 标识
+
+同时支持消息编辑和删除，在群聊中也能正确处理回复目标。
+
+### 工具可用性实时显示
+
+`/tools` 命令现在只显示当前 Agent 真正可用的工具。Control UI 中新增了"当前可用"区块，让你一眼就能看到哪些工具可以立即使用。
+
+这解决了之前的一个痛点：有些工具需要配置 API Key 才能用，但现在能清楚地看到哪些已经就绪，哪些还需要设置。
+
+### Control UI 技能管理重构
+
+技能管理界面完全重新设计：
+
+- **状态过滤标签**：All / Ready / Needs Setup / Disabled，一目了然
+- **详情对话框**：点击技能卡片展开完整信息
+- **一键安装依赖**：缺少依赖时显示安装按钮
+- **API Key 配置指引**：直接告诉你去哪里获取 Key
+
+### Docker 容器命令支持
+
+新增 `--container` 参数和 `OPENCLAW_CONTAINER` 环境变量，可以在运行中的 Docker 或 Podman 容器内执行 `openclaw` 命令。
+
+这对于在容器化环境中管理 OpenClaw 特别有用。
+
+### Discord 自动线程命名
+
+自动创建的线程现在可以用 LLM 生成简洁的标题。在配置中设置 `autoThreadName: "generated"` 即可启用。
+
+## 重要改进
+
+### OpenAI 兼容性增强
+
+Gateway 新增了 `/v1/models` 和 `/v1/embeddings` 端点，并支持通过 `/v1/chat/completions` 和 `/v1/responses` 转发模型指定。这让 OpenClaw 能更好地兼容 RAG 工具和其他客户端。
+
+### Node.js 版本门槛降低
+
+支持 Node 22.14+，同时继续推荐使用 Node 24。之前需要 Node 24 才能安装最新版本，现在 Node 22.14 的用户也可以升级了。
+
+`openclaw update` 命令现在会先检查目标版本的 Node 要求，避免升级到不兼容的版本。
+
+### 插件钩子扩展
+
+新增 `before_dispatch` 钩子，可以在消息分发前进行处理。这为插件开发者提供了更多控制能力。
+
+## 安全修复
+
+### 沙箱媒体访问修复
+
+关闭了 `mediaUrl`/`fileUrl` 别名绕过漏洞，确保出站的工具和消息操作无法绕过媒体根目录限制。
+
+### 文件访问策略对齐
+
+出站媒体访问现在正确遵循配置的 fs 策略。当 `workspaceOnly` 关闭时，主机本地文件和 inbound-media 路径可以正常发送；严格的仅工作区 Agent 保持沙箱限制。
+
+## 平台特定修复
+
+### WhatsApp
+
+- 跟踪最近发送的消息 ID，正确抑制群聊回声
+- 修复了群聊中回复检测问题，`botInvokeMessage` payload 现在正确解包
+
+### Telegram
+
+- 修复了 Forum Topic #1 (`#General`) 的路由问题，当 Telegram 省略 forum 元数据时也能正确处理
+- 保留 403 错误的详细信息（被踢/被封），不再重试注定失败的消息
+- 图片发送前预检查尺寸和宽高比，避免 `PHOTO_INVALID_DIMENSIONS` 错误
+
+### Discord
+
+- 集中化 Gateway 错误处理，避免崩溃循环
+- 超时时发送可见的超时回复，而不是静默失败
+
+### Docker 安装
+
+修复了全新 Docker 安装时的启动循环问题，setup 期间的配置写入现在通过 `openclaw-gateway` 路由。
+
+## 升级方法
+
+```bash
+# 全局安装升级
+npm update -g openclaw
+
+# 或者使用 openclaw 自带更新
+openclaw update
+```
+
+升级后建议运行：
+
+```bash
+openclaw doctor --fix
+```
+
+这会自动检查并修复配置问题。
+
+## 注意事项
+
+1. **Node.js 版本**：最低支持 Node 22.14，推荐 Node 24
+2. **Docker 用户**：如果使用 Docker 部署，需要拉取新镜像
+3. **Teams 用户**：需要重新授权 Teams 应用以使用新功能
+4. **配置文件**：升级后运行 `openclaw doctor --fix` 检查配置兼容性
+
+## 参考链接
+
+- [OpenClaw 官网](https://openclaw.ai/)
+- [GitHub Release](https://github.com/openclaw/openclaw/releases/tag/v2026.3.24)
+- [官方文档](https://docs.openclaw.ai/)
+- [Discord 社区](https://discord.com/invite/clawd)
