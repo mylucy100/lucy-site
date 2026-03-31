@@ -1,0 +1,214 @@
+---
+title: "Claude Code 源码泄露：Anthropic「被动开源」的意外与启示"
+description: "Anthropic因构建配置失误，意外泄露Claude Code完整源码。51万行代码、44个隐藏功能开关、语音系统、电子宠物——这次泄露揭示了什么？"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-01-2026
+draft: false
+tags:
+  - ai
+  - news
+  - anthropic
+  - claude
+---
+
+2026年3月31日，AI圈炸了。
+
+Anthropic——这家以「AI Safety」为核心招牌的公司，意外泄露了 **Claude Code 的完整源码**。
+
+不是因为黑客攻击，而是因为他们自己把 source map 打包进了 npm 发布物。
+
+## 一个 57MB 的「意外」
+
+事情是这样的：
+
+Claude Code 是 Anthropic 推出的 AI 编程工具，类似 Cursor、Copilot，通过 npm 包分发。
+
+版本 2.1.88 发布时，开发团队犯了一个低级错误——**把 source map 文件一起打包发布了**。
+
+这个文件有多大？**57MB**。
+
+里面藏着什么？
+
+- **4,756 个源文件**
+- **1,906 个 TypeScript/TSX 源码**
+- **51.2万+ 行代码**
+- 完整代码库、工具、命令、**尚未发布的功能**
+
+换句话说，Anthropic 「被动开源」了 Claude Code。
+
+## 泄露的「宝藏」：隐藏功能一览
+
+开发者们很快开始挖掘这个意外宝藏。发现的东西让人惊讶：
+
+### 1. 语音系统
+
+Claude Code 里藏着一个完整的 **push-to-talk 语音系统**。
+
+功能开关代号：`tengu_cobalt_frost`（语音）、`tengu_amber_quartz`（语音开关）。
+
+这意味着 Anthropic 正在开发语音交互功能，可能让 Claude Code 变成「能说话的编程助手」。
+
+### 2. 内部代号系统
+
+源码暴露了 Anthropic 的内部命名体系：
+
+| 代号 | 对应产品 |
+|------|----------|
+| Tengu | Claude Code 本身 |
+| Fennec | Opus 4.6 |
+| Numbat | 正在测试的新模型 |
+
+这种命名风格……有点可爱？
+
+### 3. ULTRAPLAN 模式
+
+源码中有一个神秘的 ULTRAPLAN 模式：
+
+- 将复杂规划任务卸载到**远程 Cloud Container Runtime (CCR)**
+- 运行 **Opus 4.6**
+- 给它最多 **30分钟** 深度思考
+- 用户在浏览器中审批结果
+
+这可能是 Anthropic 正在测试的「深度规划」功能。
+
+### 4. KAIROS 特权工具
+
+Anthropic 员工（代码中标识为 `USER_TYPE === 'ant'`）拥有专属工具 **KAIROS**：
+
+- 直接推送文件到用户设备
+- 发送推送通知
+- 监控 Pull Request 活动
+
+普通用户看不到这些功能。
+
+### 5. Tamagotchi 电子宠物
+
+最让人意外的发现：**Claude Code 里藏着一个电子宠物系统**。
+
+功能开关代号涉及「宠物」相关逻辑。具体是什么还没完全搞清楚，但……这很 Anthropic？
+
+### 6. 44 个功能开关
+
+源码中暴露了 **44 个功能开关**（feature flags），大部分尚未启用：
+
+- 语音相关
+- 模型升级相关
+- 权限控制相关
+- 内部测试功能
+
+这些开关勾勒出 Claude Code 的「未来路线图」。
+
+## 这不是第一次
+
+对 Anthropic 来说，2026年 Q1 的安全表现有些「行为艺术」：
+
+| 时间 | 事件 |
+|------|------|
+| 3月26日 | 未发布模型信息泄露（Fortune报道） |
+| 3月26日 | 内部专属活动数据暴露 |
+| 3月31日 | Claude Code 源码泄露 |
+
+三次安全事故，原因各不相同，但都指向一个问题：
+
+**一家以「AI Safety」为核心的公司，自己的安全怎么保障？**
+
+## 泄露的是工具，不是模型
+
+需要澄清一点：
+
+这次泄露的是 **Claude Code 的源码**——一个编程工具，不是 Claude 大模型本身。
+
+Anthropic 的核心基座模型依然完全闭源，未受影响。
+
+但 Claude Code 作为 Anthropic 的「前沿产品」，其源码暴露了：
+
+- 产品架构思路
+- 未来功能规划
+- 内部工程实践
+- 与模型的交互方式
+
+这些信息对竞争对手、开发者、研究者都有价值。
+
+## 开发者怎么看？
+
+Reddit 上一位开发者说：
+
+> 「我翻完了泄露的源码，Anthropic 的代码库简直 unhinged。里面有完整的语音系统、宠物系统、一堆代号……这不是你想象中的企业代码。」
+
+另有人说：
+
+> 「真正有价值的，从来不是『是不是官方代码』，而是你能从里面看到它是怎么被做出来的。」
+
+还有人调侃：
+
+> 「Anthropic 团队把 sourcemap 发到 npm 上，这意味着不需要逆向就能拿到最新源码研究……这可真的太草台了。」
+
+## Anthropic 的沉默
+
+截至发稿，Anthropic 官方**没有任何回应**。
+
+没有声明、没有解释、没有解决方案。
+
+这种沉默，让事件更具戏剧性。
+
+## 我的思考
+
+这次泄露让我想到几个问题：
+
+**1. 开源与闭源的边界**
+
+Anthropic 一直强调「负责任的 AI」，但这次被动泄露让它的「闭源策略」变得尴尬。
+
+开源社区一直呼吁大模型开源，Anthropic 却选择闭源。现在，工具代码意外公开——算不算一种「命运」？
+
+**2. 安全文化与口号的距离」
+
+以「AI Safety」为招牌的公司，自己的工程安全却连续翻车。
+
+这说明什么？
+
+安全不只是口号，是工程实践、是流程管控、是文化建设。
+
+**3. 泄露的价值**
+
+对开发者来说，这次泄露是「宝藏」。
+
+可以看到 Anthropic 如何构建 AI 工具、如何设计功能开关、如何规划产品路线。
+
+这些信息，平时不可能公开。
+
+**4. 「被动开源」的未来」
+
+会不会有更多「被动开源」事件？
+
+随着 AI 产品越来越复杂、发布流程越来越频繁，类似的失误可能还会发生。
+
+## 相关链接
+
+如果你想深入了解：
+
+- [AI Corner 报道](https://www.the-ai-corner.com/p/claude-code-source-code-leaked-2026) — 事件最早报道
+- [Matt Paige 深度分析](https://mattpaige68.substack.com/p/claude-codes-entire-source-code-just) — 功能开关详解
+- [GitHub 备份仓库](https://github.com/Kuberwastaken/claude-code) — 源码备份
+- [System Prompts 泄露](https://github.com/asgeirtj/system_prompts_leaks/blob/main/Anthropic/claude-code.md) — 系统提示词
+- [东方财富报道](https://wap.eastmoney.com/a/202603313690646964.html) — 中文报道
+
+## 小结
+
+Claude Code 源码泄露，是一个意外，也是一个启示。
+
+它暴露了 Anthropic 的工程失误，也暴露了他们的产品野心——语音系统、宠物系统、深度规划模式……
+
+对于一家以「安全」为招牌的公司，这次事件有些讽刺。
+
+但对于开发者来说，这是一次难得的「透明化」——可以看到顶级 AI 公司是怎么做产品的。
+
+至于 Anthropic 什么时候回应，没人知道。
+
+但源码已经公开，开发者们正在挖掘。
+
+这场「被动开源」的戏，还在继续。
+
+---
+
+*这是 AI 行业的戏剧时刻，值得记录。*
