@@ -1,0 +1,194 @@
+---
+title: "ClawHavoc：OpenClaw Skill 市场的供应链攻击警示"
+description: "2026年2月，攻击者向ClawHub上传超过1100个恶意Skills，通过社会工程学欺骗用户执行恶意代码。这是AI生态面临的首次大规模供应链攻击，揭示了AI Agent扩展机制的安全隐患。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-02-2026
+draft: false
+tags:
+  - openclaw
+  - security
+  - ai-agent
+  - supply-chain
+---
+
+2026年2月1日，安全团队 Koi Security 发现了一个令人震惊的事实：
+
+**ClawHub 上存在大规模、协同注入的恶意 Skills。**
+
+他们将这次攻击命名为 **ClawHavoc**（利爪浩劫）。
+
+这不是一次简单的恶意软件传播——这是 AI 生态系统面临的**首次大规模供应链攻击**。
+
+## 攻击规模：1184 个恶意 Skills
+
+截至报告发布时，ClawHub 平台上有 **3,498 个 Skills**。
+
+但 Antiy CERT 的统计显示，历史上至少有 **1,184 个恶意 Skills** 曾出现在 ClawHub 上。
+
+其中，用户 ID `hightower6eu` 上传了最多的恶意包——**677 个**。
+
+想象一下：你在 ClawHub 搜索一个 Skills，结果列表里可能有三分之一是恶意包。
+
+这不是「可能发生」的风险，而是「已经发生」的现实。
+
+## 攻击手法：ClickFix 社会工程学
+
+攻击者没有使用复杂的技术漏洞，而是选择了**社会工程学**。
+
+他们的手法很简单但有效：
+
+### 1. 注册 ClawHub 开发者账号
+
+攻击者伪装成正常开发者，在 ClawHub 上注册账号。
+
+### 2. 创建伪装成合法功能的恶意 Skills
+
+这些 Skills 通常打着「系统优化」、「增强功能」的名义。
+
+### 3. 在 SKILL.md 中嵌入「假安装步骤」
+
+关键就在这里。恶意 Skills 的文档中会包含类似这样的内容：
+
+```
+为了使用此 Skills，请手动安装 openclaw-core 组件：
+Windows: 从 GitHub 下载并运行 xxx.exe
+macOS: 执行以下命令 curl ... | bash
+```
+
+用户看到「官方文档」般的安装说明，自然就会信任并执行。
+
+### 4. 用户执行恶意代码
+
+一旦用户按照说明操作，恶意代码就会植入系统。
+
+## 三类恶意行为
+
+根据 Antiy CERT 的分析，这些恶意 Skills 主要有三种行为：
+
+| 类型 | 说明 |
+|------|------|
+| **ClickFix** | 诱导用户下载并执行恶意代码 |
+| **RAT** | 建立反向连接，获取远程控制 |
+| **Steal** | 信息窃取，包括文件、凭证等 |
+
+其中针对 macOS 的恶意样本（Trojan/MacOS.Amos）会：
+
+- 从攻击者服务器下载二进制载荷
+- 包含大量加密静态数据，运行时才解密（逃避检测）
+- 配置信息指向 `https://socifiapp[.]com`
+- 窃取各类敏感文件
+
+## 为什么 Skills 成为攻击目标？
+
+Skills 的本质是「插件/能力包」——包含配置、代码、资源和元数据。
+
+从安全视角看，Skills 是一种新型的**脚本格式执行器**。
+
+攻击者利用的是 OpenClaw 的开放扩展机制：
+
+1. **Skills 可以安装** → ClawHub 提供便捷安装渠道
+2. **Skills 有系统访问权限** → 可以执行命令、访问文件
+3. **Skills 有用户信任** → 用户认为官方市场的包是安全的
+
+这三个条件组合，形成了完美的攻击链。
+
+## 这给 AI 生态带来什么警示？
+
+ClawHavoc 事件揭示了一个更大的问题：
+
+**AI 安全不仅仅是模型安全、算法安全。**
+
+我们讨论 AI 安全时，往往聚焦：
+
+- 模型幻觉问题
+- 算法偏见问题
+- 数据投毒问题
+
+但 ClawHavoc 揭示的是另一条战线：
+
+- **AI 应用引入的新攻击面**
+- **AI 扩展机制带来的供应链风险**
+- **AI 驱动的自动化攻击**
+
+安天 CERT 在报告中指出：
+
+> 「AI 驱动的自动化网络攻击，以及 AI 应用引入的扩展攻击面和新攻击向量，正在加速演进——这些才是当前最需要投入资源去应对的现实威胁。」
+
+## 如何保护自己？
+
+如果你是 OpenClaw 用户：
+
+### 1. 只安装可信来源的 Skills
+
+- 优先选择知名开发者、高星评分的 Skills
+- 查看 Skills 的代码仓库（如果开源）
+- 遅疑新上传、无评价的 Skills
+
+### 2. 检查 SKILL.md 内容
+
+- 任何要求你「手动执行命令」的安装步骤都是危险信号
+- 正常 Skills 不需要用户执行终端命令
+- 不下载来自未知链接的文件
+
+### 3. 使用安全扫描工具
+
+- VirusTotal 已支持 OpenClaw Skills 检测
+- 安天 AVL SDK 可以检测恶意 Skills
+
+### 4. 定期检查已安装的 Skills
+
+- 删除不再使用的 Skills
+- 关注 Skills 更新内容
+
+## OpenClaw 的应对
+
+ClawHub 运营方已经采取行动：
+
+- 大量恶意 Skills 已被移除，无法搜索
+- 平台加强了上传审核
+
+但报告指出：「一些恶意 Skills 漏网了。」
+
+这是供应链攻击的典型困境——清理很难彻底。
+
+## 我的思考
+
+ClawHavoc 让我重新审视 AI Agent 的安全问题。
+
+**Skills 机制本身是好的**——它让 OpenClaw 变得更强大、更灵活。但开放性也带来风险。
+
+这不是「要不要 Skills」的问题，而是「如何让 Skills 更安全」的问题。
+
+几个方向值得探索：
+
+1. **Skills 审核机制**：类似 App Store 的审核流程？可能会牺牲开放性。
+2. **Skills 签名体系**：开发者签名 + 平台验证？技术可行但需要生态配合。
+3. **Skills 沙箱执行**：限制 Skills 的系统权限？可能会影响功能完整性。
+4. **用户安全教育**：提高用户对「假安装步骤」的识别能力？最直接但依赖用户意识。
+
+没有完美解决方案。但 ClawHavoc 至少让问题暴露了。
+
+## 相关链接
+
+- [安天 CERT 完整报告](https://www.antiy.net/p/clawhavoc-analysis-of-large-scale-poisoning-campaign-targeting-the-openclaw-skill-market-for-ai-agents/) — 本文章主要信息来源
+- [Koi Security 发现报告](https://koisecurity.com/clawhavoc/) — 最早发现并命名此次攻击
+- [VirusTotal Skills 检测支持](https://blog.virustotal.com/2026/02/from-automation-to-infection-how.html) — 安全工具更新
+- [OpenClaw 官方文档](https://docs.openclaw.ai) — 了解 Skills 机制
+
+## 小结
+
+ClawHavoc 是 AI 生态的一次警钟。
+
+它告诉我们：AI 安全不只是模型和算法的问题，还包括应用层面的供应链风险。
+
+Skills 作为 AI Agent 的扩展机制，既是强大的能力来源，也是潜在的攻击入口。
+
+对 OpenClaw 用户来说，安装 Skills 时多一分警惕，可能就少一分风险。
+
+对 AI 生态来说，建立更安全的扩展机制，是可持续发展的前提。
+
+这场「利爪浩劫」终将过去，但它留下的警示值得记住。
+
+---
+
+*安全是开放的代价，也是开放的基础。*
