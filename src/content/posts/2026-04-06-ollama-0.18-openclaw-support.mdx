@@ -1,0 +1,100 @@
+---
+title: Ollama 0.18 发布：集成 OpenClaw、Nemotron-3-Super 模型与云端加速
+description: Ollama 0.18 版本带来重大更新：官方支持 OpenClaw 集成、NVIDIA Nemotron-3-Super 模型、云端模型优化以及非交互式任务支持。
+pubDate: 2026-04-06
+heroImage: /assets/images/2026/ollama-openclaw.png
+category: AI Tools
+tags: ['Ollama', 'OpenClaw', 'LLM', '本地模型', 'Nemotron']
+---
+
+## Ollama 0.18 重要更新
+
+Ollama 在 2026 年 3 月底发布了 **0.18** 版本，这是一次里程碑式的更新，首次正式集成 OpenClaw AI Agent 框架。
+
+### 🤝 OpenClaw 官方集成
+
+最大亮点：**Ollama 现已成为 OpenClaw 的认证和模型提供商！**
+
+你可以直接使用 Ollama 进行 OpenClaw 新手引导：
+
+```bash
+openclaw onboard --auth-choice ollama
+```
+
+或使用 `ollama launch` 启动 OpenClaw：
+
+```bash
+ollama launch openclaw --model kimi-k2.5
+```
+
+这意味着 OpenClaw 用户现在可以：
+
+- 使用 Ollama 本地模型作为 Agent 后端
+- 使用 Ollama 云端模型（无需本地下载）
+- 无缝切换本地和云端推理
+
+### 🚀 Kimi-K2.5 性能提升
+
+针对 OpenClaw 使用的 Kimi-K2.5 模型：
+
+- **速度提升 2x**
+- **工具调用准确性改进**
+- 特别适合 Agent 任务场景
+
+### 🧠 Nemotron-3-Super 模型
+
+NVIDIA 推出的 **122B 参数**推理模型：
+
+- 强大的推理和工具调用能力
+- 在 PinchBench（OpenClaw 任务完成基准测试）中得分最高
+- 云端运行：`ollama run nemotron-3-super:cloud`
+- 本地运行需要 96GB+ 显存
+
+使用 OpenClaw 启动：
+
+```bash
+ollama launch openclaw --model nemotron-3-super:cloud
+```
+
+### ☁️ 云端模型优化
+
+- **云端模型无需下载**：使用 `:cloud` 标签自动连接云端
+- **MiniMax-M2.5**：北美地区响应速度提升 **10x**
+- **Qwen3.5**：响应速度提升 **2x**，TTFT（首字延迟）大幅降低
+
+### 📋 非交互式任务支持
+
+`ollama launch` 新增 `--yes` 标志，支持脚本和自动化场景：
+
+```bash
+ollama launch claude \
+  --model glm-5:cloud \
+  --yes \
+  -- "Review this PR and comment on GitHub"
+```
+
+可用于 GitHub Actions、CI/CD 等自动化流程。
+
+### 🍎 MLX 预览（Apple Silicon）
+
+2026 年 3 月 30 日，Ollama 预览了基于 Apple MLX 框架的版本，这是在 Apple Silicon 上运行 Ollama 的最快方式。
+
+## 升级建议
+
+升级到 Ollama 0.18：
+
+```bash
+# macOS/Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 或通过包管理器更新
+```
+
+**ROCm 用户注意**：此版本包含 ROCm 7，需要更新到最新驱动。
+
+## 相关链接
+
+- [Ollama 官网](https://ollama.com)
+- [Ollama GitHub Releases](https://github.com/ollama/ollama/releases)
+- [OpenClaw Ollama Provider 文档](https://docs.openclaw.ai/providers/ollama)
+- [Nemotron-3-Super 模型页面](https://ollama.com/library/nemotron-3-super)

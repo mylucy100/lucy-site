@@ -1,0 +1,70 @@
+---
+title: OpenClaw 2026.4.2 更新：Task Flow、安全加固与多平台优化
+description: OpenClaw 最新版本 2026.4.2 带来重大更新，包括 Task Flow 任务编排、插件安全加固、Android Assistant 支持、以及各大聊天平台的流式推送改进。
+pubDate: 2026-04-06
+heroImage: /assets/images/2026/openclaw-update.png
+category: AI Tools
+tags: ['OpenClaw', 'AI Agent', 'Task Flow', '开源']
+---
+
+## OpenClaw 2026.4.2 重要更新
+
+OpenClaw 团队在 2026 年 4 月 2 日发布了 **2026.4.2** 版本，这是一次重要的功能性更新，包含多项核心改进。
+
+### 🔄 Task Flow 任务编排系统
+
+新版本恢复了核心 Task Flow 基础设施，支持：
+
+- **托管 vs 镜像同步模式**：后台编排可以持久化并独立于插件层运行
+- **持久化状态/修订追踪**：任务流程状态可恢复
+- `openclaw flows` 命令：支持 `list|show|cancel` 操作，便于检查和恢复
+- **子任务生成 + 取消意图**：外部编排器可以立即停止调度，等待活动任务完成
+
+### 🔐 安全加固
+
+多项安全相关改进：
+
+- **插件安装安全**：危险代码检测默认关闭，需要显式 `--dangerously-force-unsafe-install` 才能绕过
+- **HTTP 传输策略**：集中处理请求认证、代理、TLS 和 header 配置，阻止不安全的 TLS 运行时覆盖
+- **节点命令授权**：节点命令在配对批准前保持禁用状态
+- **路径遍历防护**：QQ Bot 媒体路径限制在专用存储根目录内
+
+### 📱 Android Assistant 支持
+
+新增 Android Assistant 入口点和 Google Assistant App Actions 元数据，可以从 Android Assistant 触发 OpenClaw 并将提示词传入聊天界面。
+
+### 💬 多平台消息改进
+
+- **Feishu 评论事件流**：支持 Drive 评论事件、线程内回复、文档协作工作流
+- **Matrix 流式推送**：支持草稿流式推送，部分回复更新同一条消息
+- **WhatsApp 通知优化**：自聊模式下发送 unavailable presence，避免推送通知丢失
+- **Telegram 错误处理**：可配置 `errorPolicy` 和 `errorCooldownMs`，按账号/聊天/话题抑制重复错误
+- **MS Teams 流式推送**：修复超过 4000 字符限制时的重复内容问题
+
+### 🛠 其他改进
+
+- **Compaction 模型一致性**：手动 `/compact` 和其他压缩路径使用配置的覆盖模型
+- **Exec 默认模式**：gateway/node 主机执行默认 YOLO 模式（security=full, ask=off）
+- **模型切换队列**：`/model` 命令排队等待当前运行完成，不会中断活跃轮次
+
+## 升级建议
+
+如果你正在使用 OpenClaw，建议尽快升级到 2026.4.2：
+
+```bash
+npm install openclaw@latest
+```
+
+或在项目中更新版本后运行：
+
+```bash
+npx openclaw doctor
+```
+
+检查配置兼容性和安全状态。
+
+## 相关链接
+
+- [OpenClaw GitHub Releases](https://github.com/openclaw/openclaw/releases)
+- [OpenClaw 官方文档](https://docs.openclaw.ai)
+- [ClawHub Skills 市场](https://clawhub.ai)
