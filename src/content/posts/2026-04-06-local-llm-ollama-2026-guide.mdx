@@ -1,0 +1,158 @@
+---
+title: "本地运行大模型不再是梦：Ollama 2026 实用指南"
+description: "从消费级硬件跑 70B 模型到零成本推理，2026 年本地大模型部署变得更简单。详解 Ollama 最新功能与优化技巧。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-06-2026
+draft: false
+tags:
+  - ollama
+  - local-llm
+  - tutorial
+  - ai
+---
+
+前几年要在本地跑大模型，没个几万的显卡是想都不敢想的。
+
+但 2026 年，情况变了。
+
+一篇 Hacker News 上的热门文章[《本地 AI：2026 生产级大模型运行指南》](https://dev.to/pooyagolchian/local-ai-in-2026-running-production-llms-on-your-own-hardware-with-ollama-54d0) 总结得很好：**消费级硬件已经能跑出前沿模型 70-85% 的能力，而且边际成本为零**。
+
+这篇文章就来说说，2026 年怎么用 Ollama 在本地跑大模型。
+
+## 什么是 Ollama
+
+简单说，Ollama 是一个本地大模型运行时。
+
+它帮你搞定：
+- 模型管理（下载、切换、删除）
+- 量化（减少显存占用）
+- GPU 内存分配
+- 对外提供 OpenAI 兼容的 HTTP API
+
+安装就一行命令：
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+运行模型也是一行：
+
+```bash
+ollama run qwen3.5
+```
+
+## 2026 年的硬件现实
+
+### Mac 用户
+
+M4 Max + 128GB 统一内存，能跑 70B 参数的模型——这在 2024 年需要企业级 NVIDIA 硬件。
+
+如果你的 Mac 有 24GB 内存，也能跑 7B-14B 的模型。Ollama 自动识别苹果芯片的 GPU 加速。
+
+### PC 用户
+
+游戏显卡也能打。一块 RTX 4090（24GB 显存）可以运行 30-70B 的量化模型。
+
+Ollama 还支持**多卡并行**。如果你有两块 RTX 3090（各 24GB，共 48GB），可以自动把一个 70B Q4 模型分布到两张卡上。
+
+### 入门配置
+
+2026 年的"最低配"能跑本地大模型：
+- 16GB 内存 + 8GB 显存
+- 能跑 7B 量化模型（如 Qwen2.5 7B Q4）
+
+这个配置，花不了多少钱。
+
+## 性能优化技巧
+
+### 1. 量化
+
+量化就是用更少的比特表示模型参数，大幅减少内存占用。
+
+一篇技术博客[《Ollama 完整指南：安装、管理与优化》](https://dasroot.net/posts/2026/04/ollama-complete-guide-installation-management-optimization/) 提供了数据：
+
+> 使用 Q4_K_M 量化，Llama 3.1 8B 的内存占用**减少 45%**，可以在 16GB 显存下跑 8192 tokens 的上下文窗口。
+
+常见的量化等级：
+- **Q4_K_M**：平衡版，推荐日常使用
+- **Q5_K_S**：精度更高，但更吃显存
+- **FP16**：精度最高，需要更多显存
+
+### 2. 上下文长度
+
+通过环境变量调整：
+
+```bash
+OLLAMA_CONTEXT_LENGTH=8192 ollama run qwen3.5
+```
+
+但要注意：上下文越长，内存占用越大。根据你的使用场景调整。
+
+### 3. GPU 批处理
+
+Ollama 会自动管理批处理大小。如果你在意吞吐量，可以调整：
+
+```bash
+OLLAMA_BATCH_SIZE=512 ollama run qwen3.5
+```
+
+## 实际能用在哪
+
+### 1. 个人 AI 助手
+
+本地跑一个模型，隐私敏感的数据不需要上传云端。记笔记、写代码、回答问题，都能用。
+
+### 2. 开发测试
+
+用本地模型做 API 测试，不用每次都调用付费的云端 API。
+
+### 3. 学习研究
+
+想深入理解大模型的工作原理？本地跑一个，随意调试、观察输出。
+
+### 4. 企业内部
+
+有技术团队的公司可以搭建本地推理服务，多人共享 GPU 资源。
+
+## 2026 年的新变化
+
+### 模型生态
+
+HuggingFace 上现在有 **135,000 个 GGUF 格式的量化模型**，而三年前只有 200 个。模型获取从来没有这么方便过。
+
+### 工具链成熟
+
+Ollama v0.18+ 的发布让模型管理更稳定。多 GPU 支持、systemd 服务集成、量化选项，这些在 2025 年还要手动配置，现在都是开箱即用。
+
+### 成本账本
+
+| 方案 | 成本 | 适合场景 |
+|------|------|----------|
+| 云端 API | 按 token 付费 | 低频使用 |
+| 本地运行 | 硬件一次性投入 | 高频使用 |
+| 混合方案 | 视情况而定 | 企业级部署 |
+
+如果你每天用 AI 超过一小时，本地运行的边际成本优势就很明显了。
+
+## 我的建议
+
+1. **先试试再买硬件** — Mac 用户统一内存够用就行，PC 用户 GTX 3060 以上的卡都能跑
+2. **从 7B 模型开始** — Qwen2.5 7B、Llama 3.2 7B 这些小模型已经很强
+3. **量化是关键** — Q4 量化能把大模型塞进消费级硬件，别跳过
+4. **关注更新** — Ollama 每个月都有新版本，升级可能带来显著性能提升
+
+## 结语
+
+2026 年，本地运行大模型不再是极客的专属玩具。
+
+当边际成本趋近于零，当消费级硬件就能跑 70B 模型，我们对 AI 的使用方式正在悄悄改变。
+
+**不是每个人都需要本地部署，但每个人应该知道：这件事已经变得可行了。**
+
+---
+
+*相关链接：*
+- *[Ollama 官网](https://ollama.com/)*
+- *[本地 AI 2026 运行指南 - Dev.to](https://dev.to/pooyagolchian/local-ai-in-2026-running-production-llms-on-your-own-hardware-with-ollama-54d0)*
+- *[Ollama 完整指南 - dasroot.net](https://dasroot.net/posts/2026/04/ollama-complete-guide-installation-management-optimization/)*
+- *[HuggingFace GGUF 模型库](https://huggingface.co/models?pipeline_tag=text-generation&library=gguf)*
