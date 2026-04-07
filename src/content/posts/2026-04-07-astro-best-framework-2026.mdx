@@ -1,0 +1,133 @@
+---
+title: "Astro 为什么是 2026 年内容网站最佳框架"
+description: "Flex.com 分析认为 Astro 在 2026 年内容网站领域排名第一。凭借边缘计算支持、零 JS 默认、 islands 架构，Astro 正在重新定义内容网站的开发方式。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-07-2026
+draft: false
+tags:
+  - astro
+  - frontend
+  - web-framework
+  - framework-comparison
+---
+
+最近看到一篇分析文章，[Flex.com](https://www.flex.com.ph/articles/why-astro-tops-frameworks-for-content-sites-in-2026) 明确提出：**在 2026 年，Astro 是内容网站的最佳框架**。
+
+作为一个用 Astro 搭建博客的人，我想聊聊为什么这个判断是有道理的。
+
+## Astro 做对了什么
+
+### 1. 边缘计算支持
+
+这是今年最大的更新之一。
+
+Astro 现在支持** Cloudflare Workers 的一流集成**，可以在边缘运行服务器逻辑。这意味着：
+
+- 全球访问延迟低于 50ms
+- 静态网站也能有动态能力
+- 无需管理服务器
+
+对于面向全球读者的内容网站，这很重要。
+
+### 2. 默认零 JavaScript
+
+这是 Astro 最核心的设计理念。
+
+不像 Next.js 或 Remix 默认会发送 JavaScript，Astro 页面默认只输出 **HTML 和 CSS**。JavaScript 只在需要交互的地方加载（即 Astro Islands）。
+
+结果是什么？**飞快的页面加载速度**。
+
+### 3. 内容集合（Content Collections）
+
+这是给开发者的好东西：
+
+- 类型安全的 Markdown/MDX 处理
+- 简单的数据验证
+- 更好的开发体验
+
+写博客的人都知道，处理内容是个繁琐的活。Astro 让这个过程优雅了很多。
+
+### 4. Starlight 文档主题
+
+如果你是做文档网站的，**Starlight** 是个神器：
+
+- 开箱即用的文档主题
+- 内置搜索、导航、多语言
+- 美观且可定制
+
+## 数据说话
+
+来看看采用 Astro 的大型网站：
+
+- **Bricomarché**（法国建材零售巨头）
+- **Svenska Dagbladet**（瑞典知名报纸）
+- **Python 官方博客**（最近从 WordPress 迁移到 Astro）
+
+没错，Python 官方博客在 2026 年 3 月**迁移到了 Astro**。这很能说明问题。
+
+## 迁移故事越来越多
+
+这个月看到不少迁移案例：
+
+- [从 Framer 迁移到 Astro](https://x.com/ayushagarwal/status/2037890020422623274)
+- [从 WordPress 迁移到 Astro](https://www.creatives-berlin.com/blog/wordpress-alternative-astro/)
+- [用 Claude Code + Cloudflare + Astro 重建营销站点](https://www.stackone.com/blog/rebuilding-marketing-site-claude-code-cloudflare/)
+
+还有一个离谱的案例：**有人不小心建了一个 59,703 页的 Astro 网站**。虽然是"意外"，但说明了 Astro 的扩展能力。
+
+## Cloudflare 收购的影响
+
+2026 年 1 月，Cloudflare 收购了 Astro。这会影响什么？
+
+从目前来看：
+- 开发速度没有放缓
+- 新功能持续推出（Astro 6.0/6.1 都是今年发布的）
+- 边缘集成更强了
+
+Cloudflare 的资源注入似乎在推动 Astro 往**边缘优先**的方向发展。这对内容网站是好事。
+
+## 我的使用体验
+
+用 Astro 搭了这个博客几个月，我的感受：
+
+**优点：**
+- 速度快是真的
+- Markdown 写文章很舒服
+- 配置相对简单
+- 主题生态丰富
+
+**需要注意：**
+- 如果你要做复杂的动态功能，需要花时间研究 islands
+- 某些集成可能不如 Next.js 成熟
+
+## 适用场景
+
+Astro 最适合：
+- 个人博客
+- 文档站点
+- 营销页面
+- 企业官网
+- 简单的内容网站
+
+不太适合：
+- 复杂的 Web 应用
+- 需要大量客户端交互的站点
+
+## 结语
+
+2026 年，前端框架的分工越来越清晰：
+
+- **Astro** → 内容网站
+- **Next.js** → Web 应用
+- **Svelte/Remix** → 轻量级应用
+
+如果你做内容网站，Astro 依然是**最务实的选择**。我的博客就是证明——快速、稳定、写得舒服。
+
+---
+
+*相关链接：*
+- *[Flex.com - 为什么 Astro 是 2026 年内容网站最佳框架](https://www.flex.com.ph/articles/why-astro-tops-frameworks-for-content-sites-in-2026)*
+- *[Astro 官方博客 - 2026年3月更新](https://astro.build/blog/whats-new-march-2026/)*
+- *[Python 官方博客迁移到 Astro](https://blog.python.org/2026/03/the-python-insider-blog-has-moved/)*
+- *[Astro 6.0 发布](https://astro.build/blog/astro-6/)*
+- *[Astro 6.1 发布](https://astro.build/blog/astro-610/)*
