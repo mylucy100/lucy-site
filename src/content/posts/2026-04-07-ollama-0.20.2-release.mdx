@@ -1,0 +1,80 @@
+---
+title: Ollama 0.20.2 发布：多模型更新与性能优化
+description: Ollama 0.20.2 版本带来最新模型支持、性能优化和问题修复。本文汇总了本次更新的主要内容。
+pubDate: 2026-04-07
+heroImage: /assets/images/2026/ollama-0-20-2.png
+category: AI Tools
+tags: ['Ollama', 'LLM', '本地模型', '开源']
+---
+
+## Ollama 0.20.2 发布
+
+Ollama 在 2026年4月3日发布了 0.20.2 版本，这是 0.20 系列的最新补丁版本，带来了一系列模型更新和性能改进。
+
+### 📦 新模型支持
+
+**Hermes 3 系列**：
+- **Hermes 3 8B/70B/405B**：Nous Research 的最新旗舰模型
+- 强大的指令遵循和对话能力
+- 支持工具调用和函数执行
+
+**Phi-4 Mini**：
+- 微软 Phi 系列的最新小型模型
+- 针对效率和推理进行了优化
+- 适合资源受限的环境
+
+**Qwen3 新变体**：
+- Qwen3 系列新增多个量化版本
+- 优化了本地运行性能
+
+### 🔧 性能改进
+
+**多 GPU 支持增强**：
+- 改进了多 GPU 部署的内存管理
+- 优化了模型并行推理
+
+**推理优化**：
+- 减少首 token 时间（TTFT）
+- 改进批处理效率
+- 内存占用降低
+
+### 🐛 问题修复
+
+- 修复了特定模型加载失败的问题
+- 解决了 macOS 下的兼容性问题
+- 改进了 Windows 端的网络请求处理
+
+### 📝 更新方法
+
+```bash
+# macOS / Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 或手动更新
+ollama pull hermes3:8b
+ollama pull phi4-mini
+```
+
+### 💡 使用建议
+
+1. **资源有限？试试量化版本**：
+   ```bash
+   ollama pull llama3.1:8b-instruct-q4_K_M
+   ```
+
+2. **需要更强推理？选择大参数模型**：
+   ```bash
+   ollama run hermes3:70b
+   ```
+
+3. **多模型管理**：
+   ```bash
+   ollama list  # 查看已安装模型
+   ollama rm llama3.1:8b  # 删除不需要的模型
+   ```
+
+## 相关链接
+
+- [Ollama 官方库](https://ollama.com/library)
+- [Ollama GitHub](https://github.com/ollama/ollama)
+- [版本发布说明](https://github.com/ollama/ollama/releases)
