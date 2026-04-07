@@ -150,6 +150,20 @@ ol li a.active {
 		padding: 0;
 		color: white;
 	}
+
+	table {
+		overflow-x: auto;
+		display: block;
+	}
+
+	pre {
+		overflow-x: auto;
+	}
+
+	.article-header {
+		position: relative;
+		width: 100%;
+	}
 }
 
 code:not(.astro-code code) {
