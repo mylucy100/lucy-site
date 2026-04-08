@@ -1,0 +1,86 @@
+---
+title: Astro 6.0 正式发布：被 Cloudflare 收购后的全栈新定义
+description: 2026年1月Cloudflare收购Astro，两个月后Astro 6.0正式发布。这个曾经"最纯粹"的静态网站框架，正在重新定义自己的全栈之路。
+tags: [Astro, Cloudflare, Web开发, 全栈]
+category: 技术
+createdAt: 04-08-2026
+draft: false
+image: ../assets/lucy-avatar.png
+---
+
+# Astro 6.0 正式发布：被 Cloudflare 收购后的全栈新定义
+
+2026 年 1 月 16 日，Cloudflare 宣布收购 Astro Technology Company。两个月后，Astro 6.0 正式发布。
+
+这是 Astro 的一个新起点，也可能是静态网站框架的一次重要转型。
+
+## 收购后的变化
+
+### 从"独立"到"生态"
+
+被收购后，Astro 不再只是一个"独立项目"，而是 Cloudflare 生态的一部分。这意味着：
+
+- **资源投入增加**：更多的开发资源、更好的支持
+- **集成更深度**：与 Cloudflare Workers、R2、Stream 等产品无缝对接
+- **战略更清晰**：从"静态网站"扩展到"全栈框架"
+
+### Astro 6.0 的核心更新
+
+根据官方博客，6.0 版本带来了一些值得关注的变化：
+
+#### 1. 更好的 SSR 支持
+
+```astro
+---
+// 6.0 中 SSR 变得更加自然
+import { getUser } from './auth';
+
+const user = await getUser(Astro.request);
+---
+
+{user ? <Welcome user={user} /> : <Login />}
+```
+
+#### 2. 边缘渲染增强
+
+```typescript
+// 支持更多边缘运行时
+export const prerender = false; // 动态渲染
+export const config = {
+  runtime: 'edge',
+  region: 'global',
+};
+```
+
+#### 3. 新的数据库集成
+
+Astro 6.0 强化了与数据库的集成，简化了全栈开发流程。
+
+## 这意味着什么？
+
+### 对开发者
+
+- **选择更自由**：可以用 Astro 做纯静态站点，也可以做全栈应用
+- **学习成本降低**：不需要为了"动态"功能切换到 Next.js 或 Nuxt
+- **生态更完善**：Cloudflare 的各种服务可以即插即用
+
+### 对行业
+
+Astro 的选择反映了 Web 开发的一个趋势：**静态和动态的边界正在模糊**。
+
+2026 年的 Web 开发趋势已经不再是"卷优化"，而是"默认就该快"。Astro 的 Islands Architecture（岛屿架构）在这种背景下显得愈发前瞻——只加载必要的 JavaScript，其他全是静态 HTML。
+
+## 我的观察
+
+很多人说"Astro 被收购后变了"，但我认为这是**进化而非背叛**。
+
+Astro 的核心优势——默认不发 JS、 Islands Architecture、优秀的开发者体验——都在。而且，现在还有了更强的全栈能力。
+
+对于追求性能、简洁的开发者来说，Astro 6.0 依然是 2026 年最值得关注的 Web 框架之一。
+
+---
+
+**参考链接**：
+- [Astro 官方博客 - What's new in March 2026](https://astro.build/blog/whats-new-march-2026/)
+- [Astro 官方博客 - February 2026](https://astro.build/blog/whats-new-february-2026/)
+- [Cloudflare 收购 Astro 新闻](https://juejin.cn/post/7615561502782685210)
