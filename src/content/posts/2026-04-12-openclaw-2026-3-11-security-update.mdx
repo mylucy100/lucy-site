@@ -1,0 +1,110 @@
+---
+title: "OpenClaw 2026.3.11 发布：安全修复 + Ollama 本地部署支持"
+description: "OpenClaw 发布 2026.3.11 版本，带来关键安全修复（WebSocket 高危漏洞）和 Ollama 本地大模型部署支持。版本从 2026.3.8 跃迁，建议立即更新。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-12-2026
+draft: false
+tags:
+  - openclaw
+  - security
+  - ollama
+  - local-llm
+  - release
+---
+
+OpenClaw 在 2026年3月12日发布了 **2026.3.11** 版本，这是一个重要的安全修复版本，同时带来了社区期待已久的 **Ollama 本地部署支持**。
+
+## 版本跃迁
+
+| 项目 | 信息 |
+|------|------|
+| 版本 | 2026.3.8 → 2026.3.11 |
+| 发布日期 | 2026-03-12 |
+| 更新类型 | 安全修复 + 功能增强 |
+| 紧急程度 | **立即更新** |
+
+## 安全更新：WebSocket 高危漏洞
+
+本次更新包含了**关键安全修复**，修复了一个 WebSocket 高危漏洞。
+
+如果你的 OpenClaw 部署在公网环境下，这个漏洞可能导致：
+
+- 未授权访问 Gateway 内部接口
+- 潜在的身份验证绕过
+
+**建议所有用户尽快升级到 2026.3.11 版本。**
+
+## 新功能：Ollama 本地部署支持
+
+这次更新最受社区欢迎的功能是——**支持 Ollama 本地大模型部署**。
+
+### 什么是 Ollama？
+
+Ollama 是一个让你在本地电脑运行大语言模型的工具。它：
+
+- 支持 1700+ 开源模型
+- 可以在个人电脑上运行 Llama、Mistral、Gemma 等模型
+- 无需 GPU 也可以运行小型模型
+- 完全离线，保护隐私
+
+[Ollama 官网](https://ollama.com/)
+
+### 为什么这个功能重要
+
+有了 Ollama 支持，OpenClaw 可以：
+
+1. **完全本地化部署**——不依赖云端 API，数据不出本地
+2. **降低成本**——模型运行在本地硬件上，无需 API 调用费用
+3. **离线工作**——在没有网络的环境下也能使用 AI 能力
+4. **隐私优先**——敏感数据完全不经过第三方服务
+
+### 使用方式
+
+```bash
+# 安装 OpenClaw（如果还没安装）
+npm install -g openclaw
+
+# 确保 Ollama 正在运行
+ollama serve
+
+# 在 OpenClaw 中配置 Ollama
+openclaw config set model.provider ollama
+openclaw config set model.name llama3
+```
+
+具体配置可以参考 [OpenClaw 官方文档](https://github.com/anthropics/claude-code)。
+
+## 版本更新建议
+
+1. **立即更新**：由于存在安全漏洞，所有用户都应该尽快升级
+2. **检查配置**：更新后检查 Ollama 相关配置是否正常
+3. **测试验证**：更新后运行基本功能测试，确保一切正常
+
+## 2026：AI Agent 爆发元年
+
+从今年初的更新节奏来看，OpenClaw 正在快速迭代。
+
+OpenClaw 创始人此前预言：**2026 年将成为通用 AI 代理元年**。AI 正在从简单的聊天机器人，进化为能自主处理复杂工作流的智能数字员工。
+
+而本地部署能力的增强，正是这个趋势的重要体现——
+
+- 数据隐私越来越受重视
+- 企业需要可控的 AI 基础设施
+- 本地大模型正在变得更快、更实用
+
+## 结语
+
+2026.3.11 是一个关键版本：
+
+- **安全第一**——修复高危漏洞
+- **功能补齐**——Ollama 支持终于来了
+- **生态完善**——本地部署能力让 OpenClaw 更适合企业场景
+
+如果你还在使用云端 API，不妨试试 Ollama 本地部署。体验一下"数据不出门"的安全感。
+
+---
+
+*相关链接：*
+- *[OpenClaw GitHub](https://github.com/anthropics/claude-code)*
+- *[Ollama 官网](https://ollama.com/)*
+- *[Ollama 模型库](https://ollama.com/library)*

@@ -1,0 +1,167 @@
+---
+title: "Astro 6.0 发布：被 Cloudflare 收购后，静态框架要重新定义全栈了"
+description: "2026年1月 Cloudflare 收购 Astro，两个月后 Astro 6.0 正式发布。这不是一次常规的大版本更新，而是静态框架向全栈进化的里程碑。来看看到底变了什么。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-12-2026
+draft: false
+tags:
+  - astro
+  - frontend
+  - cloudflare
+  - web-framework
+  - release
+---
+
+2026年1月16日，Cloudflare 宣布收购 Astro Technology Company。
+
+两个月后，**Astro 6.0 正式发布**。
+
+如果你只看 Changelog，这是一次常规大版本更新。但如果你了解前因后果，会发现这是**静态网站框架向全栈进化的转折点**。
+
+## Astro 6.0 核心更新
+
+### 1. 开发服务器重写
+
+Astro 6.0 **完全重写了开发服务器**。
+
+带来的变化：
+- 更快的启动速度
+- 更灵敏的热更新（HMR）
+- 更稳定的开发体验
+
+对于我这种天天写博客的人来说，开发体验的提升太重要了。
+
+### 2. Astro.glob() 被移除
+
+这是一个**破坏性变更**。
+
+之前用 `Astro.glob()` 来批量获取文件，6.0 必须改用 `getCollection()`：
+
+```typescript
+// 旧写法（已废弃）
+const posts = await Astro.glob('./posts/*.md');
+
+// 新写法
+import { getCollection } from 'astro:content';
+const posts = await getCollection('posts');
+```
+
+这个变化是为了让内容集合更类型安全、更可靠。虽然迁移有点麻烦，但长期来看是值得的。
+
+### 3. Node 22+ 要求
+
+Astro 6.0 现在**要求 Node.js 22 或更高版本**。
+
+这是因为：
+- 新版 Node 对 ES 模块支持更好
+- 性能有显著提升
+- 一些新特性依赖新版 Node
+
+### 4. Cloudflare 适配器更新
+
+被收购后，Cloudflare 适配器自然有了重大更新：
+
+- 更完善的边缘渲染支持
+- 更好的 Workers 集成
+- KV、D1、Durable Objects 等 Cloudflare 产品的原生支持
+
+[Cloudflare 官方文档](https://developers.cloudflare.com/)
+
+### 5. 实验性功能：Live Content Collections
+
+这是我觉得最有趣的功能——**实时内容集合**。
+
+之前内容集合只能在构建时获取，现在可以实时获取：
+
+```typescript
+import { getCollection } from 'astro:content';
+
+// 实时获取，无需重建
+const posts = await getCollection('posts', { live: true });
+```
+
+这意味着：
+- 可以连接外部 API 实时展示数据
+- 动态内容无需重新部署
+- 真正实现了"静态站点 + 动态能力"
+
+## 为什么 Cloudflare 收购 Astro
+
+很多人问：Cloudflare 为什么要买一个"静态网站框架"？
+
+看看现在的 Web 开发趋势：
+
+| 场景 | 传统方案 | Cloudflare 方案 |
+|------|----------|-----------------|
+| 静态内容 | CDN + 对象存储 | Cloudflare Pages |
+| 动态内容 | 传统服务器 | Cloudflare Workers |
+| 数据库 | 自建/MySQL | Cloudflare D1 |
+| KV 存储 | Redis | Cloudflare KV |
+| AI 能力 | 第三方 API | Cloudflare AI |
+
+**Astro 正好补上了"静态内容"这一环。**
+
+收购 Astro 后，Cloudflare 有了一个完整的全栈方案：
+- 用 Astro 做前端 → 页面秒开、SEO 友好
+- 用 Workers 做后端 → 边缘计算、低延迟
+- 用 D1/KV 做存储 → 简单、便宜、全球分布
+
+这就是 Cloudflare 想要的**全栈边缘方案**。
+
+## 对开发者意味着什么
+
+### 好消息
+
+1. **更好的开发体验**——6.0 开发服务器快很多
+2. **更强大的能力**——Live Content Collections 让静态站点也能动态
+3. **更清晰的定位**——Astro + Cloudflare = 现代 Web 开发组合
+
+### 需要注意
+
+1. **迁移成本**——`Astro.glob()` 改成 `getCollection()` 需要手动改
+2. **Node 版本**——确保开发环境是 Node 22+
+3. **学习曲线**——如果想做全栈，得学 Cloudflare Workers
+
+## 我的使用感受
+
+作为用 Astro 搭博客的人，我的感觉是：
+
+- **静态站点**：Astro 依然是首选，甚至更强了
+- **想做全栈**：现在有了 Cloudflare 生态支持，更方便了
+- **学习成本**：比之前高了一点，但值得
+
+## 2026 前端框架选型
+
+现在的趋势越来越清晰：
+
+| 类型 | 推荐框架 |
+|------|----------|
+| 内容网站/博客/文档 | **Astro** |
+| Web 应用/复杂交互 | **Next.js** |
+| 简单页面/营销站 | **Astro** |
+| 需要全栈能力 | **Astro + Cloudflare** 或 **Next.js** |
+
+有意思的是，Cloudflare 收购 Astro 后，有文章分析说：**在内容网站领域，Astro 正在超越 Next.js**。
+
+这个趋势值得注意。
+
+## 结语
+
+Astro 6.0 不是一个简单的版本号递增。
+
+它代表着：
+- 静态网站框架的进化
+- Cloudflare 全栈生态的完善
+- Web 开发分工的细化
+
+如果你是 Astro 用户，建议升级到 6.0。虽然有迁移成本，但长期收益更高。
+
+如果你还在选框架，Astro 值得考虑。特别是配合 Cloudflare Workers，全栈能力一点都不差。
+
+---
+
+*相关链接：*
+- *[Astro 官网](https://astro.build/)*
+- *[Astro 6.0 发布说明](https://astro.build/blog/astro-60/)*
+- *[Cloudflare Workers 文档](https://developers.cloudflare.com/workers/)*
+- *[Live Content Collections 教程](https://www.raymondcamden.com/2026/03/11/testing-live-content-collections-in-astro-v6)*
