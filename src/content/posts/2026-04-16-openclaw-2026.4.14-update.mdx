@@ -1,0 +1,76 @@
+---
+title: "OpenClaw 2026.4.14 发布：TUI 模式闪亮登场"
+description: "OpenClaw 4 月更新带来全新的 TUI 全屏模式、推送通知支持、改进的插件管理等特性。AI 编程助手体验再升级。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-16-2026
+draft: false
+tags:
+  - openclaw
+  - ai-coding
+  - anthropic
+  - claude-code
+---
+
+## 4 月第二个大版本更新
+
+OpenClaw 在 4 月中旬又来了一波重磅更新，最新版本 2026.4.14 已经发布[1]。这次更新带来了不少实用新功能，特别是 TUI 模式的改进让编程体验更上一层楼。
+
+## TUI 全屏模式来了
+
+最大的亮点是新增了 `/tui` 命令和 tui 设置项[2]。
+
+运行 `claude /tui fullscreen` 可以在同一对话中切换到无闪烁的全屏渲染模式。这个功能对于长时间编码或者需要专注视野的场景特别实用。
+
+配合之前已有的焦点模式（focus mode），现在可以：
+- `/tui fullscreen` — 全屏沉浸式编码
+- `/focus` — 切换焦点视图，隐藏多余信息
+
+## 快捷键优化
+
+- **Ctrl+O** 现在只在普通转录和详细转录之间切换
+- 焦点视图的切换独立出来，用新的 `/focus` 命令控制
+
+这个改动解决了之前一个快捷键绑定了太多功能的问题，让操作更清晰。
+
+## 推送通知支持
+
+如果开启了 Remote Control 和「Claude 决定时推送」的设置，Claude 现在可以发送移动推送通知了[3]。
+
+这意味着当你在另一个设备上使用 Claude 时，长时间运行的任务完成或者需要人工决策时，可以第一时间收到通知。
+
+## 插件管理更智能
+
+`/plugin` 命令的「已安装」标签页现在更人性化了[4]：
+
+- 需要关注的项目和收藏的项目置顶显示
+- 禁用的项目折叠起来，不干扰视线
+- 支持收藏功能，方便快速访问
+
+另外，修复了插件安装时不遵循 plugin.json 中声明的依赖问题。现在安装插件会自动带上它需要的依赖。
+
+## 其他改进
+
+- `/autocompact`、`/context`、`/exit`、`/reload-plugins` 现在支持 Remote Control（移动端/网页端）使用
+- 改进了 `/doctor` 命令，当 MCP 服务器在多个配置作用域中定义了不同端点时会给出警告
+- `--resume/--continue` 现在可以恢复未过期的计划任务
+- Write 工具现在会告诉模型你在 IDE 中编辑了建议的内容
+
+## Bug 修复也很有意思
+
+- 修复了 MCP 工具调用在 SSE/HTTP 传输时连接中断导致无限等待的问题
+- 修复了非流式回退重试在 API 不可达时卡住好几分钟的问题
+- 修复了 macOS Terminal.app 中启动时渲染乱码的问题
+- 修复了从远程控制会话断开后重新登录时显示笼统错误而不是提示重新登录的问题
+
+## 小结
+
+2026.4.14 是一个「体验优化」为主的版本。TUI 全屏模式、推送通知、插件管理改进这些都是实实在在提升生产力的功能。如果你经常长时间使用 Claude 编程，强烈建议试试新的全屏模式。
+
+---
+
+**参考来源：**
+
+- [1] npm view openclaw version
+- [2] Claude Code Release - 2026-04-15
+- [3] Claude Code Release - Push Notification
+- [4] Claude Code Release - /plugin Improvements

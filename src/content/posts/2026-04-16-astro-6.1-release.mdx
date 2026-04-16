@@ -1,0 +1,109 @@
+---
+title: "Astro 6.1 发布：图片配置更灵活，i18n 更智能"
+description: "Astro 6.1 带来 Sharp 图片编码默认值配置、SmartyPants 高级配置、国际化回退路由等实用新功能。静态站点生成更强大。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-16-2026
+draft: false
+tags:
+  - astro
+  - frontend
+  - web-development
+  - javascript
+---
+
+## 继续进化：6.1 版本发布
+
+距离 Astro 6.0 发布才一个月，团队又带来了 6.1 版本更新[1]。这次主要是针对现有功能的增强和打磨，让静态站点生成更顺手。
+
+## Sharp 图片编码：一次配置，处处生效
+
+之前用 Astro 的 `<Image />` 组件时，如果想统一调整 JPEG 压缩质量、WebP 努力级别这些参数，只能在每个图片上单独设置。
+
+Astro 6.1 现在支持在配置文件中一次性设置全局默认值[2]：
+
+```js
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+  image: {
+    service: {
+      config: {
+        jpeg: { mozjpeg: true },
+        webp: { effort: 6, alphaQuality: 80 },
+        avif: { effort: 4, chromaSubsampling: '4:2:0' },
+        png: { compressionLevel: 9 },
+      },
+    },
+  },
+});
+```
+
+这个功能对需要处理大量图片的站点特别实用。比如博客、相册、宣传页这些场景，统一配置一次就够了，不用重复折腾每个图片的参数。
+
+当然，如果某个图片需要特殊处理，仍然可以在组件里单独覆盖。
+
+## SmartyPants：终于支持中文标点了
+
+SmartyPants 是 Astro 用来把普通标点转换成「美化版」标点的库。但它默认只支持英文 conventions，像法语的 guillemets（«»）、德语的引号（„"）这些都不行。
+
+6.1 版本开放了完整的 SmartyPants 配置[3]：
+
+```js
+export default defineConfig({
+  markdown: {
+    smartypants: {
+      dashes: 'oldschool',
+      openingQuotes: { double: '«', single: '‹' },
+      closingQuotes: { double: '»', single: '›' },
+      ellipses: 'unspaced',
+      quotes: false,
+    },
+  },
+});
+```
+
+这对非英文博客来说是个好消息终于可以优雅地使用中文标点了，不用一刀切地禁用 SmartyPants。
+
+## 国际化回退路由：集成也能看到了
+
+之前使用 `fallbackType: 'rewrite'` 时，回退生成的路由对集成（如 sitemap）是不可见的。导致多语言站点的 sitemap 里经常缺页。
+
+现在 6.1 在 `astro:routes:resolved` hook 中暴露了 `fallbackRoutes`，集成可以访问这些自动生成的回退路由[4]。
+
+官方已经用这个功能更新了 @astrojs/sitemap，现在会自动包含国际化回退页面，sitemap 更完整了。
+
+## 其他改进
+
+- **移动端视图过渡更顺滑** — iOS Safari 上使用手势（滑动返回/前进）时，浏览器自带过渡和 Astro 的视图过渡不会再冲突，消除了一闪一闪的视觉问题
+- **Vite 8 兼容性警告** — 检测到 Vite 8 时会给出警告，`astro add cloudflare` 会自动锁定 Vite 版本避免兼容问题
+- **React 水合修复** — 修复了条件渲染 slot 和 experimentalReactChildren 不匹配导致的错误
+- **CSRF 保护修复** — 反向代理后面的项目现在能正确读取 X-Forwarded-Proto，避免表单提交时误报 403
+
+## 怎么升级
+
+推荐使用官方升级工具：
+
+```bash
+# 一键升级
+npx @astrojs/upgrade
+
+# 或者手动
+npm install astro@latest
+pnpm upgrade astro --latest
+yarn upgrade astro --latest
+```
+
+## 小结
+
+Astro 6.1 是一个「打磨」为主的版本，没有颠覆性的新特性，但每个改进都很实在。图片配置、国际化、视图过渡这些都是实际项目中经常遇到的问题，6.1 都给出了漂亮的解决方案。
+
+加上 Cloudflare 的加持，Astro 的生态正在变得越来越完善。
+
+---
+
+**参考来源：**
+
+- [1] Astro 6.1 Release - https://astro.build/blog/astro-610/
+- [2] Sharp codec-specific image defaults
+- [3] Advanced SmartyPants configuration
+- [4] i18n fallback routes for integrations
