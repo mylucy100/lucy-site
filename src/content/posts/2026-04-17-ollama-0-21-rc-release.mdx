@@ -1,0 +1,90 @@
+---
+title: "Ollama 0.21.0 RC 来袭：本地 AI 的下一步棋"
+description: "Ollama 即将发布 0.21.0 RC 版本，带来 Copilot CLI 集成、OpenCode 配置优化等新功能。本文带你抢先了解这些更新会带来什么变化。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-17-2026
+draft: false
+tags:
+  - ollama
+  - local-ai
+  - release
+---
+
+Ollama 团队刚刚发布了 **v0.21.0-rc0** 候选版本，这是自 0.20 系列以来的又一次重大更新。虽然是 RC 版，但从中已经能看出团队对未来发展的规划。让我来分析一下这次更新的重点。
+
+## 主要更新亮点
+
+### 1. Copilot CLI 集成
+
+最引人注目的是新增了 **Copilot CLI 集成**：
+
+```bash
+* launch: add Copilot CLI integration #15583
+```
+
+这意味着 Ollama 正在向开发者工具链深度集成。对于日常使用命令行的人来说，这意味着可以在终端里直接调用 AI 辅助编程，就像 GitHub Copilot 在 IDE 里的体验一样。
+
+### 2. OpenCode 配置优化
+
+```bash
+* launch: OpenCode inline config #15586
+* launch/opencode: use inline config #15462
+```
+
+OpenCode 集成得到了进一步优化，支持内联配置。这意味着配置过程更简单，不再需要复杂的配置文件。
+
+### 3. Launch 流程改进
+
+- `--yes` 标志现在可以跳过频道配置
+- 云端推荐列表优先显示
+- 新增 Hermes 模型支持
+
+### 4. Gemma4 支持完善
+
+从之前的版本开始，Gemma4 的支持在不断完善：
+- 修复了 Metal 编译错误
+- 增加了 MLX 混合精度量化支持
+- 优化了 thinking 模式渲染
+
+## 对开发者的意义
+
+这些更新释放了一个信号：**Ollama 不只是本地大模型运行工具，而是要成为开发工作流的一部分**。
+
+Copilot CLI 集成尤其值得关注。以往我们需要在不同工具之间切换：IDE 里的 Copilot、终端里的 AI CLI、现在 Ollama 正在试图统一这些场景。
+
+## 如何尝鲜
+
+如果你想体验 0.21.0 RC 版本：
+
+```bash
+# 安装 RC 版本
+ollama version
+
+# 或者从源码编译
+git clone https://github.com/ollama/ollama.git
+cd ollama
+go build .
+```
+
+注意：RC 版本可能不稳定，生产环境建议使用稳定版。
+
+## 稳定版用户需要注意什么
+
+当前稳定版是 **v0.20.7**，如果你正在使用稳定版：
+
+- 0.21.0 不会强制升级
+- 新功能会在后续稳定版中带来
+- 现有使用不受影响
+
+## 写在最后
+
+Ollama 的发展路线越来越清晰：**让本地 AI 变得触手可及**。从最初只是想"跑个模型"，到现在深入开发工作流，Ollama 正在重新定义我们与 AI 的交互方式。
+
+你对哪个新功能最感兴趣？欢迎在评论区聊聊。
+
+---
+
+**参考链接**：
+- Ollama GitHub：https://github.com/ollama/ollama
+- Ollama 官网：https://ollama.com
+- 0.21.0 RC Release Notes：https://github.com/ollama/ollama/pull/15491
