@@ -1,0 +1,89 @@
+---
+title: "Astro 4 月 18 日更新：构建和部署体验优化"
+description: "Astro 团队发布了 4 月 18 日的补丁更新，修复了构建输出特殊字符问题、Vue  scoped style 渲染问题，以及开发服务器性能优化。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-19-2026
+draft: false
+tags:
+  - astro
+  - web开发
+  - 前端
+  - release
+---
+
+Astro 在 4 月 18 日发布了多个补丁更新，主要聚焦于**构建稳定性**和**开发体验优化**。让我们来看看具体改了什么。
+
+## 修复特殊字符导致的部署失败
+
+### 问题回顾
+
+之前如果你的 Astro 项目构建输出的文件名包含特殊字符（如 `!`、`~`、`{`、`}`），在部署到 **Netlify** 等平台时会直接失败。这个问题在静态站点生成（SSG）场景下尤为棘手。
+
+### 修复内容
+
+现在 Astro 会自动处理这些特殊字符，确保构建输出的文件名在任何部署平台上都能正常工作。
+
+> 原 PR: [#16367](https://github.com/withastro/astro/pull/16367) - Fixes build output files with special characters
+
+这个修复对于使用动态路由生成页面的开发者来说是个好消息，终于不用手动清理文件名了。
+
+## Vue Scoped Style 改进
+
+### 问题回顾
+
+在使用 Vue 组件时，scoped style 在开发模式下配合客户端路由（client-side router）导航时会出现样式丢失的问题。
+
+### 修复内容
+
+现在 Vue 的 scoped style 在开发模式下可以正确保持，不会因为页面导航而丢失样式。
+
+> 原 PR: [#16379](https://github.com/withastro/astro/pull/16379) - Improves Vue scoped style handling in DEV mode during client router navigation
+
+这对使用 Astro 的 Vue 集成开发者来说是个重要修复，特别是单页应用场景。
+
+## 开发服务器性能优化
+
+### 改进内容
+
+Astro 开发服务器现在会缓存项目的依赖爬取结果，提升了内部处理效率。这意味着：
+
+- 首次启动后，后续的文件变更响应更快
+- 复杂项目的开发体验更流畅
+
+> 原 PR: [#16381](https://github.com/withastro/astro/pull/16381) - Improved performance of the dev server
+
+## 修复 Netlify/Vercel 构建错误
+
+### 问题场景
+
+在使用动态 import 的 JavaScript 跨 chunk 时，如果平台启用了 skew protection（如 Vercel、Netlify），构建会报错。
+
+### 修复内容
+
+这个问题现在已经修复，构建产物可以在这些平台正常部署。
+
+> 原 PR: [#16282](https://github.com/withastro/astro/pull/16282) - Fixes build errors on platforms with skew protection enabled
+
+## 其他修复
+
+- **远程图片尺寸验证**：在 Netlify 静态构建时，现在会正确验证远程图片的尺寸
+- **--port 标志**：修复了 Vite 触发服务器重启后 --port 参数被忽略的问题
+- **静态资源错误响应**：修复了静态资源错误响应错误包含 immutable 缓存头的问题
+- **Cloudflare 图像转换**：使用 `redirect: 'manual'` 处理远程图像获取，保持一致
+
+## 我的感受
+
+这次更新虽然都是补丁，但都很实用：
+
+1. **特殊字符修复** - 解决了部署时的"玄学"问题
+2. **Vue 改进** - 对使用 Vue 的开发者很友好
+3. **性能优化** - 开发体验更流畅
+
+建议所有 Astro 用户更新到最新版本，特别是如果你在 Netlify 或 Vercel 上部署。
+
+---
+
+**参考链接**：
+- Astro 官方发布说明：https://github.com/withastro/astro/releases
+- Astro 官方文档：https://docs.astro.build/
+- Vue 集成文档：https://docs.astro.build/en/guides/integrations-guide/vue/

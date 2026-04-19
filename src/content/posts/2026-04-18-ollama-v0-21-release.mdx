@@ -1,0 +1,107 @@
+---
+title: "Ollama v0.21 发布：Hermes Agent 来了，OpenClaw 集成更强！"
+description: "Ollama 刚刚发布 v0.21.0 版本，带来全新 Hermes 自学习 Agent、Gemma 4 工具调用优化，以及更完善的 OpenClaw 消息通道支持。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-18-2026
+draft: false
+tags:
+  - ollama
+  - openclaw
+  - hermes
+  - release
+---
+
+Ollama 刚刚发布了 **v0.21.0** 版本，这次更新相当重磅——不仅有全新 Hermes Agent，还有 Gemma 4 的工具调用改进，以及更完善的 OpenClaw 集成。让我来看看具体内容。
+
+## Hermes Agent：会学习的 AI 助手
+
+### 什么是 Hermes？
+
+Hermes 是 Nous Research 开发的自学习 AI Agent，现在可以通过 Ollama 直接使用了。官方说法是：
+
+> "Hermes learns with you, automatically creating skills to better serve your workflows."
+
+简单说，Hermes 会随着使用不断学习，自动创建技能来优化你的工作流。特别适合研究和工程任务。
+
+### 如何使用
+
+```bash
+ollama launch hermes
+```
+
+### 官方集成文档
+
+Ollama 提供了完整的 [Hermes 集成指南](https://docs.ollama.com/integrations/hermes)，有兴趣的朋友可以深入研究。
+
+## Gemma 4 工具调用大幅改进
+
+### 发生了什么？
+
+Gemma 4 的工具调用能力在最近几个版本中持续优化：
+
+- **并行工具调用改进**：流式响应中的并行工具调用更加稳定
+- **图像渲染修复**：修复了 `gemma:e2b` 和 `gemma:e4b` 关闭思考时的质量下降问题
+
+### Flash Attention 加持
+
+现在 Gemma 4 在兼容的 GPU 上可以启用 Flash Attention，推理速度更快、显存占用更低。
+
+## OpenClaw 集成：消息通道一键配置
+
+### 这有多方便？
+
+通过 `ollama launch openclaw` 命令，现在可以一键配置：
+
+- WhatsApp
+- Telegram
+- Discord
+- 其他消息通道
+
+之前需要手动配置的东西，现在一个命令就搞定了。官方还做了内联配置检测，会自动发现你本地安装的 OpenClaw。
+
+### 命令示例
+
+```bash
+ollama launch openclaw
+```
+
+会弹出交互式配置界面，选择你要连接的通道，按提示授权即可。
+
+## 其他更新
+
+### ROCm 7.2.1 支持
+
+Linux 上的 AMD GPU 用户现在可以用 ROCm 7.2.1 了，性能和兼容性都有提升。
+
+### MLX 改进
+
+Apple Silicon 的 MLX 推理继续优化，M5 性能有显著提升。混合精度量化和能力检测也更智能了。
+
+### Ollama App 更新
+
+修复了图片附件的错误，版本体验更稳定。
+
+## 我的观察
+
+Ollama v0.21 这次有几个趋势值得关注：
+
+1. **Agent 集成成为标配**：不只是跑模型，还要帮你做事。Hermes 的自学习能力是个有意思的方向
+
+2. **工具调用越来越稳**：Gemma 4 的工具调用连续多个版本优化，说明端侧 AI Agent 确实是重点方向
+
+3. **OpenClaw 集成深化**：从"能跑"到"好用"，`ollama launch openclaw` 把配置门槛降到了零
+
+如果你本地跑着 Ollama，建议现在更新：
+
+```bash
+ollama update
+```
+
+或者直接下载最新版本：https://github.com/ollama/ollama/releases
+
+---
+
+**参考链接**：
+- Ollama v0.21.0 发布说明：https://github.com/ollama/ollama/releases
+- Hermes 集成文档：https://docs.ollama.com/integrations/hermes
+- OpenClaw 官方文档：https://docs.openclaw.com

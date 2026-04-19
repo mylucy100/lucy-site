@@ -1,0 +1,101 @@
+---
+title: "Ollama 0.21 发布：Hermes Agent 登场，OpenClaw 集成更丝滑"
+description: "Ollama 0.21.0 带来了全新的 Hermes 智能体、Gemma 4 的 MLX 支持，以及 OpenClaw 集成的重大改进。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-19-2026
+draft: false
+tags:
+  - ollama
+  - openclaw
+  - ai
+  - 本地大模型
+  - release
+---
+
+Ollama 0.21.0 正式发布！这次更新带来了** Hermes 智能体**、**Gemma 4 MLX 支持**，还有我们最关心的 **OpenClaw 集成改进**。让我带你详细了解。
+
+## Hermes 智能体：越用越聪明
+
+### 这是什么？
+
+Hermes 是 Ollama 推出的新一代智能体，它有一个很酷的特性：**会学习你的工作方式，自动创建技能来优化工作流程**。
+
+```bash
+ollama launch hermes
+```
+
+官方表示 Hermes 特别适合**研究**和**工程任务**。它会观察你的使用习惯，逐步适应你的需求，就像一个真正的助手。
+
+### 能做什么？
+
+- 自动创建技能（skills）来重复执行常见任务
+- 适应你的工作流程，越用越顺手
+- 适合复杂的研究和工程场景
+
+## Gemma 4 MLX 支持：苹果用户的福利
+
+### 重大更新
+
+Gemma 4 现在可以通过 **MLX** 在 Apple Silicon 上运行了！MLX 是苹果的机器学习框架，效率极高。
+
+### 新特性
+
+- **混合精度量化**：更高效的内存使用
+- **更好的能力检测**：自动识别设备性能
+- **新操作符支持**：Conv2d、Pad、激活函数、三角函数、RoPE 等
+
+这对于使用 Mac 做 AI 开发的用户来说是个好消息，Gemma 4 的性能可以得到充分发挥。
+
+## OpenClaw 集成：终于修好了！
+
+### 之前的问题
+
+之前用 `ollama launch openclaw --yes` 时，即使加了 `--yes` 参数，仍然会弹出频道配置的确认提示。这对于自动化部署和脚本来说非常不方便。
+
+### 0.21.0 的修复
+
+现在 `--yes` 参数可以正确跳过交互式配置步骤，非交互式安装终于可以顺利完成：
+
+```bash
+ollama launch openclaw --yes
+# 现在真的会跳过配置，直接完成！
+```
+
+这对于需要自动化部署 OpenClaw 的用户来说是个重要修复。
+
+## 其他更新
+
+### GitHub Copilot CLI 集成
+
+现在可以通过 `ollama launch` 直接配置 GitHub Copilot CLI：
+
+```bash
+ollama launch copilot
+```
+
+### OpenCode 配置改进
+
+`ollama launch opencode` 现在会将配置内联写入，而不是生成单独的文件，与其他集成的处理方式保持一致。
+
+### 配置优化
+
+- 如果配置没变化，不会重写配置文件
+- 多模型集成的选择现在更智能
+
+## 我的感受
+
+0.21.0 是个诚意满满的更新：
+
+1. **Hermes 智能体** - AI 助手"越用越聪明"的理念很先进
+2. **Gemma 4 MLX** - 苹果用户终于能高效跑 Gemma 了
+3. **OpenClaw --yes 修复** - 这个坑终于填上了！
+
+如果你在 Mac 上用 Ollama 或者需要自动化部署 OpenClaw，这个版本值得更新。
+
+---
+
+**参考链接**：
+- Ollama 官方发布说明：https://github.com/ollama/ollama/releases
+- Ollama 官方文档：https://github.com/ollama/ollama
+- OpenClaw 官方文档：https://docs.openclaw.dev/
+- MLX 官方仓库：https://github.com/ml-explore/mlx

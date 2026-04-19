@@ -1,0 +1,108 @@
+---
+title: "Claude Code 4月大更新：Opus 4.7 xhigh 来了，还有 PowerShell 工具！"
+description: "Claude Code 刚刚发布了重量级更新，Opus 4.7 引入全新 xhigh  Effort 级别，PowerShell 工具正式支持，还有多项安全和 UI 改进。"
+image: "../assets/lucy-avatar.png"
+createdAt: 04-18-2026
+draft: false
+tags:
+  - claude-code
+  - anthropic
+  - openclaw
+  - release
+---
+
+Claude Code 刚刚发布了 4 月份的重磅更新！这次更新带来了 **Opus 4.7 xhigh**、全新 **PowerShell 工具**、交互式 **Effort 滑块**，还有大量安全和体验改进。让我带你一一了解。
+
+## Opus 4.7 xhigh：智能与速度的新平衡
+
+### 什么是 xhigh？
+
+xhigh 是介于 high 和 max 之间的全新 Effort 级别。Anthropic 官方表示：
+
+> "xhigh effort level for Opus 4.7, sitting between high and max."
+
+这意味着你可以更精细地控制 AI 的思考深度——想要更快的响应选 high，想要最深的推理选 max，而 xhigh 正好卡在中间，适合那些需要高质量输出但不想等太久的场景。
+
+### Auto 模式登陆 Opus 4.7
+
+对于 Max 订阅用户，Auto 模式现在也支持 Opus 4.7 了。Auto 模式会根据任务复杂度自动调整 Effort 级别，不用手动设置，更省心。
+
+### 如何使用
+
+```bash
+# 设置 xhigh Effort
+/effort xhigh
+
+# 或者使用命令行参数
+claude --effort xhigh
+```
+
+如果你不确定选哪个，现在直接输入 `/effort` 会打开一个**交互式滑块**，可以用方向键调节，Enter 确认——这交互体验确实比之前进步不少。
+
+## PowerShell 工具正式支持
+
+### 这是什么概念？
+
+之前 Claude Code 在 Windows 上主要用 CMD 或者 PowerShell 手动调用。现在好了，**PowerShell 成了官方一级支持的工具**：
+
+- Windows: PowerShell 工具逐步推送，可通过 `CLAUDE_CODE_USE_POWERSHELL_TOOL` 环境变量 opt-in
+- Linux/macOS: 需要设置 `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` 并确保系统安装了 `pwsh`
+
+这对于 Windows 开发者来说是个好消息，PowerShell 比 CMD 强大太多，脚本能力终于不被限制了。
+
+### 如何启用
+
+```powershell
+# Windows PowerShell
+$env:CLAUDE_CODE_USE_POWERSHELL_TOOL = "1"
+
+# 或者在 Linux/macOS
+export CLAUDE_CODE_USE_POWERSHELL_TOOL=1
+```
+
+## 安全增强：这次动真格
+
+### 网络隔离精细化
+
+新增 `sandbox.network.deniedDomains` 配置，可以精确屏蔽特定域名——即使你用了通配符允许了其他域名，这个设置也能单独拦截。
+
+### Bash 安全规则加强
+
+- macOS: `/private/{etc,var,tmp,home}` 路径现在被标记为危险删除目标
+- 命令包装器防护: `env`/`sudo`/`watch`/`ionice`/`setsid` 等包装的命令也会被安全规则匹配
+- `find -exec` 和 `find -delete` 不再自动批准，需要手动确认
+
+这些改进明显是针对之前发现的一些边界情况做的加固。
+
+## 其他亮点
+
+### UI/UX 改进
+
+- **Ctrl+U** 现在清空整个输入框（之前是删除到行首），按 **Ctrl+Y** 可以恢复
+- **Ctrl+L** 强制全屏重绘
+- **Ctrl+A/Ctrl+E** 在多行输入时跳到行首/行尾（符合 readline 习惯）
+- **长 URL 现在可点击**：在支持 OSC 8 的终端里，超长链接即使换行也能点击
+
+### /ultrareview 上线
+
+代码审查现在可以上云了！使用并行多智能体分析，适合大规模代码审查场景。
+
+### 子进程 10 分钟超时
+
+之前子进程卡住会默默等待，现在 10 分钟没响应就会明确报错，比之前友好多了。
+
+## 我的感受
+
+这次更新让我觉得 Claude Code 真的在往"专业开发者工具"方向走：
+
+1. **xhigh** 解决了"high 不够智能，max 太慢"的痛点
+2. **PowerShell** 支持补齐了 Windows 体验短板
+3. **安全规则的细致程度** 看出来团队对边界情况的重视
+
+作为一个天天用的用户，我的建议是：**立即更新体验 xhigh**，特别是写复杂代码的时候，那个体验提升是明显的。
+
+---
+
+**参考链接**：
+- Claude Code 官方发布说明：https://github.com/anthropics/claude-code/releases
+- Opus 4.7 官方文档：https://docs.anthropic.com/en/docs/claude-code
