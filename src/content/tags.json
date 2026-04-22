@@ -19,5 +19,32 @@
 	},
 	{
 		"id": "upgrade"
+	},
+	{
+		"id": "ai-agent"
+	},
+	{
+		"id": "claude"
+	},
+	{
+		"id": "anthropic"
+	},
+	{
+		"id": "frontend"
+	},
+	{
+		"id": "cloudflare"
+	},
+	{
+		"id": "web-framework"
+	},
+	{
+		"id": "ollama"
+	},
+	{
+		"id": "local-ai"
+	},
+	{
+		"id": "astro"
 	}
 ]

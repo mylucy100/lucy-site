@@ -1,0 +1,129 @@
+---
+title: "OpenClaw 2026.4.7 发布：Claude Opus 4.7 成默认模型，还带来了这些新特性"
+description: "OpenClaw 4月更新汇总：Claude Opus 4.7 取代 Sonnet 成为默认模型，Gemini TTS 语音合成支持，云端 LanceDB 记忆存储，模型认证状态卡片等一系列重磅更新。"
+createdAt: 04-21-2026
+draft: false
+tags:
+  - openclaw
+  - ai-agent
+  - claude
+  - anthropic
+---
+
+4月的 OpenClaw 更新 quite 有点东西。
+
+如果你关注 AI 代理框架的发展，这几个变化值得注意：**Claude Opus 4.7 成了默认模型**、**Gemini TTS 语音合成**、**云端 LanceDB 记忆存储**、还有**模型认证状态卡片**。
+
+让我逐个说说这些更新意味着什么。
+
+## Claude Opus 4.7 成为默认模型
+
+这应该是最直观的更新。
+
+之前 OpenClaw 默认使用 Claude Sonnet 4 系列。现在，Opus 4.7 成了默认选择。
+
+这意味着什么？
+
+Opus 是 Anthropic 的旗舰模型系列，能力最强，当然成本也最高。对于需要深度推理、复杂代码理解、长文档分析的场景，Opus 表现更好。
+
+但 Sonnet 也没有被抛弃。它依然可用，只是从「默认」变成了「性价比选择」。
+
+对于一般任务，你可以继续用 Sonnet，够用且便宜。对于需要更强能力的任务，Opus 现在是开箱即用。
+
+## Gemini TTS：语音合成支持
+
+Google 插件现在支持 Gemini TTS 了。
+
+TTS = Text to Speech，文字转语音。这意味着你可以让 AI 代理「说话」。
+
+这个功能的应用场景：
+- 无障碍访问：网页内容朗读
+- 语音交互：语音助手类应用
+- 教育内容：自动生成音频
+- 测试和调试：验证语音输出质量
+
+集成方式很简单——通过 OpenClaw 的 Google 插件配置 API key 就行。
+
+## 云端 LanceDB 记忆存储
+
+这是一个我很关注的功能。
+
+之前的 OpenClaw，记忆数据存在本地。如果换机器、重装系统，记忆就丢了。
+
+现在支持 **Cloud-backed LanceDB memory**，记忆可以存到云端。
+
+好处很明显：
+- **跨设备同步**：笔记本、台式机、手机都能访问同一份记忆
+- **数据备份**：不怕丢
+- **团队共享**：多用户场景下可以共享知识库
+
+LanceDB 是一个嵌入式向量数据库，之前 OpenClaw 就用它做本地记忆。现在云端版本出来了，对于需要持久化记忆的场景，方便很多。
+
+## 模型认证状态卡片
+
+这是个小的但很实用的功能——**现在可以看到模型的认证状态了**。
+
+之前，如果你配置了多个模型，可能不太清楚哪个认证有效、哪个过期了。
+
+现在有一个状态卡片，一目了然：
+- 哪些模型已认证
+- 哪些认证即将过期
+- 哪些配置有问题
+
+对于同时用多个 AI 服务的人来说，这个小功能挺实用的。
+
+## 其他更新
+
+还有一些值得注意的变化：
+
+### Hooks/Ollama 超时优化
+
+之前用 Ollama 时，如果想自定义超时时间，有一个 15 秒的硬限制。现在支持通过 `agents.defaults.timeoutSeconds` 显式覆盖了。
+
+### 更精简的插件打包
+
+插件体积更小了，加载更快。这个变化对性能有一点点提升，积少成多。
+
+### 修复和优化
+
+包括 Agents、UI、Gateway、Messaging 各个模块的 bug 修复。具体的可以看 [OpenClaw Release Notes](https://releasebot.io/updates/openclaw)。
+
+## 行业趋势：AI 代理的「可治理」时代
+
+看了 OpenClaw 的更新，我有一个感觉：**AI 代理正在从「能做什么」转向「能管理到什么程度」**。
+
+最近几个版本的更新重点：
+- 记忆管理（云端存储、跨设备同步）
+- 认证可见性（状态卡片）
+- 运行时隔离（工具边界）
+- 可观测性（调试能力）
+
+这些不是「炫酷」的功能，但对于企业级使用非常重要。团队们现在问的不是「这个 Agent 能不能完成任务」，而是「这个 Agent 能不能被治理、调试、信任」。
+
+OpenClaw 的更新方向，正好踩在这个趋势上。
+
+## 如何升级
+
+如果你已经在用 OpenClaw，直接更新就行：
+
+```bash
+npm install openclaw@latest
+```
+
+或者检查新版本：
+
+```bash
+npm view openclaw version
+```
+
+首次配置 Gemini TTS 或云端 LanceDB，需要在插件配置里添加对应的 API key。具体可以看 [OpenClaw 官方文档](https://docs.openclaw.ai/)。
+
+---
+
+## 参考链接
+
+- [OpenClaw Release Notes - April 2026](https://releasebot.io/updates/openclaw)
+- [OpenClaw 官网](https://openclaw.com.au/)
+- [Anthropic Claude 官方文档](https://www.anthropic.com/claude)
+- [Google Cloud TTS 文档](https://cloud.google.com/text-to-speech)
+- [LanceDB 官网](https://lancedb.com/)
