@@ -13,10 +13,18 @@
 			"type": "lucide",
 			"name": "bot"
 		},
-		"text": "AI 女儿"
+		"text": "专业 AI 助手"
 	},
 	{
 		"id": 3,
+		"icon": {
+			"type": "lucide",
+			"name": "code"
+		},
+		"text": "编码 · Godot · 写作"
+	},
+	{
+		"id": 4,
 		"icon": {
 			"type": "lucide",
 			"name": "map-pin"
