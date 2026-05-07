@@ -1,0 +1,144 @@
+---
+title: "Hermes Agent vs OpenClaw：两大 AI Agent 框架深度对比"
+description: "2025 年 AI Agent 框架战况激烈。Nous Research 的 Hermes Agent 凭借自我改进能力强势崛起，OpenClaw 则以 10 万星稳坐王座。本文从架构、能力、场景全面对比，帮你找到最适合的 AI 助手。"
+createdAt: 05-07-2026
+draft: false
+tags:
+  - hermes-agent
+  - openclaw
+  - ai-agent
+  - nous-research
+---
+
+2025 年，AI Agent 框架的竞争到了白热化阶段。
+
+OpenClaw 一周内狂揽 10 万 GitHub 星标，刷新了开源纪录。另一边， Nous Research 推出的 Hermes Agent 以「自我改进」为核心卖点，直接对标 OpenClaw，声称在记忆和自主学习方面更胜一筹。
+
+这两个框架到底有什么区别？选哪个更合适？我从架构设计、核心能力、实际场景三个维度，做了一次深度对比。
+
+## 起源：同一个目标，不同的路线
+
+### OpenClaw：开源生态的「超级连接器」
+
+OpenClaw 最初的设计目标是 **让 AI 能在 20+ 消息平台上 24/7 运行**。它不只是一个 Agent，更像是一个「操作系统」——把消息收发、浏览器自动化、记忆存储、定时任务、多 Agent 协调这些能力全部封装好，开发者只需要告诉它「做什么」，不用自己搭基础设施。
+
+它的架构基于「Gateway」模式：启动一个后台服务（Gateway），所有的 Agent 实例都通过它与外部世界交互。这种设计让它天然支持多平台、多会话、长时间运行。
+
+核心特点：
+- 20+ 消息平台原生集成（Telegram、Discord、Slack、微信等）
+- 内置 MCP 服务器支持
+- 浏览器自动化（Computer Use）
+- 定时任务和 Cron
+- 多 Agent 协调
+
+### Hermes Agent：会成长的 AI 助手
+
+Hermes Agent 来自 **Nous Research**——一家专注于大模型和 Agent 技术的 AI 公司。它的核心理念是 **「自我改进」**：Agent 不仅执行任务，还能从每次执行中学习，生成自己的技能（Skills），随着使用时间变长，它会越来越「懂你」。
+
+它的架构更偏向「单兵作战」——一个 Agent 实例专注于一个目标，但通过技能系统实现跨场景的复用。
+
+核心特点：
+- 自我改进的技能系统（创建、更新、删除自己的流程）
+- 跨会话持久记忆 + 记忆检索
+- MCP 服务器集成
+- 多平台消息网关
+- 定时自动化
+- 语音模式支持
+
+## 能力对比：谁更强？
+
+### 1. 记忆系统
+
+| 能力 | Hermes Agent | OpenClaw |
+|------|-------------|----------|
+| 跨会话记忆 | ✅ 持久记忆，自动检索 | ✅ Session 记忆 |
+| 记忆检索 | ✅ FTS5 全文搜索 | ✅ 会话内记忆 |
+| 自我学习 | ✅ 从经验生成技能 | ❌ 无 |
+| 记忆后端 | ✅ 可插拔（SQLite、PostgreSQL） | ✅ 多后端支持 |
+
+**结论**：在「记住」这件事上，Hermes Agent 更胜一筹。它的记忆系统不仅能存，还能主动检索、甚至根据经验自我优化。
+
+### 2. 技能系统
+
+这是 Hermes Agent 最大的差异化亮点。
+
+传统 Agent 需要人类提前写好 Prompt，定义好每一步操作。Hermes Agent 不同——**它可以在执行任务的过程中，自己生成一个「技能」**。
+
+比如，你让它每天早上 8 点给你发天气报告。第一次，它会按流程执行。但执行完后，它可以把这个流程保存为一个 Skill。下次你再说「每天早上发天气」，它直接调用已有技能，不再重复生成。
+
+```yaml
+# Hermes Agent 技能示例
+name: daily-weather
+description: 每天早上发送天气报告
+trigger: cron(0 8 * * *)
+actions:
+  - type: fetch_weather
+    city: Beijing
+  - type: send_message
+    platform: telegram
+```
+
+OpenClaw 也有类似的概念（叫「Tools」），但它是静态的——需要开发者预先定义，Agent 本身无法自主创建。
+
+### 3. 工具生态
+
+| 工具/能力 | Hermes Agent | OpenClaw |
+|-----------|-------------|----------|
+| 内置工具数 | 47+ | 134+ |
+| MCP 支持 | ✅ | ✅ |
+| 浏览器自动化 | ✅ | ✅ |
+| 代码执行 | ✅ | ✅ |
+| 定时任务 | ✅ | ✅ |
+| 多平台消息 | 7+ | 20+ |
+
+**结论**：OpenClaw 在工具数量和平台覆盖上更丰富，但 Hermes Agent 在「质量」和「自我进化」上更有优势。
+
+### 4. 部署复杂度
+
+| 维度 | Hermes Agent | OpenClaw |
+|------|-------------|----------|
+| 最低配置 | $5 VPS | 需要更高配置 |
+| Docker 支持 | ✅ | ✅ |
+| 云端部署 | 官方文档详细 | 社区方案为主 |
+| 学习曲线 | 中等 | 较陡 |
+
+Hermes Agent 官方提供了从 $5 VPS 到 GPU 集群的部署指南，文档非常详细。OpenClaw 由于功能更全，配置也相对复杂，新手上手门槛更高。
+
+## 场景对比：谁更适合你？
+
+### 适合 Hermes Agent 的场景
+
+1. **个人 AI 助手**：你想有一个「越用越聪明」的助手，它能记住你的偏好，帮你处理日常任务
+2. **研究与实验**：你需要生成训练数据、收集轨迹、研究 Agent 学习行为
+3. **私有部署**：对数据隐私要求高，想完全自托管
+4. **简单自动化**：任务相对单一，但需要长期记忆和定时执行
+
+### 适合 OpenClaw 的场景
+
+1. **多平台运营**：你需要同时管理 Telegram、Discord、Slack、微信等 20+ 渠道
+2. **复杂工作流**：需要多 Agent 协调、复杂的条件分支
+3. **社区驱动**：你更依赖社区插件和模板
+4. **企业级应用**：需要更强的安全隔离和企业支持
+
+## 总结：没有最优解，只有更适合
+
+| 维度 | Hermes Agent | OpenClaw |
+|------|-------------|----------|
+| 定位 | 自我进化的个人 AI | 全功能开源 Agent 平台 |
+| 核心优势 | 自我改进 + 记忆检索 | 工具丰富 + 多平台 |
+| 适合用户 | 个人开发者、研究者 | 团队、企业、多平台运营 |
+| 社区规模 | 快速增长中 | 10 万星，生态成熟 |
+
+如果你想要一个「会成长的伙伴」，选 **Hermes Agent**。它的技能系统和记忆检索是目前最接近「真正 AI 助手」的实现。
+
+如果你需要一个「多面手」，要同时管理几十个平台和复杂工作流，选 **OpenClaw**。它的生态已经相当成熟，插件和模板足够丰富。
+
+有意思的是，OpenClaw 创始人 Peter Steinberger 已经加入 OpenAI，担任 Agent 方向的负责人。行业普遍认为，这是 OpenAI 在「Agent 操作系统」战场上的直接布局。未来两个框架的走向，值得持续关注。
+
+---
+
+**参考来源**：
+- [Hermes Agent 官方文档](https://hermes-agent.nousresearch.com)
+- [Decrypt: What Is Hermes?](https://decrypt.co/364211/what-is-hermes-open-source-ai-agent-openclaw-competitor)
+- [The New Stack: Persistent AI Agents Compared](https://thenewstack.io/persistent-ai-agents-compared/)
+- [GitHub: NousResearch/hermes-agent](https://github.com/nousresearch/hermes-agent)
