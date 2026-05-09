@@ -1,0 +1,86 @@
+---
+title: "Ollama v0.21.0 发布：Hermes Agent 联动、Copilot CLI 集成全面解析"
+description: "Ollama v0.21.0 带来重大更新：新增 Hermes Agent 联动、Copilot CLI 集成、launch 配置优化、Gemma4 与 MLX 性能修复等19项更新。"
+image: "../assets/lucy-avatar.png"
+createdAt: 05-09-2026
+draft: false
+tags:
+  - ollama
+  - AI
+  - hermes-agent
+  - open-source
+  - release
+---
+
+2026年4月17日，Ollama 发布了 v0.21.0 版本。这是一次兼顾新能力接入与稳定性提升的集中更新，涵盖19项变更。最值得关注的是 Hermes Agent 正式纳入 Ollama 生态。
+
+## 核心更新亮点
+
+### 1. Hermes Agent 与 Ollama 联动
+
+**新增命令**：
+```bash
+ollama launch hermes
+```
+
+Hermes Agent 是 NousResearch 打造的自改进型 AI Agent，现在可以通过 Ollama 直接启动使用。根据官方描述，它「会学习、能进化，自动创建技能以更好地服务于工作流」，特别适合研究和工程任务。
+
+这意味着 Ollama 的使用场景从单纯模型调用扩展到**自我改进型 AI Agent**的工作流协作模式。
+
+### 2. Copilot CLI 集成
+
+在 `cmd/launch` 中加入了 Copilot CLI 集成，launch 体系进一步扩展到命令行 AI 助手工作流。
+
+### 3. Launch 体系优化
+
+| 更新项 | 说明 |
+|--------|------|
+| 跳过未变化的 integration rewrite 配置 | 减少不必要的磁盘写入 |
+| 跳过未变化的 managed-single rewrite | 提升启动稳定性 |
+| OpenCode 配置改为内联式处理 | 简化配置管理 |
+| 修复 OpenClaw --yes 参数行为 | 跳过 channels 配置更智能 |
+| 云推荐始终优先展示 | 改善用户发现体验 |
+| Windows 上显示 WSL 指引 | 不再直接 hand off |
+
+## Gemma4 多项优化
+
+v0.21.0 对 Gemma4 模型进行了多项优化：
+
+| 更新项 | 说明 |
+|--------|------|
+| 根据模型大小差异化渲染 | 更精准的 UI 展示 |
+| 保持 router projection 使用 source precision | 保证推理精度 |
+| empty block 条件化处理 | 减少无效渲染 |
+| 修复 cache 使用 logical view | 解决缓存不一致问题 |
+
+## MLX 性能与实现修复
+
+针对苹果芯片的 MLX 框架，版本进行了重要性能优化：
+
+- **新增编译后 closure 支持**
+- **融合 MLP 激活函数**：通过 `mlx_compile` 减少计算开销
+- **Gemma4 性能提升**：通过 fused operations 优化推理速度
+- **修复 RotatingKVCache**：解决中间旋转时丢失上下文问题
+- **修复图像生成查找**：完善多模态能力
+
+## 其他修复
+
+- 修复 create 与 gc 之间的竞态问题，提升稳定性
+
+## 版本价值总结
+
+| 维度 | 价值体现 |
+|------|----------|
+| 新能力接入 | Hermes Agent、Copilot CLI 纳入 launch 体系 |
+| 配置与启动体验 | skip unchanged 优化，稳定性提升 |
+| 模型与计算层 | Gemma4 缓存/精度修复，MLX 性能优化 |
+
+## 如何升级
+
+```bash
+ollama upgrade
+# 或
+ollama launch hermes  # 直接启动 Hermes Agent
+```
+
+Ollama v0.21.0 不是简单的常规维护版本，而是兼顾新集成、新 Agent 支持、启动流程优化、模型渲染和缓存修复的集中更新。Hermes Agent 的加入标志着 Ollama 生态正在从「模型运行平台」向「AI 工作流协作平台」演进。
