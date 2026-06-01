@@ -1,0 +1,155 @@
+---
+title: "2026国产开源编程大模型对决：DeepSeek V4 vs Kimi K2.5 vs GLM-5 vs Qwen3.6"
+description: "2026年DeepSeek V4、Kimi K2.5、GLM-5、MiniMax M2、Qwen3.6五大国产编程模型横向对比，从1M上下文到0.23元/千token的成本路由，附Claude Code一键配置方案。"
+image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200"
+createdAt: "2026-06-01"
+draft: false
+tags:
+  - "AI"
+  - "大模型"
+  - "编程"
+  - "开源"
+  - "2026"
+---
+
+国产开源编程模型已经悄悄打到了 GPT-4o 同一水平。
+
+2024 年 12 月 DeepSeek V3 出来的时候，HumanEval 89.1%、SWE-bench Verified 42.0%——这成绩放在当时已经和 Claude 3.5 Sonnet 持平。一年半过去，国产阵营不仅追上了，还在某些维度反超：**1M 上下文窗口、0.23 元/千 token 的输入价格、按任务类型动态路由的完整生态**。闭源模型不再是唯一选择。
+
+## 一、为什么 2026 是分水岭
+
+2025 年开源 LLM 的格局开始收敛。Meta Llama 系列依然是全球开源生态的底座，但国产五强——DeepSeek、Moonshot、Zhipu、MiniMax、阿里——在编程这个垂直场景，已经构建出 **成本差 12.5 倍、上下文差 4 倍、风格差 3 种** 的完整矩阵。
+
+转折点不是单一模型的发布，是 **模型路由（model routing）变成了一等公民**。
+
+闭源 API 的逻辑是：一个主模型走天下。开源时代的逻辑是：简单任务用 Flash 跑，复杂任务用 Pro 跑，**1 个 endpoint 1 个 API key，模型只是参数**。这把 unit economics 拉到了一个新的下限。
+
+## 二、五大模型横向对比
+
+### 2.1 规格总览
+
+| 模型 | 实验室 | 上下文 | 输入费率 | 输出费率 | 缓存写入 |
+|------|--------|--------|----------|----------|----------|
+| DeepSeek V4 Flash | DeepSeek | 1M | 0.23 | 0.46 | 0.046 |
+| DeepSeek V3.2 | DeepSeek | 160K | 0.42 | 0.62 | 0.193 |
+| MiniMax M2.5 | MiniMax | 200K | 0.65 | 2.18 | 0.109 |
+| Kimi K2.5 | Moonshot | 262K | 1.09 | 5.45 | 0.182 |
+| Kimi K2.6 | Moonshot | 262K | 1.72 | 7.26 | 0.290 |
+| GLM-5 | Zhipu | 200K | 1.82 | 5.81 | 0.363 |
+| MiniMax M2.7 | MiniMax | 200K | 2.36 | 4.00 | 0.109 |
+| GLM-5.1 | Zhipu | 200K | 2.54 | 7.99 | 0.472 |
+| DeepSeek V4 Pro | DeepSeek | 1M | 2.87 | 5.75 | 0.231 |
+| Qwen3.6-plus | Alibaba | 256K+ | 3.30 | 9.90 | 0.660 |
+
+*费率单位：每 1000 token 积分。官方 API 价基础上再降 45-55%。*
+
+### 2.2 关键观察
+
+**DeepSeek 内部价差 12.5 倍**：V4 Flash 输入 0.23，V4 Pro 输入 2.87。同一个家族，复杂度差异巨大。这给了"按任务路由"这个优化策略最强的事实基础。
+
+**Kimi K2.5 性价比最优**：1.09 的输入价 + 262K 上下文窗口，覆盖 80% 日常编程任务。
+
+**Qwen3.6-plus 输出价 9.90 是表里最贵**：倾向生成更长更详细的补全，**长代码生成任务用，其他场景慎用**。
+
+**GLM 系列靠指令遵从性吃饭**：JSON 模式、API 响应格式化、结构化输出场景，GLM-5.1 的稳定性是其他模型追不上的。
+
+## 三、按场景选模型
+
+不要一上来就锁定一个模型。**2026 年的正确姿势是建一张路由表**。
+
+### 3.1 简单任务——DeepSeek V4 Flash
+
+适用：docstring、变量重命名、格式转换、补全。Agent 后台自动调用的所有辅助请求。
+
+Claude Code 默认会把后台任务路由到 Haiku 模型槽位。把这个槽位换到 V4 Flash，**60% 的成本直接砍掉**。
+
+### 3.2 中等复杂度——DeepSeek V3.2 / MiniMax M2.5
+
+V3.2：160K 上下文，55% 官方折扣，V3 架构完整性能。  
+M2.5：输入 0.65，200K 上下文，**200K 是 V3.2 给不了的甜点**。
+
+### 3.3 长上下文——Kimi K2.5 / K2.6
+
+262K 上下文是表里最大的。大型代码库、长会话记录、多文件重构场景：
+
+- K2.5（1.09）：性价比之选
+- K2.6（1.72）：在上下文优势上叠加质量提升
+
+### 3.4 结构化输出——GLM-5 / GLM-5.1
+
+JSON 模式、API 响应、格式化代码片段。**GLM-5.1 的指令遵从性是多年对齐优化的结果**。
+
+### 3.5 旗舰级推理——DeepSeek V4 Pro / Qwen3.6-plus
+
+复杂架构决策、多系统调试、首轮生成质量。V4 Pro 的 1M 上下文 + MoE 推理 + 旗舰编程能力，是当前的六边形战士。
+
+## 四、模型路由：最被低估的优化
+
+**一个 50 次调用的 Agent 会话**，任务分布通常是这样：
+
+| 任务 | 复杂度 | 推荐模型 |
+|------|--------|----------|
+| 制定方案 | 复杂 | V4 Pro |
+| 核心算法 | 复杂 | V4 Pro |
+| 测试用例 | 中等 | M2.5 / K2.5 |
+| docstring | 轻量 | V4 Flash |
+| 文件读取 | 轻量 | V4 Flash |
+
+假设 50 次调用中 60% 是简单任务（平均 2000 输入 + 500 输出 token）：
+
+- **全部 V4 Pro**：30 × (2.0 × 2.87 + 0.5 × 5.75) = **258.45 积分**
+- **简单任务路由到 V4 Flash**：30 × (2.0 × 0.23 + 0.5 × 0.46) = **20.7 积分**
+
+**12.5 倍的差价——单次会话 30 次辅助调用**。
+
+## 五、Claude Code 一键配置
+
+统一网关把路由这件事变得更简单。一个 API key、一个 base URL，模型只是一个参数。
+
+### 5.1 配置文件
+
+文件位置：`~/.claude/settings.json`
+
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "your-atlas-api-key",
+    "ANTHROPIC_BASE_URL": "https://api.atlascloud.ai",
+    "ANTHROPIC_MODEL": "deepseek-ai/deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-ai/deepseek-v4-flash",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-ai/deepseek-v4-pro",
+    "CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS": "1"
+  }
+}
+```
+
+**关键技巧**：`ANTHROPIC_DEFAULT_HAIKU_MODEL` 字段映射到 Claude Code 的后台任务槽位。设成 V4 Flash，所有辅助调用（文件读取、状态检查）都走 Flash，**无需任何路由代码，自动实现 12x 成本优化**。
+
+### 5.2 Base URL 陷阱
+
+| 工具 | Base URL |
+|------|----------|
+| Claude Code | `https://api.atlascloud.ai`（不带 /v1） |
+| Codex, Cursor, OpenCode | `https://api.atlascloud.ai/v1`（带 /v1） |
+
+**弄错不会直接报错，但认证会失败**。这是社区里踩过最多坑的地方。
+
+### 5.3 切换主力模型
+
+把 `ANTHROPIC_DEFAULT_SONNET_MODEL` 改成 `zai-org/glm-5.1`，**整套 Claude Code 行为切换到 GLM**。同一个 API key，不用改业务代码。
+
+## 六、怎么选
+
+**最大单次上下文**：DeepSeek V4 Pro（1M）/ Qwen3.6-plus（256K+）  
+**成本敏感**：简单任务 V4 Flash，中等任务 V3.2 或 M2.5  
+**结构化输出**：GLM-5.1 起步  
+**多步 Agent 流水线**：按步骤路由——辅助 Flash，推理 K2.5/GLM-5，规划 V4 Pro  
+**首选测试模型**：DeepSeek V4 Pro——文档详尽、社区活跃、旗舰编程质量
+
+## 写在最后
+
+闭源 API 不是终点。2026 年的开源编程模型生态，已经能用 1/12 的成本跑到 95% 的效果。
+
+关键不是"用哪个模型"，是 **"什么时候用哪个模型"**。建好你的路由表，把 unit economics 拉到下一个台阶，比纠结 prompt 怎么写有效十倍。
+
+**Agent 时代不会奖励用最贵模型的人，会奖励用对模型的人。**
