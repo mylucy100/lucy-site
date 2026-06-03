@@ -1,0 +1,118 @@
+---
+title: "Rust 1.96 稳定化全新 Range 类型与 assert_matches 宏：六天前刚发布的硬核更新"
+description: "2026年5月28日发布的Rust 1.96.0稳定化core::range模块、assert_matches!宏与debug_assert_matches!宏，WebAssembly目标不再默认传递--allow-undefined，并修复CVE-2026-5223与CVE-2026-5222两个Cargo漏洞。"
+image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200"
+createdAt: "2026-06-03"
+draft: false
+tags:
+  - "Rust"
+  - "编程语言"
+  - "开源"
+  - "WebAssembly"
+  - "2026"
+---
+
+Rust 1.96.0 在 6 天前（2026 年 5 月 28 日）发布，核心团队终于把纠结了多年的 Range 类型重做了一次。
+
+这次最值得关注的是 **`core::range` 模块的稳定化**。原来的 `Range`、`RangeFrom`、`RangeInclusive` 既实现了 `Iterator` 又想做成 `Copy`，但 Rust 一直禁止同时实现这两个 trait（参考 RFC 3550 提到的 footgun）。1.96 把 `core::ops::Range*` 留在原位，引入一组新的 `core::range::Range*` 类型，只实现 `IntoIterator`，因此天然 `Copy`。
+
+## 一、新的 `core::range` 解决了什么
+
+老 `Range<usize>` 不能放进 `Copy` 结构体里。一旦切片范围要存到结构体，要么拆成 `start` 和 `end` 两个字段，要么用 `Box<Range<usize>>`。这在 parser、AST span、字节流窗口里非常常见。
+
+1.96 之后，slice 索引能直接放进 `Copy` 类型：
+
+```rust
+use core::range::Range;
+
+#[derive(Clone, Copy)]
+pub struct Span(Range<usize>);
+
+impl Span {
+    pub fn of(self, s: &str) -> &str {
+        &s[self.0]
+    }
+}
+```
+
+同步稳定的还有 `RangeToInclusive`、`RangeToInclusiveIter`、`RangeFrom`、`RangeFromIter`、`RangeIter`。`RangeInclusive` 把字段从私有改成公开，因为新类型不再保留"已耗尽"状态这个内部表示坑，调用方需要主动 `into_iter()` 才会迭代。
+
+下一版 Rust 还会加 `RangeFull` 和 `RangeTo`，并把 `core::range::legacy::*` 作为老 range 的新家。**`0..1` 这种字面量语法暂时还生成老类型**，要等新 edition 切换。
+
+库作者需要注意：公开 API 优先用 `impl RangeBounds`，这样新老 range 都能传。如果必须用具体类型，**优先用新 `core::range::*`**，未来 edition 切换后这就是默认。
+
+## 二、`assert_matches!` 与 `debug_assert_matches!`
+
+`std` 之前没有原生的 pattern 断言宏，社区靠 `assert!(matches!(x, Pattern))` 凑合。新版本直接给了：
+
+```rust
+use core::assert_matches;
+
+fn get_random_number() -> u32 {
+    4 // 公平的骰子投出的数字，保证随机
+}
+
+fn main() {
+    assert_matches!(get_random_number(), 1..=6);
+}
+```
+
+注意两个细节：
+
+- 这两个宏**没进 prelude**——避免和第三方 crate 撞名，必须手动 `use core::assert_matches;`
+- 失败时打印的是值的 `Debug` 表示，比 `assert!(matches!(..))` 信息更详细
+
+## 三、WebAssembly 目标的不再宽容
+
+1.96 把 wasm 链接行为改成了更严格的一档：**不再默认传 `--allow-undefined` 给链接器**。后果直接：
+
+- 未定义符号会变成链接错误
+- 不会自动转成从 `"env"` 模块导入
+- 模块必须自己定义所有链接期符号
+
+意图是更早暴露 bug，避免符号命名漂移。
+
+如果你的项目依赖旧的自动补 import 行为（比如引用 JS 侧函数），两种恢复方式：
+
+```bash
+# 环境变量方式
+RUSTFLAGS=-Clink-arg=--allow-undefined cargo build --target wasm32-unknown-unknown
+```
+
+```rust
+// 源码方式：在定义符号的 block 上加 attribute
+#[link(wasm_import_module = "env")]
+extern "C" { /* ... */ }
+```
+
+这个改动 4 月 4 日已经预告过，1.96 才正式生效。
+
+## 四、两个 Cargo 安全修复
+
+1.96 同步修了两个第三方 registry 用户的漏洞（**crates.io 用户不受影响**）：
+
+| CVE | 等级 | 问题 |
+|------|------|------|
+| CVE-2026-5223 | Medium | 提取 crate tarball 时处理 symlink 的方式 |
+| CVE-2026-5222 | Low | 规范化 URL 后的认证流程 |
+
+用自建 registry 的同学建议立刻升级。
+
+## 五、升级与注意点
+
+升级一行：
+
+```bash
+rustup update stable
+```
+
+1.96 完整稳定化 API：
+
+- `assert_matches!`、`debug_assert_matches!`
+- `From<T> for AssertUnwindSafe<T>`
+- `From<T> for LazyCell<T, F>`、`From<T> for LazyLock<T, F>`
+- `core::range::RangeToInclusive`、`core::range::RangeToInclusiveIter`
+- `core::range::RangeFrom`、`core::range::RangeFromIter`
+- `core::range::Range`、`core::range::RangeIter`
+
+如果你的库还在给公开 API 暴露 `core::ops::Range`，现在是迁移到 `core::range::Range` 的好窗口。`impl RangeBounds` 写得越早，未来 edition 切换时改动越小。

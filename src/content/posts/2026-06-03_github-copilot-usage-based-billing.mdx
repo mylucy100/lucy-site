@@ -1,0 +1,76 @@
+---
+title: "GitHub Copilot 改用量计费：6 月 1 日起按 Token 扣点，模型降级机制取消"
+description: "GitHub Copilot 自2026年6月1日起改用Usage-Based Billing，以AI Credits替代Premium Request，按输入输出与缓存Token扣抵。月费不变但超额按模型API费率收取，企业新增额度共用池与三层预算控管。"
+image: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200"
+createdAt: "2026-06-03"
+draft: false
+tags:
+  - "GitHub"
+  - "Copilot"
+  - "AI"
+  - "开发者工具"
+  - "2026"
+---
+
+GitHub Copilot 的计费方式在 6 月 1 日悄悄变了。
+
+过去一年 Copilot 一直是 **Premium Request（PRU）** 一把梭：一次快速问答和一整场多步骤代理任务扣同样的额度。但代理式 Copilot 已经在 IDE 里能跑完整个 PR，用同样额度衡量这两件事的算力成本已经不合理。GitHub 这次的解法是把"按次"换成"按 Token"，**官方说法是 AI 成本回归真实**。
+
+## 一、新计费机制长什么样
+
+四个付费方案（Copilot Pro、Pro+、Business、Enterprise）都同步改成 **Usage-Based Billing（UBB）**：
+
+- 计费单位从 Premium Request 换成 **GitHub AI Credits**
+- 扣减依据是**实际 Token 用量**——输入、输出、缓存三类分别计费
+- 月费**维持不变**，但超额部分按各模型 API 公告费率额外收费
+- 代码补全（Code Completions）和下一步编辑建议**不消耗 Credits**
+
+缓存也单独计费是个值得注意的点。Anthropic、OpenAI 的 prompt cache 已经能压住成本，**GitHub 选择把缓存也纳入 Credits** 而不是免费给——这也是代理场景下用户实际能省钱的部分，企业用 prompt cache 拼对话历史还是能显著降低超额。
+
+## 二、模型降级机制没了
+
+旧制下一种保底手段是用完 PRU 之后，自动切到便宜模型继续跑。**6 月 1 日起这个机制取消**。
+
+新的封顶逻辑直接两层：
+
+1. Credits 余额用完
+2. 管理员没允许超额
+
+任意一条触发，对应用量直接被锁，**等下一个计费周期重置**。没有"降级兜底"了。
+
+企业侧的兜底换成了治理工具，不是自动降级：
+
+- **共用池**：组织里各用户用不完的 Credits 汇总成池子，避免额度闲置
+- **三层预算控管**：企业、成本中心、用户三个层级都能设上限
+- 池子用尽时管理员可以二选一：允许按 API 费率继续用 / 直接封顶
+
+## 三、Code Review 的隐藏成本
+
+代码审查（Copilot Code Review）这次有个小坑：除了扣 AI Credits 之外，**还会额外消耗 GitHub Actions 的执行分钟数**。重度使用 Code Review 的团队，预算建模时要把 Actions 也算进来。
+
+## 四、过渡期怎么走
+
+时间表：
+
+- 2026 年 5 月初：账单预览上线，github.com 的账单总览可以模拟新制下费用
+- 2026 年 6 月 1 日：新制正式生效
+- 商用客户 3 个月过渡优惠
+- Copilot Pro / Pro+ 年缴用户**沿用旧 PRU 制度**直到订阅到期，但 6 月 1 日起部分模型扣抵倍率上调
+- 年缴到期后默认转 Copilot Free，再决定是否升月缴付费方案
+
+如果你目前是 Pro 年缴用户，**最划算的姿势是先观察 5 月新账单预览**，再决定要不要提前取消年缴转月缴（新制下超额按月计价，灵活性更高）。
+
+## 五、对个人开发者的实际影响
+
+简单算一笔账：
+
+| 场景 | 旧制 (PRU) | 新制 (Credits) |
+|------|------------|----------------|
+| 短问答、补全 | 1 PRU | 免费 |
+| 短问答（代理） | 1 PRU | 吃 Credits |
+| 长代理任务 | 1 PRU | 吃大量 Credits |
+| 模型降级兜底 | 有 | 无 |
+
+纯补全用户基本没影响。**重度用代理模式（Agent Mode、Copilot Workspace）的团队要警惕超额**——GitHub 这次明牌把代理的算力成本摊到用户面前，而不是继续用 PRU 平均化补贴。
+
+习惯的工作流是"无脑开代理"的话，建议先看 5 月预览账单估算一下月均用量，再决定要不要加钱开 Pro+ 还是控制代理调用频率。
