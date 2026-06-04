@@ -1,0 +1,112 @@
+---
+title: "NVIDIA Vera Rubin 与 AMD MI455X 同台：2026 年 AI 算力进入机架级军备竞赛"
+description: "2026 年 3 月 GTC 大会上 NVIDIA 发布 Vera Rubin 平台，CES 上 AMD 推出 MI455X GPU。两套架构围绕 HBM4、MoE 推理、机架级互联全面对位，AI 算力竞争从单卡性能转向系统级吞吐。"
+image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=1200"
+createdAt: "2026-06-04"
+draft: false
+tags:
+  - "AI"
+  - "硬件"
+  - "GPU"
+  - "NVIDIA"
+  - "AMD"
+  - "2026"
+---
+
+2026 年 3 月 GTC 大会，黄仁勋把 NVIDIA Vera Rubin 平台端上舞台。同一时间，AMD 在年初的 CES 上亮出 MI455X，**3200 亿晶体管、432GB HBM4、2nm + 3nm 工艺**。
+
+这意味着 2026 年的 AI 算力竞争，已经不是单卡跑分能解释的。竞争维度从 FLOPS 转向 HBM 容量、互联带宽、机架级功耗、CUDA 生态迁移成本。每一项都是几十亿美元级别的赌注。
+
+## 一、Vera Rubin 在解决什么问题
+
+Vera Rubin 不是一个 GPU，而是一个**七芯片全栈平台**。它包含：
+
+- Vera CPU（接替 Grace）
+- Rubin GPU（接替 Blackwell）
+- BlueField-4 STX 存储处理器
+- ConnectX-10 网络
+- Spectrum-X 光交换机
+- NVLink Switch 6
+- 一台面向代理式 AI 的超级计算机（NVR10X）
+
+把这么多芯片塞进一个命名里，是因为 AI 工厂的核心指标已经变了。黄仁勋在主题演讲里给出一组数字：**过去几年 AI 计算需求增长了 100 万倍**。这个量级的增长单靠 GPU 提频已经追不上，必须靠系统级协同。
+
+Vera Rubin 平台的设计目标是：**把"计算"和"数据搬运"的能耗比反着优化**。黄仁勋引用了 Bill Dally 的研究——一次乘加运算耗几飞焦耳，从 HBM 读一次数据消耗高出数千倍。换句话说，瓶颈不是算力，是内存墙和互联墙。
+
+## 二、AMD MI455X 的对位逻辑
+
+AMD 的策略不是复制 NVIDIA 路线，而是**在 HBM 容量和晶体管数量上做不对称超越**。MI455X 的几个关键数字：
+
+- 3200 亿晶体管（相比 MI355 提升 70%）
+- 432GB HBM4
+- 2nm + 3nm 混合工艺
+- 先进封装（应该是 2.5D CoWoS 的下一代）
+
+**432GB HBM4 是关键变量**。当前主流的 H200 是 141GB HBM3e，Blackwell B200 是 192GB HBM3e。一张 MI455X 的显存容量是 B200 的 2.25 倍。
+
+这个数字对什么场景最重要？**MoE 推理**。
+
+DeepSeek V4 Pro 的 1M 上下文、Kimi K2.6 的 262K 上下文，都需要把整个模型权重常驻显存。一张 H200 装不下 DeepSeek V4 Pro 的全精度权重，必须拆分到多卡走 NVLink。但 MI455X 单卡 432GB 已经能装下大部分主流开源大模型的全权重，**推理阶段不需要张量并行**。
+
+## 三、机架级系统的真实瓶颈
+
+到了 2026 年，"买卡"这件事已经演化成"买机柜"。GTC 上 NVIDIA 推的 5 套机架级系统，本质上是把 72 颗 Rubin GPU 用 NVLink Switch 6 织成一张 1.8TB/s 域内网络，再通过 Spectrum-X 光交换机接到训练集群。
+
+AMD 走的是 Ultra Ethernet 联盟路径，靠 UEC（Ultra Ethernet Consortium）规范和博通、Arista 合作，把机架内和机架间网络统一到同一套协议。
+
+| 维度 | Vera Rubin | MI455X + UEC |
+|------|-----------|--------------|
+| GPU 互联 | NVLink Switch 6（私有） | Ultra Ethernet（开放） |
+| 显存 | 288GB HBM4e（每 GPU） | 432GB HBM4（每 GPU） |
+| 域内带宽 | TB 级 | 200GbE 起步 |
+| 软件生态 | CUDA + cuDNN + 600 万开发者 | ROCm + CUDA 兼容层 |
+| 单卡推理能力 | 强 | 极强（依赖显存） |
+
+## 四、软件生态的真实差距
+
+硬件数字之外，CUDA 是 NVIDIA 真正的护城河。GTC 上公布的数字是**全球超过 600 万开发者**在 CUDA 平台。Meta Superintelligence Labs 的 Paulius Micikevicius 回忆 2007 年的状态："那时候没有人愿意使用 GPU，我们不得不去恳求别人考虑使用 GPU。"
+
+AMD 的追赶策略是兼容。摩尔线程 MUSA 架构的 MUSIFY 工具号称能让 CUDA 代码一键迁移，20 万开发者在线。沐曦 MXMACA 实现 95% 以上 CUDA API 兼容。两个国产厂商的路径说明：**未来 5-10 年的差距必须靠"无缝迁移"来抹平**。
+
+但兼容是有上限的。CUDA Graphs、CUDA Stream、Cooperative Groups 这些高级特性在 ROCm 上的对位实现，要么性能打折，要么时序不对。真正在生产环境跑大模型训练的人，短期内不会切到 ROCm 主线。
+
+## 五、为什么说 2026 是"机架级"转折点
+
+几个数据点连起来看：
+
+1. **AWS 宣布部署超过 100 万个 NVIDIA GPU**，加上 Groq 3 LPU，涵盖 Blackwell 和 Rubin 架构
+2. **风险投资基金对 AI 基础设施的投入达 1500 亿美元**
+3. **黄仁勋预计 2025-2027 年间带来至少 1 万亿美元收入**
+4. **AI 工厂中累计部署超过 100 万个 NVIDIA GPU，相当于超过 17 亿瓦的 AI 容量**
+
+这些数字的共同特征是：**单点指标已经不重要**。模型可以跑、可以扩、可以省电、可以装进机柜，这四件事必须同时成立。
+
+DGX Station 是这个趋势的极端例子。72 核 Grace CPU + Blackwell Ultra GPU 通过 NVLink-C2C 连接，**748GB 一致性内存，20 petaflops**，桌面端跑 1 万亿参数模型。这台机器不是给个人用的，是给"必须在本地调试云端模型"的企业 AI 团队用的。
+
+## 六、几个工程层面的判断
+
+1. **HBM 容量是 2026 年最重要的硬件指标**。超过模型权重的单卡容量才能避免张量并行，延迟和成本都会显著下降。
+
+2. **互联协议的开放化会持续，但不会在 2026 年完成**。Ultra Ethernet 1.0 已经发布，但真正替代 InfiniBand 还需要等到 2027-2028 年。
+
+3. **国产 GPU 的关键战场是推理侧**。CUDA 训练生态短期追不上，但推理对兼容性的要求低、对显存容量要求高，沐曦和摩尔线程有机会在国产推理市场拿到份额。
+
+4. **端侧 AI 不会取代云端**。RTX PRO 工作站 96GB 显存、4000 TOPS 是极限，但跑不动 1M 上下文的旗舰模型。端侧跑小模型，云端跑大模型，这条分工在 2026 年彻底清晰。
+
+## 七、给开发者的实际建议
+
+- **写代码时别绑定特定 GPU 架构**。PyTorch + Triton + torch.compile 这套组合在 Rubin 和 MI455X 上都能跑，迁移成本最低
+- **关注 HBM 容量而不是 FLOPS**。一张 432GB 的卡能省下的不仅是钱，是整套系统设计的复杂度
+- **学 Ultra Ethernet 而不是 NVLink**。NVLink 是 NVIDIA 私有，Ultra Ethernet 是开放标准。后者更值得长期投入
+- **CUDA 不能丢，但要看 ROCm 的 PyTorch 路径**。torch 的 `torch.cuda` 接口在 ROCm 下基本能直接用，先把代码跑通再决定要不要优化
+
+2026 年的算力竞争，本质上是在问"**AI 工厂应该长什么样**"。NVIDIA 给的答案是把一切都装进自己的机柜。AMD 给的答案是开放、模块化、让客户自由选型。最终谁赢，取决于客户的运维团队更信任哪套生态。
+
+---
+
+**参考资料**：
+
+- [NVIDIA GTC 2026 主题演讲全文](https://blogs.nvidia.cn/blog/gtc-2026-news)
+- 知乎：[2026 年 AI 大模型架构及应用场景全景分析](https://zhuanlan.zhihu.com/p/1999467514623718633)
+- 36 氪：[展望 2026，AI 行业有哪些创新机会](https://m.36kr.com/p/3572274259016581)
+- WSJ 中文：[迅猛增长一年后，AI 芯片制造商准备迎接收入更高的 2026 年](https://cn.wsj.com/articles/...)

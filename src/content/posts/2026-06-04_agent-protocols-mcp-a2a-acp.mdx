@@ -1,0 +1,123 @@
+---
+title: "MCP、A2A、ACP 三协议分庭抗礼：2026 年 AI Agent 互联标准之争"
+description: "Anthropic MCP、Google A2A、IBM ACP 三大智能体通信协议在 2026 年走向分化与博弈。从工具调用、跨智能体协作到企业级寻址，三套协议正在塑造 Agent 互联网的底层规则。"
+image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200"
+createdAt: "2026-06-04"
+draft: false
+tags:
+  - "AI"
+  - "Agent"
+  - "MCP"
+  - "A2A"
+  - "协议"
+  - "2026"
+---
+
+Anthropic 在 2024 年 11 月把 MCP（Model Context Protocol）开源时，很多人以为这只是又一个会被遗忘的 GitHub 项目。
+
+18 个月后，2026 年 5 月 23 日财联社报道一个反直觉现象：腾讯、京东、荣耀、昆仑万维在同一周扎堆发布智能体产品，**天工超级智能体上线即限流**。同一时间，IBM 在 5 月份把 ACP（Agent Communication Protocol）从草案推到 v0.3，Google 的 A2A（Agent-to-Agent）联盟成员突破 150 家。
+
+智能体赛道已经从"谁家模型更强"切换到"谁的协议能跑通"。
+
+## 一、问题：Agent 为什么要协议
+
+Agent 和传统 API 的根本差异在于"自主性"。一个真正的 Agent 会在运行时决定调用哪些工具、调用几次、组合方式是什么。如果每个 Agent 都用自己的私有协议对接每个工具，集成成本会指数级爆炸。
+
+MCP 给出的答案是：**把"模型-工具"这一对关系标准化**。它定义了一套 JSON-RPC 风格的接口，让任何模型客户端（Claude Desktop、Cursor、Cline）都能用统一方式调用任何暴露成 MCP server 的工具（GitHub、PostgreSQL、Playwright）。
+
+实际收益是直接的。开发者不用再为每个 Agent 框架写一套适配器：
+
+```python
+# 任何支持 MCP 的客户端，都可以这样接入 GitHub
+from mcp import Client
+
+async with Client("stdio", ["npx", "-y", "@modelcontextprotocol/server-github"]) as c:
+    tools = await c.list_tools()
+    result = await c.call_tool("create_issue", {
+        "owner": "anthropics",
+        "repo": "mcp",
+        "title": "Test from MCP client",
+        "body": "Posted via MCP, not the GitHub REST API"
+    })
+```
+
+## 二、三大协议的定位差异
+
+到 2026 年 6 月，Agent 协议战场已经清晰分成三块。
+
+### 2.1 MCP：模型-工具层的标准
+
+- 维护方：Anthropic（开源，Linux Foundation 托管中）
+- 核心场景：单个 Agent 调用外部工具、数据源
+- 典型组合：Claude Desktop + 本地 MCP server、Cursor + GitHub MCP
+- 协议风格：JSON-RPC 2.0 over stdio / SSE / Streamable HTTP
+
+MCP 不解决"两个 Agent 怎么聊"。它的边界是模型边界：一个 LLM 进程加上一组它能调用的资源。
+
+### 2.2 A2A：智能体之间的协作协议
+
+- 维护方：Google + Linux Foundation
+- 核心场景：跨厂商、跨框架的 Agent 互操作
+- 当前规模：150+ 成员，包括 AWS、Atlassian、Salesforce、ServiceNow、LangChain、Cohere
+- 协议风格：基于 HTTP + JSON-RPC，引入 Agent Card（智能体名片）做能力发现
+
+A2A 解决的是另一个问题。当订单查询 Agent 需要把工单转交给物流 Agent，物流 Agent 又要调用支付 Agent 的时候，三者之间靠什么交换上下文、状态和能力声明。A2A 的 Agent Card 本质上是一个 `.well-known/agent.json`，让任何 Agent 都能通过网络发现另一个 Agent 的能力。
+
+### 2.3 ACP：企业级寻址与会话管理
+
+- 维护方：IBM（Linux Foundation 联合治理）
+- 核心场景：企业内多 Agent 编排、会话状态、权限隔离
+- 当前进展：2026 年 5 月发布 v0.3，引入命名空间与会话 ID 体系
+- 协议风格：REST + Webhook，偏向传统企业集成模式
+
+ACP 在三家里最"老派"。它没有采用 JSON-RPC，而是把 HTTP REST 当成主干，Agent 之间靠 webhook 推送异步事件。这套设计在企业内部落地阻力最小，因为运维、安全审计、网络隔离都按现有 IT 架构走。
+
+## 三、协议之间的张力
+
+三套协议不是简单的并列关系，它们对"Agent 是什么"这件事有完全不同的假设。
+
+| 维度 | MCP | A2A | ACP |
+|------|-----|-----|-----|
+| 主语 | 模型 | 智能体 | 智能体 |
+| 通信对象 | 工具/数据 | 另一个智能体 | 另一个智能体 |
+| 状态管理 | 无状态调用 | 会话 ID | 命名空间 + 会话 ID |
+| 鉴权模型 | OAuth 2.1 | OAuth 2.1 + mTLS | OAuth 2.1 + 企业 SSO |
+| 典型延迟 | 毫秒级 | 秒到分钟 | 秒到小时 |
+| 落地阻力 | 低 | 中 | 低（企业 IT 友好） |
+
+实际项目中三者经常并存。Cursor 通过 MCP 读 GitHub（模型-工具），两个 Claude Code 会话之间通过 A2A 交换上下文（智能体-智能体），公司内部的工单系统通过 ACP 接收异步回调（企业集成）。
+
+## 四、协议战对开发者的直接影响
+
+第一，**工具集成的边际成本趋近于零**。只要工具方暴露一个 MCP server，前端不管换 Cursor、Claude Desktop 还是自研 Agent 都能直接用。
+
+第二，**Agent 间调用开始有"路由表"概念**。类似 DNS，A2A 联盟正在推动 AgentCard 的标准发现机制，预计 2026 年底会出现第一批公共 Agent 目录服务。
+
+第三，**调试工具开始分层**。MCP 有官方的 [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector)，A2A 刚发布 [a2a-inspector](https://github.com/a2a-mcp-extensions/a2a-inspector)。Agent 调试不再只是看 prompt 模板，而是看协议层的消息流。
+
+## 五、几个值得关注的工程问题
+
+1. **Token 膨胀**。A2A 的 Agent Card 描述可能长达几 KB，每次握手都要传一次。在高频协作场景下，握手成本可能高于实际任务成本。
+
+2. **鉴权传递**。MCP 工具调用链可能是 A → Agent → B Agent → 工具。当 B Agent 拿到的 token 是 A 的用户 token，权限边界开始模糊。OAuth 2.1 的 Token Exchange 草案（RFC 8693）正在被三套协议同时引入。
+
+3. **协议升级兼容性**。MCP 在 2025 年 11 月从 SSE 切换到 Streamable HTTP，老的 Python SDK 在 0.5.x 之后不兼容。A2A 至今没发过 1.0，生产环境用 v0.x 风险自负。
+
+## 六、接下来一年会看到什么
+
+- **MCP 1.0 正式版**：预计 2026 年 Q3，解决 Streamable HTTP 的会话恢复问题
+- **A2A 联盟分叉风险**：Salesforce 和 ServiceNow 都在推自己的扩展字段，标准化进程会持续博弈
+- **ACP 在金融和制造行业落地**：IBM 的销售路径决定 ACP 会先在受监管行业扎根
+
+对开发者来说，最务实的策略是：**先掌握 MCP 工具开发**（门槛低、生态完整），再用 A2A 做 Agent 间的小规模试验（多观察 v0.x 的变更），ACP 等到企业项目真要落地再学。
+
+协议之争的最终赢家，不取决于哪个技术委员会更强，而取决于谁的 SDK 先在生产环境跑满 6 个月不出事故。
+
+---
+
+**参考资料**：
+
+- [MCP 官方文档（Model Context Protocol）](https://modelcontextprotocol.io/)
+- [Google A2A 协议仓库（a2a-protocol）](https://github.com/a2a-mcp-extensions/a2a-inspector)
+- [IBM ACP 草案（agentcommunicationprotocol）](https://github.com/orgs/agentcommunicationprotocol)
+- 财联社 2026-05-23：[上线即限流，AI 智能体开启爆发式增长](https://www.cls.cn/detail/2039837)
