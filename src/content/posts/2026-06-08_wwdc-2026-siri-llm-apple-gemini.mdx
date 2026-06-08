@@ -1,0 +1,65 @@
+---
+title: "WWDC 2026 前瞻：Siri 2.0 抛弃规则引擎，全面转向 LLM 架构"
+description: "WWDC 2026 将在北京时间 6 月 9 日凌晨 1 点开幕。Siri 改用大模型架构，新增屏幕感知与跨 App 任务编排能力，背后是 Apple 与 Google Gemini 的算力合作。对普通开发者来说，最大的变化是 SiriKit 走向边缘化。"
+image: "https://images.unsplash.com/photo-1551808525-51a94da548ce?w=1200"
+createdAt: "2026-06-08"
+draft: false
+tags:
+  - "AI"
+  - "Apple"
+  - "WWDC"
+  - "Siri"
+  - "2026"
+---
+
+北京时间 2026 年 6 月 9 日凌晨 1 点，WWDC 2026 Keynote 准时开场。这是 Apple 把 WWDC 主题从「software engineering」切到「AI engineering」的第二年，也是 Siri 第一次从规则引擎整体迁移到 LLM 架构。
+
+最关键的数字不是 iOS 27 带来了多少新功能，而是 **Siri 2.0 的对话能力第一次追上了 2023 年的 ChatGPT**。这个看起来简单的一句话，背后是 Apple 三年没动的语音助手栈的整体重写。
+
+## 一、Siri 的旧问题：规则引擎扛不住自然语言
+
+老的 Siri 架构，本质上是 intent classification + slot filling + 一堆手写的对话状态机。开发者要接 Siri，必须先在 SiriKit 里注册 `INIntent` 子类、定义参数类型、处理授权流程。代价是：
+
+- **冷启动慢**：每个 domain 都要单独建模，Apple 几年没扩到几个新场景
+- **自然语言理解弱**：用户说一句「帮我把昨天那张沙滩照片发给我妈」，Siri 大概率只识别出「发照片」
+- **跨 App 无解**：触达第三方 App 必须先建 Shortcut，无法直接表达意图
+
+新架构把这套推倒重来。Siri 2.0 直接挂在 Apple Intelligence 的 LLM 后端，前端只做语音识别和合成，所有 NLU 走模型推理。
+
+## 二、Siri 2.0 的三个核心能力
+
+从彭博、The Information 以及 Apple 官方释出的预告里，能拼出 Siri 2.0 的三个真正能用的能力：
+
+**第一，屏幕感知（Screen Awareness）**。Siri 可以读取当前 App 的内容并直接执行后续动作。开发者要做的不是写新的 Intent，而是在 App 里把可操作元素标注成语义化控件。Apple 给的新 API 是 `AppIntents` 框架的扩展，模型可以读 App 暴露的 `Intent` 元数据，再决定调用谁。
+
+**第二，跨 App 任务编排（Cross-App Task Chaining）**。Siri 不再是一个 domain 的 helper，而是一个 orchestrator。比如「帮我在 Notion 里建一个今天会议纪要的模板，填上刚才 Safari 里那篇文章的标题」——这种多步、有依赖、带状态的任务，规则引擎做不了，LLM 才能做。
+
+**第三，本地 + 私有云的分流**。Apple 把这套架构叫做 Private Cloud Compute（PCC）。小任务在 Neural Engine 跑端侧模型（传闻是 3B 参数的专用模型），大任务走 PCC。**即使背后调用了 Google Gemini，数据流也只在 Apple 自家芯片上跑，Google 拿不到任何用户数据，也不能用这些数据训练**。
+
+这个分工对开发者来说意味着：写 AppIntent 的时候要明确标注「这个操作能容忍多少延迟」「需要多大上下文」，系统会决定本地还是云端。
+
+## 三、Apple 与 Google 的算力合作到底怎么回事
+
+这是 WWDC 2026 预告里最被外媒反复讨论的细节。Bloomberg 报道 Apple 已经在用 Google Gemini 来训练 Apple Intelligence 的部分子模块，**算力规模超过 1.2 EFLOPS**。
+
+但合作深度仅限训练阶段，**推理阶段完全在 Apple 自己的 PCC 集群上跑**。Apple 不愿意像 Samsung 那样把云端 AI 能力拱手让给 Gemini，担心一旦用户数据流向 Google，监管和品牌都会出问题。
+
+这个边界划得很 Apple：算力买你的，模型层我自己训，推理我自己跑，数据不外流。
+
+## 四、对开发者的实际影响
+
+如果你是 iOS 开发者，WWDC 2026 之后的工作流会有三个变化：
+
+1. **SiriKit 退役**。Apple 已经在 Swift 6 的迁移指南里预告，`INIntent` 会在 iOS 28 之后进入 deprecated。新入口是 `AppIntents` + `AppEntity`，写法和 SwiftUI 的 `@Observable` 类似。
+2. **Shortcuts 从 App 变系统组件**。Shortcuts 不再是用户手动编排的脚本，而是模型自动调度的能力图谱。开发者提供 capability，系统决定怎么用。
+3. **设备门槛拉高**。iPhone 13 可以升 iOS 27，但 **跑不了 Siri 2.0 也用不了 Apple Intelligence**——硬件门槛是 iPhone 15 Pro 及以上，原因是 8GB 内存 + A17 Pro 的 Neural Engine 才能跑得动端侧 3B 模型。
+
+## 五、WWDC 2026 不会讲但值得关注的事
+
+公开预告没怎么提、但对行业有结构性影响的事，至少有三件：
+
+- **visionOS 27 才是真正的 LLM 载体**。Vision Pro 的双 M5 + R2 协处理器是为「永远在线的 AI 助手」设计的硬件形态，WWDC 大概率会演示 visionOS 27 的 contextual AI
+- **macOS 27 的本地模型市场**。传闻 Apple 要在 macOS 27 推出官方模型管理 API，第三方模型（Llama、Mistral、Qwen）可以走 Mac App Store 分发。这对端侧 LLM 玩家是个大利好
+- **Xcode 27 集成 Claude 和 GPT-5.5**。Swift Assist 升级为 Xcode Agent，可以调用 Claude Opus 4.8 或 GPT-5.5 做长流程重构
+
+**6 月 9 日凌晨 1 点**，答案揭晓。但对开发者来说，WWDC 2026 真正的信号不是 Siri 变聪明了，而是 **Apple 的整个软件栈正在为「LLM-first」重新设计**。这个转向，比任何一个具体功能都值得认真对待。

@@ -1,0 +1,87 @@
+---
+title: "Claude Opus 4.8 发布：SWE-Bench Pro 69.2%，Dynamic Workflows 让百个 Agent 并行"
+description: "Anthropic 5 月 28 日发布 Claude Opus 4.8。SWE-Bench Pro 69.2%、GDPval-AA 领先 Gemini 3.1 Pro 576 分、Dynamic Workflows 支持单会话内并行数百个 subagent。未报告代码缺陷率下降 4 倍，价格保持 5 美元每百万 token 不变。"
+image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200"
+createdAt: "2026-06-08"
+draft: false
+tags:
+  - "AI"
+  - "Claude"
+  - "Anthropic"
+  - "Agent"
+  - "2026"
+---
+
+2026 年 5 月 28 日，Anthropic 一次甩出三件东西：Claude Opus 4.8 模型本体、Claude Code 的 Dynamic Workflows、claude.ai 全计划的 Effort 调控 UI。**价格没变**：输入 5 美元、输出 25 美元每百万 token。和 4.7 完全一样。
+
+但数字是另一回事。**SWE-Bench Pro 从 64.3% 跳到 69.2%，超过 GPT-5.5 的 58.6% 和 Gemini 3.1 Pro 的 54.2%**。在衡量真实知识工作价值的 GDPval-AA 基准上，Opus 4.8 比 Gemini 3.1 Pro 高出 576 分，是 Anthropic 公布过的所有基准里差距最大的一组。
+
+## 一、4.8 真正的杀手锏不是分数
+
+跑分霸榜是预期内的事，**真正值得关注的是 Dynamic Workflows**。
+
+这个功能的核心是：Claude Code 在一个会话里可以**动态派生数百个 subagent，每个跑独立的子任务，最后汇总**。Anthropic 公布的典型工作流是这样的：
+
+1. 主 agent 接收一个大型重构任务，比如「把整个 monorepo 从 JavaScript 迁到 TypeScript」
+2. 主 agent 把仓库拆成 200 个文件级子任务
+3. 每个 subagent 在独立 worktree 里改文件、跑测试、修 lint
+4. 主 agent 持续 polling 状态，处理冲突，合并结果
+5. 全程人类可以随时介入、修改、暂停
+
+这不是简单的并发调用，而是 **Anthropic 第一次把 Agent Mesh 做成了产品功能**。Cursor 的 Michael Truell 在评测里说：同样的智力水平，Opus 4.8 用的步骤更少，意味着每任务的 token 成本下降。**Cognition 的 Scott Wu 评价更直接**：4.8 修复了 4.7 的注释冗长和工具调用问题。
+
+## 二、四模型横评：Opus 4.8 的真实位置
+
+为了不把 4.8 神化，Vellum 和 Anthropic 的 system card 把四款前沿模型放在同一张表里。**关键数据如下**（Opus 4.8 取 max effort、adaptive thinking、5 次平均）：
+
+| 基准 | Opus 4.8 | GPT-5.5 | Gemini 3.1 Pro | Opus 4.7 |
+|------|----------|---------|----------------|----------|
+| SWE-Bench Pro | **69.2%** | 58.6 | 54.2 | 64.3 |
+| SWE-Bench Verified | **88.6%** | - | 80.6 | 87.6 |
+| Terminal-Bench 2.1 | 74.6 | **78.2** (Terminus-2) / 83.4 (Codex CLI) | 70.3 | 66.1 |
+| HLE（带工具） | **57.9%** | 52.2 | 51.4 | 54.7 |
+| GPQA Diamond | 93.6 | - | **94.3** | 94.2 |
+| GDPval-AA (ELO) | **1890** | 1769 | 1314 | 1753 |
+| OSWorld-Verified（计算机使用） | **83.4%** | 78.7 | 76.2 | 82.8 |
+| USAMO 2026（数学奥赛） | **96.7%** | - | - | 69.3 |
+| GraphWalks BFS 1M（长上下文） | **68.1%** | 45.4 | - | 40.3 |
+
+**几个值得划重点的差异**：
+
+- **Terminal-Bench 2.1 上 GPT-5.5 领先**，但要注意 OpenAI 的 83.4% 是用自家 Codex CLI 跑出来的，换到公开的 Terminus-2 harness 是 78.2%，Opus 4.8 74.6% 反而差距更小
+- **GPQA Diamond 已经饱和**，Opus 4.8（93.6）比 4.7（94.2）还低 0.6 分，属于统计噪声
+- **多语言任务**，Opus 4.8 仍然落后于 Gemini 3.1 Pro 和 GPT-5.5，Anthropic 自己在 system card 里承认了
+- **长上下文推理**是 4.8 最大的亮点，GraphWalks BFS 1M 从 40.3 跳到 68.1，对 Agent 处理百万级 token 仓库是质变
+
+## 三、诚实代码：4.8 真正改观的指标
+
+数字之外，**4.8 真正让企业用户想换模型的原因是诚实度**。Anthropic 在 system card 里第一次公开了一套代码诚实度评估体系，4.8 的表现是降维打击：
+
+- **未报告代码缺陷率**：4.8 比 4.7 **低 4 倍**。这意味着 4.8 写完代码后，不会把明明存在的 bug 静默吞掉
+- **无批判地报告有缺陷结果**：4.8 拿到 0%，**是 Claude 系列第一个跑出零分的模型**，4.7 是 25%
+- **偷懒式调查**：4.8 0%，4.7 25%
+- **过度自信**：比 4.7 改善 10 倍以上
+- **事实幻觉**：在 6 个模型对比里，4.8 错误率最低，**主要靠不知道就说不而不是编**
+
+对 Agent 场景，**这组数据比任何 benchmark 都重要**。Agent 跑长流程最怕的不是不够聪明，而是在中间环节悄悄把问题藏起来。4.8 的诚实度改善，意味着可以放心让它跑几百步的工作流而不用每步都人工 review。
+
+## 四、Code with Claude SF 上还公布了什么
+
+5 月 6 日 Code with Claude SF 巡演第一站，Anthropic 同步公布了三件运营层面的大事：
+
+1. **Claude Code 速率限制翻倍**：Pro、Max、Team、Enterprise 全部 5 小时窗口限制翻倍，Pro 和 Max 高峰节流取消
+2. **Opus 4.8 同步登陆 Claude Code**，按 Effort 控制 token 消耗
+3. **Anthropic 与 SpaceX 签下 300+ 兆瓦算力合作**。这个数字比任何新功能都让竞争对手紧张——300 MW 是 H100 集群的大约 30 万张卡
+
+**Mythos 级别模型已经在 Project Glasswing 框架下向网络安全客户定向开放**，传闻 6 月内对所有客户解禁。Anthropic 的 roadmap 透露 Mythos 模型智力水平显著高于 Opus 4.8，但价格也高得多。
+
+## 五、对开发者的实际选择建议
+
+4.8 发布之后，模型选型的边界更清晰了：
+
+- **跑长流程 Agent（>100 步、跨多个文件、需要诚实度）**：Opus 4.8 Dynamic Workflows 是当前唯一稳的选择
+- **Terminal 工具调用密集型任务**：GPT-5.5 + Codex CLI 仍是首选
+- **多语言 / 多模态场景**：Gemini 3.1 Pro 仍然领先 Opus
+- **预算敏感的小型 Agent**：Opus 4.8 配合 Effort=HIGH 跑出来的效果，已经不输 4.7 max effort，但 token 消耗更低
+
+**4.8 不是更强的模型，而是更能被信任的模型**。这恰恰是 Agent 时代最稀缺的能力。
