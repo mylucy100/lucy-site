@@ -1,0 +1,204 @@
+---
+title: "NVIDIA Cosmos 3 开源：全球首个全模态物理 AI 基础模型，机器人开发门槛断崖式下降"
+description: "英伟达 6 月 4 日台北 GTC 大会发布 Cosmos 3，6 月 5 日在 Hugging Face 全面开源。全球首个面向物理 AI 的开放全模态基础模型，同时支持文本、图像、视频、动作生成与物理推理，配套 Isaac、GR00T、Physical AI Data Factory。开发者用单张 H100 就能跑推理微调。"
+image: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1200"
+createdAt: "2026-06-09"
+draft: false
+tags:
+  - "AI"
+  - "NVIDIA"
+  - "Cosmos"
+  - "具身智能"
+  - "物理AI"
+  - "2026"
+---
+
+英伟达 6 月 4 日在台北 GTC 大会发布 Cosmos 3，**6 月 5 日起在 Hugging Face 全面开源模型权重、训练脚本、部署工具和数据集**。这是全球第一个完全开源的全模态物理 AI 基础模型——同时覆盖文本、图像、视频、环境声音和动作五个模态，并且原生支持物理推理。
+
+简单说：**Cosmos 3 不是一个视频生成模型，是一个「世界模型」**。它理解重力、摩擦、碰撞、液体流动这些物理规律，然后把这些规律用视频和动作轨迹表达出来。
+
+## 一、Cosmos 3 到底是什么：双 Transformer 架构
+
+Cosmos 3 采用**双模块架构**：
+
+```
+┌──────────────────────────────────────────────┐
+│                  Cosmos 3                     │
+│                                               │
+│  ┌─────────────────┐  ┌────────────────────┐  │
+│  │ Reasoning       │  │ Generative         │  │
+│  │ Transformer     │  │ Transformer        │  │
+│  │                 │  │                    │  │
+│  │ • 物体交互      │  │ • 视频生成         │  │
+│  │ • 运动轨迹      │──▶• 动作轨迹输出     │  │
+│  │ • 时空关系      │  │ • 环境声音         │  │
+│  └─────────────────┘  └────────────────────┘  │
+│                                               │
+│  输入：文本指令 / 图像 / 视频片段 / 动作序列   │
+│  输出：物理一致的视频 + 动作轨迹 + 推理解释    │
+└──────────────────────────────────────────────┘
+```
+
+- **Reasoning Transformer**：负责物理推理。给定一段视频或一组动作，它能预测接下来会发生什么——物体是否会被撞倒、液体是否会溢出、机器人手臂能不能抓稳。
+- **Generative Transformer**：在推理结果的基础上生成视频和动作轨迹。生成的内容不是「看起来像」，而是「物理上正确」。
+
+这两个模块可以单独使用，也可以联合推理。**对开发者来说，这意味着 Cosmos 3 既能当物理仿真器用，也能当数据增强器用，还能当机器人控制策略的 backbone 用**。
+
+## 二、为什么这件事比 Llama 3 / DeepSeek-V4 重要
+
+很多人会问：「大模型卷了一年，又来一个？」不一样。
+
+- **大语言模型**是对人类语言的统计建模。语言本身不遵守物理规律。
+- **视频生成模型**（Sora、Veo）是「看起来合理」的视频。钟摆可以倒着转，碰撞可以无视动量守恒。
+- **物理 AI 基础模型**必须遵守物理规律。视频和动作是物理规律的推论，不是统计模式的拟态。
+
+**Cosmos 3 是第一个把物理推理作为一等公民的全模态模型**。这意味着：
+
+1. **机器人训练数据不再稀缺**。传统机器人学习需要几十万条真实操作数据，收集成本极高。Cosmos 3 生成的视频天然带物理一致的动作轨迹，可以直接当训练数据。
+2. **自动驾驶仿真不再失真**。CARLA、Waymax 这些仿真器的手工建模可以退休了，Cosmos 3 在 latent space 里推演物理。
+3. **通用视觉智能体有了基础**。屏幕上「点击哪个按钮」这种决策，背后是「按钮被按下去会发生什么」的物理推理。
+
+英伟达这次开源的是**全套**：模型权重、训练代码、推理代码、数据集、Isaac Sim 集成、GR00T 基础模型、Physical AI Data Factory 蓝图。**不是放出权重让社区猜，是放出整条 pipeline**。
+
+## 三、开发者怎么用 Cosmos 3：三种主流路径
+
+### 路径 1：直接生成合成数据
+
+最小可运行代码：
+
+```python
+from cosmos3 import Cosmos3Generator
+
+model = Cosmos3Generator.from_pretrained("nvidia/Cosmos-3-7B")
+model.cuda()
+
+# 用自然语言生成物理一致的视频
+video = model.generate(
+    prompt="A robotic arm picks up a red cup and places it on a shelf",
+    num_frames=120,
+    fps=24,
+    physics_constraints=["gravity", "rigid_body"]
+)
+video.save("pickup_demo.mp4")
+```
+
+输出是物理一致的视频 + 同步的动作轨迹（机器人每个关节的角度序列）。这个 `.mp4` 加上动作轨迹，**就是一条完整的训练样本**。
+
+### 路径 2：在 Cosmos 3 之上做后训练
+
+英伟达公开了 Post-Train 流程，目标是把它训练成**前向动力学模型（forward dynamics model）**：
+
+```python
+from cosmos3 import Cosmos3ForAction
+from cosmos3.data import RobotActionDataset
+
+# 加载你自己的机器人轨迹数据
+dataset = RobotActionDataset(
+    trajectories="my_robot_demos/",
+    modalities=["video", "joint_angles", "gripper_state"]
+)
+
+# 用 Cosmos 3 做后训练
+model = Cosmos3ForAction.from_pretrained("nvidia/Cosmos-3-7B-Base")
+model.post_train(
+    dataset=dataset,
+    epochs=10,
+    learning_rate=2e-5,
+    objective="next_frame_prediction"
+)
+model.save_pretrained("./my_robot_world_model")
+```
+
+后训练出来的模型可以预测「给定当前画面 + 当前动作，下一帧画面是什么」。这就是世界模型的核心能力。
+
+### 路径 3：和 GR00T 配，做端到端机器人策略
+
+```python
+from cosmos3 import Cosmos3Reasoner
+from groot import GR00TPolicy
+
+# 物理推理器
+reasoner = Cosmos3Reasoner.from_pretrained("nvidia/Cosmos-3-Reasoner")
+
+# GR00T 通用机器人基础模型
+policy = GR00TPolicy.from_pretrained("nvidia/GR00T-N1-3B")
+
+# 让 Cosmos 3 评估 GR00T 的动作提议是否物理合理
+def safe_action(rgb_obs, proprio):
+    proposed_action = policy(rgb_obs, proprio)
+    
+    # 用 Cosmos 3 模拟这个动作会发生什么
+    predicted_next_frame = reasoner.simulate(rgb_obs, proposed_action)
+    
+    # 物理一致性检查
+    if reasoner.is_physically_consistent(predicted_next_frame):
+        return proposed_action
+    else:
+        return policy.get_safe_fallback(rgb_obs, proprio)
+```
+
+**这套组合让机器人策略从「试错」变成「预测+验证」**。GR00T 给出动作，Cosmos 3 在 latent space 预演这个动作的后果，物理一致才执行。
+
+## 四、硬件门槛：单卡 H100 就能起步
+
+Cosmos 3 提供了三种规格：
+
+| 规格 | 参数量 | 推理显存 | 后训练显存 | 适用场景 |
+|------|--------|----------|------------|----------|
+| Cosmos-3-1B | 1B | 8 GB | 24 GB | 边缘设备、教学 |
+| Cosmos-3-7B | 7B | 24 GB | 80 GB | 通用研究 |
+| Cosmos-3-13B | 13B | 48 GB | 160 GB | 数据中心训练 |
+
+**单张 H100 就能跑 Cosmos-3-7B 的推理和轻量后训练**。不需要 DGX，不需要 NVLink，普通的 8 卡服务器就能做完整的 post-train。
+
+这对中小团队和个人开发者是真正的平权：**2024 年做物理 AI 研究需要百万级设备投入，2026 年只需要一张 H100 加 Hugging Face 账号**。
+
+## 五、Cosmos 3 解决的真问题：数据稀缺
+
+具身智能卡脖子卡在哪里？不是算法，是**数据**。
+
+- 真实机器人操作数据：一条轨迹采集要 5-15 分钟，标注成本 $50-200
+- 自动驾驶 corner case：百万公里才出一个，模拟器里造出来的又不真实
+- 工业机器人迁移：换一台机械臂就要重新采集所有数据
+
+**Cosmos 3 的合成数据是物理一致的**。这意味着：
+
+1. 生成的视频 + 动作轨迹，可以**直接喂给下游策略模型**做训练
+2. 可以**针对特定 corner case 定向生成**（「卡车在暴雨中变道」）
+3. 迁移到新硬件时，**世界模型本身不需要重训**，只需要少量真实数据 fine-tune 策略层
+
+英伟达配套开源的 **Physical AI Data Factory Blueprint** 是数据生成的工程模板：从 prompt 库、轨迹约束、到质量验证、到下游训练 pipeline，全套都给了。
+
+## 六、对生态的直接冲击
+
+1. **仿真器赛道重洗牌**。CARLA、LGSVL 这些传统自动驾驶仿真器的中期前景变暗。物理一致的世界模型可以直接替代规则式仿真。
+2. **机器人基础模型竞争升级**。Google DeepMind 的 RT-2、RoboCat 之后，Cosmos 3 把开放权重的门槛从「论文」拉到「可部署」。
+3. **英伟达从 GPU 厂商升级为机器人时代的基础设施**。CUDA 当年把英伟达锁定为 AI 训练的事实标准，Cosmos 3 + Isaac 组合在锁定机器人时代的事实标准。
+4. **中国团队的窗口期**。Cosmos 3 开源权重 + Hugging Face 镜像，国内机器人公司可以在 1-2 个月内做出第一个 demo。这个窗口期大约 6-9 个月。
+
+## 七、本月要做什么
+
+如果你是机器人 / 自动驾驶 / 工业视觉方向的开发者，下面是 6 月可以动手的清单：
+
+```bash
+# 1. 拉模型
+git clone https://huggingface.co/nvidia/Cosmos-3-7B
+cd Cosmos-3-7B
+
+# 2. 装依赖
+pip install cosmos3 torch>=2.6 transformers>=4.52
+
+# 3. 跑最小 demo
+python examples/generate_physics_video.py \
+    --prompt "A drone hovers in a wind tunnel" \
+    --output drone_demo.mp4
+
+# 4. 接入你自己的数据
+python examples/post_train.py \
+    --dataset /path/to/your/robot/demos \
+    --output ./my_post_trained_cosmos
+```
+
+**英伟达这次是真的把物理 AI 拉到了和 LLM 同等的开放程度**。一年前你需要一个 NVIDIA 销售对接、一份商业合同、一台 DGX。现在你只需要一张 H100 和一个 Hugging Face 账号。
+
+这是 2026 年开源 AI 领域最重要的一步棋。Cosmos 3 不是英伟达的 Cosmos 3，是整个机器人社区的 Cosmos 3。
