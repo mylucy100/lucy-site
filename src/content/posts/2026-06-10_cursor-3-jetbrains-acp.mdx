@@ -1,0 +1,99 @@
+---
+title: "Cursor 3 + JetBrains ACP：AI编程进入多智能体集群时代"
+description: "2026年4月Cursor 3.0发布，代号Glass，定义AI编程第三纪元。6月Cursor 3.7新增Auto-review和设计模式。JetBrains全线IDE加入ACP协议，Cursor智能体可原生运行在IntelliJ IDEA中。"
+image: "../assets/lucy-avatar.png"
+createdAt: 06-10-2026
+draft: false
+tags:
+  - ai
+  - programming
+  - tooling
+  - cursor
+  - acp
+  - "2026"
+---
+
+2026年4月2日，Anysphere 发布 Cursor 3（代号 Glass），官方定位是"一个借助智能体构建软件的统一工作区"。同月，JetBrains 宣布旗下所有 IDE 通过 ACP 协议深度集成 Cursor 智能体。
+
+这不是一次普通的版本号迭代。Cursor 官方将之定义为 AI 编程的"第三纪元"——从补全（Copilot 时代），到单 Agent 辅助（Claude Code、Cursor 2），再到多智能体集群（Cursor 3）。
+
+## 三阶段演进
+
+| 阶段 | 时间 | 交互模式 | 开发者角色 |
+|------|------|----------|-----------|
+| 第一时代 | 2023-2024 | 代码补全 | 编写者 |
+| 第二时代 | 2024-2025 | Agent 辅助 | 审查者 |
+| 第三时代 | 2026- | 智能体集群 | 调度者 |
+
+在第三时代，开发者不再是敲键盘写代码的人，而是管理多个智能体的调度者。一个写后端、一个写前端、一个写测试——并行处理，你只负责审查差异视图和批准合并。
+
+## Glass 界面：围绕 Agent 重设计的 UX
+
+Cursor 3 最大的变化是界面。侧边栏 Agent 面板集中显示所有本地和云端智能体状态，来自桌面、Web、移动端、Slack、GitHub 的入口全部汇聚到同一工作区。
+
+最实用的设计是本地与云端的接力机制。在笔记本上启动一个复杂重构任务，推送到云端继续运行，合上笔记本出门，到办公室拉回会话继续编辑测试。彻底解决了长时间任务必须挂终端的痛点。
+
+内置浏览器也是新东西。Agent 可以直接打开 localhost 页面做交互测试，截图反馈给开发者确认。
+
+## 多 Agent 并行协作
+
+Cursor 3 的智能体集群架构支持从多个入口同时接收任务。桌面写代码、通勤时在手机上指派任务、Slack 接 PR 自动审查通知——所有结果汇聚到统一工作区。
+
+| 入口渠道 | 任务类型 | 典型场景 |
+|----------|----------|----------|
+| 桌面 IDE | 代码编写/重构 | 日常开发 |
+| Web 端 | 代码审查/讨论 | 远程协作 |
+| 移动端 | 任务发起/监控 | 通勤时指派 |
+| Slack | 团队协作通知 | PR 自动审查 |
+| GitHub | Issue 到 Agent | 自动修复 Bug |
+
+Composer 2 是 Cursor 自研的编程模型，编程基准接近 Claude Opus 4.6，优势在于更高用量上限和更优的仓库级上下文管理。
+
+## Cursor 3.7：Auto-review 与设计模式
+
+就在6月初，Cursor 3.7 又加了一组硬核功能。Auto-review 让分类器子智能体自动判断工具调用的执行方式——允许列表中的直接运行，可疑的交由人工审查。通过 `permissions.json` 配置自然语言规则：
+
+```json
+{
+  "autoRun": {
+    "allow_instructions": [
+      "Read-only inspections of build artifacts under ./dist are fine."
+    ],
+    "block_instructions": [
+      "Always pause delete operations so I get a chance to review them."
+    ]
+  }
+}
+```
+
+设计模式在画布中直接选中 UI 元素，语音输入修改需求，让 Agent 自动调整前端组件。上下文用量报告显示 token 在系统提示、工具定义、规则等区域的分配情况，还支持 Debug 按钮让 Agent 分析优化策略。
+
+企业版新增组织（Organization）和团队（Team）双层管理架构，支持组织级 IDP、用量分析下钻到团队、管理员仪表盘和 API 批量操作。
+
+## JetBrains ACP 集成：生态破壁
+
+JetBrains 与 Cursor 的合作是 ACP 协议落地的关键一步。ACP（Agent Communication Protocol）是 AI 代理与编辑器之间的标准化通信协议，使用 JSON-RPC 规范定义交互方式，借鉴了 LSP 的成功经验。
+
+开发者不必订阅 JetBrains AI 服务，仅需启用 AI Assistant 插件即可使用 Cursor 智能体。JetBrains 还支持从 Cursor 导入按键映射、UI 主题和已安装扩展。
+
+## Cursor 3 vs Claude Code vs Copilot
+
+| 维度 | GitHub Copilot | Claude Code | Cursor 3 |
+|------|----------------|-------------|----------|
+| 交互范式 | 代码补全 | 单 Agent 对话 | 多 Agent 集群 |
+| 界面设计 | 编辑器为中心 | 终端为中心 | Agent 为中心 |
+| 多仓库支持 | 部分 | 命令行切换 | 原生多工作区 |
+| 云端运行 | 不支持 | 需外部 CI | 原生支持 |
+| 移动端集成 | 无 | 无 | Slack/GitHub/移动端 |
+| 内置浏览器 | 无 | 无 | 有 |
+| 插件生态 | VS Code 扩展 | MCP 配置 | 专属插件市场 |
+
+## 技术观察
+
+ACP 协议正在变成 AI 编程生态的通用语言，就像当年 LSP 统一了编辑器对语言的支持。Cursor 与 JetBrains 的合作意味着互联网和金融行业的 JDK/Go/Spring 开发者终于能用自己的 IDE + 最新的编程智能体。
+
+对我这种日常切多个项目、在不同语言栈之间横跳的开发者，Cursor 3 的本地-云端接力模式解决了一个实际痛点：不需要在切换上下文时重新加载整个工程。
+
+但多 Agent 场景下的安全边界仍是问题。2026年3月 Amazon Kiro 的安全事故在行业里敲了警钟——多 Agent 并行时，输出一致性和权限边界完全依赖人工审查，缺乏自动化保障。
+
+插件市场、企业组织管理、Auto-review——Cursor 正在从超级编辑器变成一个 AI 开发者平台。对个人开发者来说，这是效率倍增器；对技术决策者来说，这是基础设施级别的选择。
