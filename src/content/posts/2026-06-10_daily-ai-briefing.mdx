@@ -1,0 +1,64 @@
+---
+title: "2026年6月10日 AI日报：MiniMax M3正式发布、扣子Coze 3.0上线、Hermes Agent桌面端亮相"
+description: "今日AI圈密集发布：MiniMax M3正式上线（1M上下文、开源权重）；扣子Coze 3.0支持多Agent协作与第三方Agent接入；Hermes Agent桌面端v0.15.2发布；OpenAI推出GPT-Rosalind 5.5。三大板块重点速览。"
+image: "https://lucy.suiyan.cc/assets/images/2026/ai-daily-briefing.jpg"
+createdAt: "2026-06-10"
+draft: false
+tags:
+  - AI日报
+  - MiniMax
+  - Coze
+  - Hermes Agent
+  - OpenAI
+  - "2026"
+---
+
+## 大模型板块
+
+### MiniMax M3 正式发布：开源权重 + 1M上下文
+
+6月1日，MiniMax 正式上线 M3 大模型。最大的三个看点：
+
+**架构重构。** M3 自研稀疏注意力机制，通过 Index Branch 快速扫描上下文筛选关键 Token，再交 Sparse Branch 做精准计算。传统 Transformer 的 O(n²) 复杂度被压到原来的十分之一以下，1M 上下文的预填充速度提升了 9.7 倍，解码速度提升了 15.6 倍。
+
+**多模态原生。** 文本、图像、音频统一输入输出，不是外挂视觉模块，是架构级的原生多模态。
+
+**开源权重。** 和 K2 系列一样走开源路线，对社区友好。实测 SWE-Bench Pro 持平 GPT-5.5，属于开源阵营第一梯队。
+
+### OpenAI 发布 GPT-Rosalind 5.5
+
+6月3日，OpenAI 为 GPT-Rosalind 模型推出新能力。Rosalind 是 OpenAI 的生物防御专用模型序列，5.5 版本在分子建模和蛋白质结构预测上有显著提升。同时，Codex 更新为「适用于每个角色、工具与工作流程」的全新形态，并在 AWS 市场上线。
+
+### 阿里 Qwen3.7 系列发布
+
+5月20日阿里云峰会，Qwen3.7-Max-Preview（万亿参数）与 Qwen3.7-Plus-Preview 发布。核心突破是**全域思考模式（All-field Thinking）** —— 文本、图像、代码统一推理链。Agentic Coding 能力 SWE-bench Verified 72.3%，国产第一。推理成本压到 GPT-5.5 的 1/25。
+
+## 智能体板块
+
+### 扣子 Coze 3.0 上线：多 Agent 协作 + 第三方接入
+
+6月1日，字节跳动发布扣子 Coze 3.0。这次升级幅度不小：
+
+- **多人多 Agent 协作**：一人 + 多 Agent / 多人 + 多 Agent 灵活组合
+- **接入第三方 Agent**：直接对接 Claude Code、Codex CLI、OpenClaw 等本地 Agent
+- **行业模板**：自媒体、法律、金融、医疗等垂直场景的专家技能开箱即用
+
+这标志着扣子从「零代码 Bot 平台」进化为「Agent 原生协作操作系统」。
+
+### Hermes Agent v0.15.2 桌面端发布
+
+Nous Research 在 6月2日 发布 Hermes Agent 桌面端公测版（v0.15.2），原生支持 macOS、Windows、Linux。自 2月25日 开源以来不到 4 个月，GitHub 星标突破 18 万，是 2026 年增长最快的开源 Agent 框架。
+
+## 编程软件板块
+
+### Claude Code 创始人：编程已解决
+
+2026年5月红杉资本 AI Ascent 大会上，Claude Code 创建者 Boris Cherny 说了一句让全场沉默的话：「编程已经解决了。从去年10月开始，模型就能写 100% 的代码。」他本人从 2026 年初就没手写过一行代码，日均合并几十个 PR，用手机管理数百个 AI 智能体。
+
+### Trae 登顶中文 AI 编程工具榜
+
+字节跳动 Trae 在 2026 Q2 开发者调研中登顶榜首，代码生成准确率 98%，累计注册用户突破 600 万。三个模式（Chat、Agent、Batch）覆盖全场景，支持 Figma 设计稿一键转代码。中文场景下的提示词理解和注释准确率行业领先。
+
+### AI 编程工具生态分化
+
+2026年 AI 编程工具已形成清晰梯队分化：Trae/Cursor/Claude Code 第一梯队拼综合体验，而 CLI 原生工具（Qwen Code、OpenCode、Codex CLI）在特定场景（Git 工作流、CI 自动化）有不可替代的优势。
