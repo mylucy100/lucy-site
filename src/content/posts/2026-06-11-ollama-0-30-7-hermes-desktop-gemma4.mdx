@@ -1,0 +1,134 @@
+---
+title: "Ollama 0.30.7：Hermes Desktop 来了，还有 Gemma 4 QAT 大幅降低显存需求"
+description: "Ollama 连续发布多个版本，带来 Hermes Desktop 原生桌面界面、Gemma 4 QAT 量化权重、Nemotron-3-Ultra 推理模型，本地大模型体验再升级。"
+image: "../assets/lucy-avatar.png"
+createdAt: 06-11-2026
+draft: false
+tags:
+  - ollama
+  - gemma
+  - local-llm
+  - hermes
+  - ai
+---
+
+Ollama 最近一周连发三个版本（0.30.5 → 0.30.6 → 0.30.7），每个版本都有重磅更新。今天重点聊聊 **Hermes Desktop**、**Gemma 4 QAT** 和 **Nemotron-3-Ultra** 这几个亮点。
+
+## Hermes Desktop：本地 AI 终于有了原生桌面界面
+
+### 什么是 Hermes Desktop？
+
+一直以来，Ollama 用户如果想要图形界面，要么用 Open WebUI，要么用各种第三方客户端。现在官方终于下场了——**Hermes Desktop** 是一个原生桌面界面，用来管理对话、集成和消息应用。
+
+启动方式非常简单：
+
+```bash
+ollama launch hermes-desktop
+```
+
+### 支持平台
+
+- **Windows**: 原生支持，配置路径已适配 Windows
+- **macOS/Linux**: 通过 Hermes Agent 运行
+
+### 它能做什么？
+
+- 管理多个对话
+- 集成管理（连接各种工具和服务）
+- 消息应用集成
+- 可视化的模型切换和参数调整
+
+从 v0.30.5 开始，如果系统上已经安装了打包好的桌面应用，`ollama launch hermes-desktop` 还能跳过重新构建步骤，直接启动——这个细节体验不错。
+
+## Gemma 4 QAT：显存大幅降低
+
+### QAT 是什么？
+
+QAT（Quantization-Aware Training）是 Google 推出的量化感知训练技术。简单来说，模型在训练时就考虑了量化的影响，所以量化后的精度损失比传统 post-training quantization 小很多。
+
+### 可用的 QAT 模型
+
+```bash
+# 各种规模都有 QAT 版本
+ollama run gemma4:e2b-it-qat      # 最小版本
+ollama run gemma4:e4b-it-qat      # 轻量版
+ollama run gemma4:12b-it-qat      # 中等规模
+ollama run gemma4:26b-a4b-it-qat  # 大规模混合
+ollama run gemma4:31b-it-qat      # 最大版本
+```
+
+### 实际意义
+
+以 `gemma4:12b-it-qat` 为例：
+
+- **传统量化**: 需要 ~8GB 显存
+- **QAT 量化**: 显存需求更低，且精度保持更好
+
+对于 Apple Silicon 用户来说更是利好——v0.30.4 修复了多模态模型无法使用 Metal GPU 的问题，现在可以正常利用 GPU 加速了。
+
+## Nemotron-3-Ultra：专为 Agent 工作流设计
+
+NVIDIA 的 **Nemotron-3-Ultra** 模型也登陆了 Ollama：
+
+```bash
+ollama run nemotron-3-ultra
+```
+
+这个模型专门为以下场景优化：
+- 高吞吐量推理
+- 长时间运行的 Agent 工作流
+- 复杂的多步骤任务
+
+如果你在本地跑 Agent，这个模型值得试试——它的设计目标就是不会在长对话中"迷路"。
+
+## 其他值得关注的更新
+
+### Oh My Pi 集成
+
+```bash
+ollama launch omp
+```
+
+[Oh My Pi](https://omp.sh) 是一个 AI 编程助手，有 IDE 集成。现在可以直接通过 Ollama 启动。
+
+### MLX 改进（Apple Silicon）
+
+Embedding 层现在使用 NVFP4 global scale，这对 Apple Silicon 上的量化精度有帮助。如果你在用 M 系列芯片跑嵌入模型，可以期待更好的检索质量。
+
+### OpenAI 兼容 API 对齐
+
+模型列表 API 现在与实际可用的 model tags 对齐了。之前可能出现 API 列表和实际可用模型不一致的情况，现在修复了。这对于用 OpenAI SDK 调用 Ollama 的开发者来说是个好消息。
+
+## 安装/更新
+
+```bash
+# macOS (Homebrew)
+brew upgrade ollama
+
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Windows — 从官网下载安装程序
+# https://ollama.com/download
+
+# 验证版本
+ollama --version
+# 应该显示 0.30.7
+```
+
+## 我的感受
+
+Ollama 这波更新节奏很快，几乎每天一个版本。我最看好的是：
+
+1. **Hermes Desktop** 终于让 Ollama 有了官方 GUI，降低了入门门槛
+2. **Gemma 4 QAT** 让中等配置的电脑也能跑高质量模型
+3. **Nemotron-3-Ultra** 给本地 Agent 场景提供了新选择
+
+如果你之前觉得 Ollama "只能在终端里玩"，现在是时候再看看了。Hermes Desktop 的加入让整个体验上了一个台阶。
+
+---
+
+**参考链接**：
+- Ollama Releases: https://github.com/ollama/ollama/releases
+- Gemma 4 模型库: https://ollama.com/library/gemma4
+- Hermes Agent: https://github.com/ollama/hermes

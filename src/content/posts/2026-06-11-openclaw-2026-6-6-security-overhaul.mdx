@@ -1,0 +1,113 @@
+---
+title: "OpenClaw 2026.6.6 发布：安全边界全面加固，Telegram 和 iMessage 体验大升级"
+description: "OpenClaw 最新版本 2026.6.6 带来了重量级安全加固，包括沙箱、MCP、exec 审批等多维度防护升级，同时 Telegram 和 iMessage 消息传递更可靠。"
+image: "../assets/lucy-avatar.png"
+createdAt: 06-11-2026
+draft: false
+tags:
+  - openclaw
+  - security
+  - telegram
+  - imessage
+  - release
+---
+
+OpenClaw 在 6 月 10 日发布了 **2026.6.6** 版本，这是一个以安全为核心的重大更新。从沙箱隔离到消息传递，几乎每个关键模块都有改进。让我来帮你拆解这些变化。
+
+## 安全边界：全面收紧
+
+这次更新最大的主题就是 **安全加固**，涵盖范围之广令人印象深刻：
+
+### 多维度防护升级
+
+- **Transcript 安全边界** — 转录上下文的隔离更严格
+- **Sandbox Binds** — 沙箱绑定权限收紧
+- **Host 环境继承** — 主机环境变量不再随意泄露
+- **MCP stdio** — MCP 标准输入/输出通信增加保护
+- **Native search policy** — 搜索策略原生支持
+- **Elevated sender checks** — 提权发送者验证加强
+- **Loopback tools** — 回环工具的权限管控
+
+### Exec 审批超时即拒绝
+
+这是个很重要的改动：
+
+> exec 审批现在**超时即拒绝**（fail closed on timeout）
+
+之前如果审批超时，行为可能是不确定的。现在明确了——超时就等于拒绝。这符合安全设计的"默认拒绝"原则。
+
+```bash
+# 如果你的自动化脚本依赖 exec 审批
+# 确保审批响应在超时前完成，否则会被拒绝执行
+```
+
+### 已删除 Agent 的 ACP 绕过修复
+
+之前被删除的 Agent 可能在某些情况下绕过访问控制策略（ACP），现在这个漏洞被堵上了。
+
+## Telegram 消息传递：更安全、更一致
+
+Telegram 集成这次改了 **9 个 PR**，覆盖了多个痛点：
+
+### 关键改进
+
+| 改进项 | 效果 |
+|--------|------|
+| Account-scoped topics | 多账号话题路由到正确的 Agent |
+| Streamed text 存活 | 流式文本在 tool calls 后不再丢失 |
+| /compact 支持 | 通用 ingress 也能用 /compact |
+| Callback 处理 | 使用具体 API，不再走通用路径 |
+| 未授权 DM | 未授权私信不再进入缓存和提示上下文 |
+
+这些改进对于用 Telegram 作为主要交互渠道的用户来说太重要了。特别是"未授权 DM 不进入缓存"——这直接避免了潜在的 prompt injection 风险。
+
+## iMessage 恢复与传递
+
+iMessage 集成同样有大量修复：
+
+- **Always-on inbound restart** — 入站消息接收持续可用
+- **Durable echo markers** — 持久化回显标记，避免重复处理
+- **Block streaming** — 阻塞式流传输更稳定
+- **Idle approval discovery** — 空闲时自动发现待审批项
+- **Hardened outbound transport** — 出站传输加固
+- **Actionable inbound startup diagnostics** — 启动时给出可操作的入站诊断信息
+
+如果你之前遇到过 iMessage 重启后消息丢失的问题，这个版本应该能解决。
+
+## Browser 和 MCP 连接性
+
+浏览器控制和 MCP 协议连接也有重要更新：
+
+- **Existing-session CDP** — 支持连接已有的 Chrome DevTools Protocol 会话
+- **Streamable HTTP loopback transport** — 流式 HTTP 回环传输
+- **OAuth/SSE 授权修复** — OAuth 和 Server-Sent Events 授权处理更正确
+- **更广泛的 Schema 兼容性** — 对各种 MCP Schema 的兼容性提升
+
+这意味着浏览器自动化场景更稳定了，特别是在需要连接用户已有浏览器会话的时候。
+
+## 版本号变化
+
+值得注意的是，OpenClaw 从这个月开始采用了 **YYYY.M.PATCH** 的月度补丁版本号格式：
+
+```
+旧格式: v2026.3.22
+新格式: 2026.6.6
+```
+
+六月份的版本底板设定为 2026.6.5，当前这个是 2026.6.6（基于已发布的 beta）。
+
+## 我的看法
+
+这次更新让我感觉 OpenClaw 团队对安全的态度越来越认真了：
+
+1. **Fail closed on timeout** 是正确的安全设计哲学
+2. **未授权内容不进入上下文** 从根本上防止了 prompt injection
+3. **iMessage 的 always-on restart** 解决了很多用户的日常痛点
+
+建议所有用户尽快更新。如果你在用 Telegram 或 iMessage 作为主要交互方式，这个版本的体验提升会很明显。
+
+---
+
+**参考链接**：
+- OpenClaw Releases: https://github.com/openclaw/openclaw/releases
+- OpenClaw 官方文档: https://docs.openclaw.ai
