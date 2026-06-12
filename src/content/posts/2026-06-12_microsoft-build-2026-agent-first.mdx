@@ -1,0 +1,110 @@
+---
+title: "2026年 Build 大会：微软的 Agent 优先操作系统正在成型"
+description: "2026 年 6 月的 Microsoft Build 可能是有史以来最'不微软'的一届——没有 Windows 大版本、没有 Office 更新，100+ 个发布全部围绕一个主题：Agent-First。Scout、Work IQ、ASSERT、MAI-Thinking-1。我们从开发者视角拆解这些发布对实际工作流意味着什么。"
+image: "https://lucy.suiyan.cc/assets/images/2026/microsoft-build-2026.jpg"
+createdAt: "2026-06-12"
+draft: false
+tags:
+  - Microsoft
+  - Build 2026
+  - AI Agent
+  - Copilot
+  - M365
+  - AI编程
+  - "2026"
+---
+
+2026 年 6 月 2 日，微软 Build 大会。100+ 个发布，全部围绕一个主题：**Agent-First**。
+
+没有 Windows 12 预览。没有 Office 2027 发布。萨提亚·纳德拉的开场 Keynote 讲的是 Copilot 的进化路径：Chat → Cowork → Code → Autopilots。
+
+翻译成人话：从聊天到协作到编程再到无人值守。每一步都是更深的自主权下放。
+
+## Scout：你有了一个 24 小时在线的同事
+
+**Microsoft Scout** 是这届 Build 最具体的一个产品——一个"始终在线的个人工作 Agent"，基于 OpenClaw Agent 框架，接入 Work IQ 数据层。
+
+它能做什么？
+
+- 早晨自动整理你错过的邮件、会议记录、待办
+- 主动提醒冲突安排和优先级变更
+- 跨 Teams、Outlook、OneDrive、SharePoint 执行多步任务
+
+底层逻辑：**不再是你在软件里操作数据，是 Agent 在数据层面帮你操作软件。**
+
+Scout 目前仅限 Frontier 客户使用，后续会扩大。但重要的是这条产品线宣告了微软在 Agent 上的定位——我不做模型，我做**企业 Data 层 + Agent 运行层**。
+
+## Work IQ：M365 数据变成 Agent 的上下文
+
+如果说 Scout 是前端产品，**Work IQ** 就是底层基础设施。
+
+6月16日 GA 的 Work IQ API，功能一句话概括：**把你的邮件、会议、文档、聊天记录变成任何 Agent 可以调用的结构化上下文。**
+
+这意味着第三方 Agent（不是微软自己的）也能通过 Work IQ 读取你的 Outlook 日历来决定什么时候开会，或者用你的 Teams 聊天记录来回答"上周客户说了什么要求"。
+
+同类产品还包括：
+- **Fabric IQ** → 结构化业务数据的语义层（数据库、ERP）
+- **Foundry IQ** → 企业知识 + 实时网络的融合
+- **Web IQ** → AI-first 搜索引擎，MCP 原生，速度是竞品 2.5x
+
+翻译一下这套策略：**微软在卖上下文，不是卖模型。** 模型可以换（Azure 上跑 GPT-5、Claude、Llama、MAI 都行），但谁有你的数据，谁就是不可替代的底座。
+
+## MAI-Thinking-1：微软终于有一个能打的推理模型
+
+35B 激活参数，256K 上下文，SWE-Bench Pro 持平 Claude Opus 4.6。
+
+数据是亮点：训练数据全部来自 **clean commercially licensed data**，没有版权争议。推理模型 + 合规训练数据，企业对前者恐惧小很多。
+
+同期发布的还有：
+- **MAI-Code-1**：面向 GitHub Copilot 优化的编码模型
+- **MAI-Image-2.5**：文生图第二，图生图第二（在 Arena 排行榜上超过 Banana Nano 2）
+- **MAI-Transcribe 1.5**：43 种语言
+- **MAI-Voice-2**：15+ 新语言，OpenAI TTS 的直接竞品
+
+模型本身不是最前沿的，但配上 Azure 的合规和分销能力就完全不同了——企业不需要"最强模型"，需要"不会吃官司且能直接买到的模型"。
+
+## ASSERT + Agent Control Specification：Agent 安全的竞标赛
+
+Agent 安全是这届 Build 被低估的一条线。
+
+从技术层面看，微软做了两件事：
+
+**ASSERT（Adaptive Spec-driven Scoring for Evaluation and Regression Testing）** → 开源 Agent 评估框架。定义 Agent 行为的"期望规范"→ 自动评估是否符合 → 回归测试保 regressions。
+
+**Agent Control Specification** → 标准化了"控制点应该加在哪里"。不是在模型层加 filter，是在 Agent 循环的每个环节（感知→推理→执行→反馈）定义控制接口。
+
+为什么这很重要？因为在企业落地 Agent 的最大障碍不是能力不够，是 **"Agent 做出错误决策时怎么办"**没有标准答案。ASSERT 和 Control Spec 就是在回答这个问题。
+
+同期还有三款安全产品：
+- **Zscaler Zero-Trust for Agentic AI**（6月10日）
+- **Cisco AgenticOps**（Build 当天发布）
+- **Netskope AgentSkope**（6月3日）
+
+整个行业在同步往一个方向走：**Agent 安全基础设施**。
+
+## Surface RTX Spark Dev Box：本地跑 120B 模型
+
+1 petaflop AI 算力，128 GB 统一内存，能本地跑 **120B 参数模型**，1M token 上下文。预装 WSL2 + CUDA + VS Code + Copilot。
+
+面向 Agent 开发者的 Dev Box。今年晚些时候开售。
+
+Agent 开发工作流正在变成：本地跑推理 + 云端做编排。Dev Box 解决了本地推理这一步。
+
+## 开发者视角：这一届 Build 对实际工作流的影响
+
+**如果你写代码：**
+- 在 Copilot App（preview）里，Agent 模式 + git worktrees 支持并行开发会话
+- Agent Skills 可以用 SKILL.md 定义了——和 Hermes Agent 一样的模式
+- 背景 Agent 支持持续运行（类似 CI 但不只是测试，是持续的代码改进）
+
+**如果你用 M365：**
+- 所有你产生的数据（文档/邮件/会议）都将变成 Agent 的上下文
+- 你的日常工作流会从"我操作软件"变成"我告诉 Agent 做什么"
+
+**如果你是 CTO：**
+- 3 年内，你的团队里最多的"员工"可能是 Agent
+- 安全和治理架构需要现在就改——Agent 能读到什么、能写什么、能执行什么
+
+## 一句话
+
+Microsoft Build 2026 的核心表达是：**Agent 是新的应用层，数据是新的基础设施层，微软想同时拥有这两层。**
