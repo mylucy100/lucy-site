@@ -1,0 +1,73 @@
+---
+title: "2026年6月18日 AI日报：Coze 3.0重塑Agent协作、Trae大赛启动、Claude计费改革生效"
+description: "字节Coze 3.0支持多人多Agent协作，可接入Claude Code/Codex CLI/OpenClaw；Trae AI创造力大赛启动，胡彦斌罗永浩任领造官；Anthropic Claude程序化调用独立计费生效，GPT-5.6发布传闻升温"
+image: "https://placehold.co/1200x630/1a1a2e/e2e8f0?text=AI+Daily+Briefing+0618"
+createdAt: "2026-06-18T08:20:00.000Z"
+draft: false
+tags:
+  - ai
+  - daily-briefing
+  - "2026"
+---
+
+## 大模型板块
+
+### Anthropic 计费改革生效，程序化调用独立计费
+
+6月15日起，Anthropic 所有付费版 Claude（Pro/Max/Team/Enterprise）增加月度程序化调用专用额度。Agent SDK、claude -p、Claude Code GitHub Actions 等纳入订阅费，不再独立 API 计费。互动使用与程序化使用切割为两个独立额度池，用尽后可选择 API 费率按量计费或暂停。
+
+这对重度 Claude Code 用户来说影响不小——如果你的工作流大量依赖自动化调用，得重新算算 Pro/Max 订阅方案是否还划算。
+
+### DeepSeek V4.1 计划6月推出，启动500亿融资
+
+DeepSeek 启动 500 亿元新一轮融资计划，V4 预览版（V4-Pro + V4-Flash）已于 4 月上线，100 万 token 上下文窗口。架构创新 mHC、Engram 条件记忆、稀疏注意力已通过论文公开。V4.1 版本计划 6 月内推出，具体日期待官方公布。
+
+500 亿级别的融资规模，说明 DeepSeek 在算力基础设施上的投入决心——不是小打小闹，是要在全球大模型竞赛里站住脚。
+
+### Kimi K2.7 Code 开源
+
+6月15日，月之暗面开源了 Kimi K2.7 Code 编程模型。此前 Kimi K2.5 为 Composer 2 提供底座（Cursor 通过 Fireworks 托管推理接入）。与此同时，月之暗面启动新一轮最高 10 亿美元融资，估值升至约 180 亿美元——从 2025 年底的 43 亿到现在的 180 亿，不到两年翻 4 倍。
+
+### GPT-5.6 发布传闻升温
+
+奥特曼在 Slack 透露 OpenAI 预计未来一年内 IPO，GPT-5.6 可能 6 月发布。但 OpenAI 面临 Anthropic 增长压力和高额烧钱，IPO 时间线可能推迟。Google I/O 2026 后，大模型竞争格局趋于微妙——Claude Fable 5 全线领先基准测试，Google 转向 Agentic AI 叙事，OpenAI 需要一个大招来稳住节奏。
+
+## 智能体板块
+
+### Coze 3.0 上线：多人多 Agent 协作，接入 Claude Code
+
+6月1日，字节跳动 AI 智能体平台扣子 Coze 3.0 版本上线。核心更新：
+
+- **多人多 Agent 协作** — 不再是单人单 Agent，多个智能体可以在同一工作流中协同任务
+- **自由切换主流平台** — 支持接入 Claude Code、Codex CLI、OpenClaw 等本地 Agent
+- **专家技能模板** — 含自媒体、法律、金融等预设模板
+
+这是 Agent 平台从"单兵作战"走向"团队协作"的重要信号。Coze 本身是零代码/低代码平台，接入本地 Agent 后，专业开发者也可以在上面编排复杂的工作流。零代码 + 代码共存，是 Agent 平台走向成熟的分水岭。
+
+### Manus 收购受阻：中国发改委叫停 Meta 20 亿美元交易
+
+中国发改委禁止外资投资 Manus 收购交易，要求相关各方退出。Manus 参加 6 月 9-14 日 AI NATIVE EXPO 2026，已完成加入 Meta 的程序。这笔约 20 亿美元的收购案从传出到叫停，只用了不到两个月。
+
+### 百度千帆：承载 130 万+ Agents，调用量数千万次/日
+
+百度千帆平台累计支持企业构建超 130 万个 Agents，工具日均调用数千万次。平台支持调用文心 5.0（参数量 2.4 万亿），AgentInfra 提供五层能力。超 65% 央企使用百度智能云。百度的 AI 战略重心已经明确从"大模型能力展示"转向"Agent 生态基建"。
+
+## 编程软件板块
+
+### Trae AI 创造力大赛启动，胡彦斌罗永浩任领造官
+
+6月16日，字节跳动 Trae 启动 AI 创造力大赛，面向全民 0 门槛参赛。胡彦斌、罗永浩、楼天城、影视飓风 Tim 任领造官。奖金超百万，赛程 6 月 16 日-8 月 22 日。
+
+Trae 在 Q2 登顶开发者社区 AI 编程工具榜，注册用户突破 600 万，98% 代码生成准确率，支持 Figma 设计稿一键转代码、100+ 编程语言，永久免费。从"工具好用"到"生态活跃"，Trae 在加速跑。
+
+### Codex CLI 周下载量达 Claude Code 的 12 倍
+
+2026 年 5 月数据：Codex npm 周下载量 8610 万，Claude Code 720 万，Codex 是 Claude Code 的 12 倍。迁移潮源于 Anthropic 高峰时段额度消耗不可预测，以及 Opus 4.7 的争议。但要注意——下载量不等于活跃用户，很多是 CI/CD 流水线中的自动拉取。不过趋势确实明显：开发者正从单一产品依赖转向多引擎策略。
+
+### ChatGPT 代码能力大升级
+
+6 月初，OpenAI Code Interpreter 大幅强化——可读取、修改、运行多种语言的完整项目文件，支持 SQLite。这不再是"写个代码段"，而是能操作完整项目仓库的代码能力。配合 GPT-5.6 发布预期，ChatGPT 作为编程助手的定位越来越接近 IDE 级别。
+
+### AI 编程六强格局成型
+
+2026 年 6 月 AI 编程工具六强横评（Cursor 3 / Claude Code / OpenAI Codex / Trae / Windsurf / Replit）显示，竞争焦点已从"代码补全准确率"转向"Agent 多文件编辑 + 项目级理解"。Cursor 3 的智能体集群、Trae 的中文深度优化、Codex 的生态开放性是三个差异化方向。
