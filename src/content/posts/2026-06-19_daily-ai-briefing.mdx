@@ -1,0 +1,79 @@
+---
+title: "2026年6月19日 AI日报：GLM-5.2开源登顶、SpaceX吞Cursor、Kimi K2.7 Code 开源"
+description: "智谱GLM-5.2开源即登顶Code Arena全球第一，百万Token窗口；SpaceX 600亿美元收购Cursor尘埃落定；Kimi K2.7 Code开源编程模型Token消耗降30%；MLPerf Training 6.0发布，NVIDIA Blackwell横扫榜单"
+image: "https://placehold.co/1200x630/1a1a2e/e2e8f0?text=AI+Daily+Briefing+0619"
+createdAt: "2026-06-19T08:20:00.000Z"
+draft: false
+tags:
+  - ai
+  - daily-briefing
+  - "2026"
+---
+
+## 大模型板块
+
+### GLM-5.2 开源即登顶，Code Arena 全球可用模型第一
+
+6月17日，智谱正式发布并开源 GLM-5.2。最大亮点是 **100 万 Token 上下文窗口** 和新的推理控制机制，在超百万用户盲测的 Code Arena 代码评估系统中拿下全球可用模型第一。
+
+除了标准型号，GLM-5.2 还提供了长程编码优化版本，支持对整个代码库进行跨文件分析和重构。MIT 协议开源权重已在 Hugging Face 上线，Coding Plan 用户可即时使用。
+
+智谱选择在 DeepSeek V4.1 即将发布、Kimi K2.7 Code 刚开源的这个时间窗口出手，竞争意味很明显。
+
+### Claude Fable 5 / Mythos 5 被美国政府叫停
+
+6月10日，Anthropic 同时发布了两款旗舰模型——Fable 5（通用型，保守安全策略）和 Mythos 5（仅限网络防御和基础设施提供商的受限模型）。两款模型在软件工程、安全、视觉等多领域达到顶级水平。
+
+然而仅过了 5 天，美国政府就以出口管制为由，**禁止非美国公民/实体访问这两款模型**。Anthropic 被迫直接禁用 Fable 5 和 Mythos 5。
+
+如果你在用其他 Claude 模型，不受影响。如果已经在用 Fable 5 或 Mythos 5，得立刻换掉。
+
+### MLPerf Training 6.0 发布：NVIDIA Blackwell 8192 GPU 集群称王
+
+MLCommons 在 6月18日发布 MLPerf Training v6.0 结果。**95 个系统、24 个组织、13 种加速器** 参与，创下历史规模之最。首次引入 MoE 评测基准（DeepSeek V3 和 GPT-OSS 20B）。
+
+NVIDIA Blackwell 以 8,192 GPU 集群拿下最快训练时间。核心创新：NVLink 全互连、NVFP4 MoE 路由量化、RAS 引擎。云端提交比 v5.1 翻倍。多家厂商提交了 FP4 量化训练方案，精度管理正成为新的竞争焦点。
+
+## 智能体板块
+
+### ChatGPT Dreaming V3 记忆系统上线：事实回忆率翻倍
+
+OpenAI 在 6月5日-8日分批上线 ChatGPT Dreaming V3 记忆系统。新系统能自动从历史对话中合成上下文，**事实回忆率从 2024 年的 41.5% 飙升至 82.8%**，偏好遵循率 71.3%，时效性保持 75.1%。
+
+Plus/Pro 用户的记忆容量翻倍。这意味着 ChatGPT 越来越像一个能记住你是谁、你做过什么、你偏好的真实助手，而不是每次对话都重置的"金鱼"。
+
+### Anthropic "Dreaming" 系统：让 Agent 学会自我复盘
+
+Anthropic 推出了自改进 Agent 系统——"Dreaming"。原理很简单：Agent 在执行任务后回顾自己的行为，发现模式、识别错误、在下一次任务中自动改进。
+
+适用场景明确——销售跟进、客服分流、长周期编码任务、法规合规检查。这套机制把 AI 从"一次性生成工具"变成了"能自我迭代的工作者"。
+
+不过风险也很明确：**如果评估指标设计不好，你会得到一个越来越自信但依然犯错不断的 Agent**。
+
+### 扣子 Coze 3.0 上线多人多 Agent 协同
+
+字节跳动 Coze 3.0 在 6月初完成全端更新，最大变化是支持 **一人/多人 + 多 Agent** 的灵活组合。支持接入 Claude Code、Codex CLI、OpenClaw 等外部 Agent，内置自媒体、法律、金融等垂直模板。
+
+手机和电脑可跨端同步，支持 Agent 处理本地文件。编程项目支持多人对话式开发和部署。这是国内 Agent 平台首次把"多人多 Agent 协同"从概念推向产品化。
+
+## 编程软件板块
+
+### SpaceX 600亿美元收购 Cursor，重塑 AI 编程格局
+
+6月16日，SpaceX 正式宣布以 **600 亿美元全股权交易** 收购 Cursor（母公司 Anysphere）。交易预计 2026 年 Q3 完成。此前 SpaceX 刚刚在纳斯达克上市，市值突破 2.5 万亿美元。
+
+Cursor 仅 150 人团队，不到 3 年年化营收突破 20 亿美元。被收购后将成为 SpaceX 全资子公司，直接对抗 OpenAI Codex 和 Anthropic Claude Code。
+
+这不是简单的"有钱任性"——马斯克正在构建从火箭到代码的完整技术栈。详见本期聚焦文章。
+
+### Kimi K2.7 Code 开源：更少 Token，更强编程
+
+6月12日，月之暗面发布并开源 Kimi K2.7 Code 编程模型。相比 K2.6，**平均 token 消耗减少 30%**，Kimi Code Bench v2 提升 21.8%，MLS Bench Lite 提升 31.5%。
+
+在 Agent 自主化执行测试中，工具调用基准达 81.1%（超越 Claude Opus 4.8 的 76.4%）。API 定价延续前代，1M token 标准输入 6.5 元、输出 27 元。Kimi Code Plan 默认模型已更新为 K2.7 Code。详见本期聚焦文章。
+
+### INT21 从隐身模式走出：AI 自己写 GPU 代码，比人类快 59%
+
+6月16日，INT21 公司结束隐身模式，发布 PTX Kernel Factory——**AI 自动生成 GPU 内核代码**，性能比当前实现快最高 59%。更离谱的是，这家公司只有 2 个人，零基础设施工程师，所有工作都由 Agent 完成。
+
+创始人 Bing Xu（前 HippoML，已被 NVIDIA 收购）的核心理念：让 AI 自己优化基础设施代码，团队专注产品逻辑而非性能调优。这是"AI 编程"的终极形态——AI 优化自己的运行时。
