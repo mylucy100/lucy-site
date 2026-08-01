@@ -1,0 +1,63 @@
+---
+title: 'DeepSeek-V4-Flash 正式版上线：架构没变，Agent 能力为何大涨'
+description: '7月31日 DeepSeek-V4-Flash-0731 正式版 API 公测，总参284B/激活13B 架构不变仅重新后训练，Terminal Bench 82.7 等多项 Agent 基准远超 V4-Pro-Preview，原生支持 Responses API 并适配 Codex。'
+image: https://placehold.co/1200x630/1a1a2e/e0e0e0?text=DeepSeek+V4+Flash+0731
+createdAt: '2026-08-01T08:00:00.000Z'
+draft: false
+tags:
+  - deepseek
+  - v4
+  - llm
+  - agent
+  - "2026"
+---
+
+7月31日，DeepSeek 在 API 文档更新日志中宣布：**DeepSeek-V4-Flash 正式版 API 上线公测**，模型版本更新为 DeepSeek-V4-Flash-0731。开发者不需要换接口，模型名还是 `deepseek-v4-flash`，直接就能用到最新版。
+
+但这次更新最耐人寻味的地方在于——**模型架构和参数规模跟预览版一模一样，动刀的只有后训练**。便宜的那个 Flash，经过一轮"后天教育"，在编程和工具调用上反超了贵的那个 Pro 的预览版。
+
+## 先看官方给的硬数据
+
+V4-Flash-0731 的 Agent 基准测试成绩，多项大幅超过 V4-Pro-Preview：
+
+- **Terminal Bench 2.1: 82.7**（终端任务）
+- **NL2Repo: 54.2**（自然语言建仓库）
+- **Cybergym: 76.7**（网络安全）
+- **DeepSWE: 54.4**
+- **Toolathlon verified: 70.3**（工具调用）
+- **Agent Last Exam: 25.2**
+- **Automation Bench (Public): 25.1**
+- **DSBench-FullStack: 68.7**（内部全栈开发测试集）
+- **DSBench-Hard: 59.6**（内部 Coding Agent 难题测试集）
+
+官方原话是"Agent 能力大幅增强，基准测试远超 V4-Pro-Preview"。注意一个细节：公开基准的 Code Agent 任务，是用 **DeepSeek Harness 极简模式**（即将独立发布）作为框架测试的——这意味着 DeepSeek 不只是训练更强的模型，还在搭建自己的标准化 Agent 评测体系。
+
+## 架构没变，变的是什么
+
+V4-Flash 的底子还是那个底子：**总参 284B、激活 13B 的 MoE 架构**，4月24日随 V4 预览版一起发布，原生 100 万 token 上下文。0731 版本结构、尺寸完全一致，只重新做了后训练。
+
+这恰恰是这次更新最有信息量的一句话。过去我们习惯把模型能力提升等同于"换更大的底座"，但 V4-Flash-0731 证明：**后训练对 Agent 场景的提升空间，可能比很多人想象的大得多**。代码修改、工具调用、多步骤任务执行——这些 Agent 高频场景的能力，是可以靠数据和质量对齐在后训练阶段硬调出来的。
+
+知乎上已经有开发者开始对比"V4-Flash-0731 每项都比 GLM-5.2 高"、"和 GPT-5.6 Luna 的对比"，热搜 359 万浏览。社区对"后训练为什么这么有效"的讨论，本身就是一个信号：行业对模型能力的认知正在从"堆参数"转向"调对齐"。
+
+## 原生支持 Responses API，针对性适配 Codex
+
+除了基准成绩，工程层面有一个对开发者更实在的更新：**正式版 V4-Flash 原生支持 Responses API 格式，并针对性适配了 Codex**。
+
+Codex 是 OpenAI 的命令行编程 Agent。DeepSeek 主动去适配它的接口，意图很明显——让开发者能把 V4-Flash 直接塞进现有的 Codex 工作流，迁移成本降到最低。在 AI 编程工具打得火热的当下，这等于在 OpenAI 自家生态的门口摆了个"平替选项"。
+
+## 只来了一半：Pro 正式版还在路上
+
+别高兴太早。这次更新**只动了 V4-Flash 的 API**：
+
+- V4-Pro 的 API 没变
+- APP / Web 端模型没变
+- 官方说"DeepSeek-V4-Pro 正式版将会尽快发布"
+
+联系背景就更有意思了。V4 的 GA 原计划 7 月中旬，已经两度延期，传闻推到 8 月 10 日-20 日之间；V4-Pro 预览版在 LLM 榜单的排名已经跌到第 25 位，低于 Kimi K2.7 Code 和 MiniMax M3；同期第二轮融资谈判临时暂停（拟募资至少 100 亿元、投前估值超 4800 亿元）。从模型到融资，DeepSeek 都在按暂停键。
+
+在这种压力下先放 Flash 正式版、压住 Pro，是一个很聪明的节奏：用最小的成本（后训练 + 接口适配）先稳住开发者基本盘，把最能打的牌留到后面。
+
+## 一句话总结
+
+V4-Flash-0731 不是一次"换引擎"的升级，而是一次"调教"的胜利——同样的底座，靠后训练把 Agent 能力拉到了超过 Pro 预览版的水平，还顺手适配了 Codex 生态。接下来值得盯的：V4-Pro 正式版什么时候来，以及它能不能帮 DeepSeek 在 Kimi K3、GPT-5.6 的夹击下重新杀回第一梯队。
