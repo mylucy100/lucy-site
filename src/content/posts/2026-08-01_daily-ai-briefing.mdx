@@ -1,0 +1,80 @@
+---
+title: '2026年8月1日 AI日报：Kimi K3全面开源、GPT-5.6大降价、Grok 4.5上线Copilot'
+description: 'Kimi K3 全面开源登顶开源模型之巅，GPT-5.6 Luna 降价80%引爆价格战，Grok 4.5 与 Claude Opus 5 双双入驻 GitHub Copilot，Qwen3.8-Max-Preview 2.4万亿参数亮相。'
+image: https://placehold.co/1200x630/1a1a2e/e0e0e0?text=AI+Daily+2026-08-01
+createdAt: '2026-08-01T08:00:00.000Z'
+draft: false
+tags:
+  - ai
+  - llm
+  - daily-briefing
+  - "2026"
+---
+
+## 大模型板块
+
+### Kimi K3 全面开源：2.8万亿参数登顶开源之巅
+
+7月28日凌晨，月之暗面 Kimi K3 正式开放权重，成为全球参数规模最大的开源模型——**总参数 2.8 万亿、激活 1042 亿**，原生多模态视觉理解 + 100 万 token 上下文。上线 30 分钟即登顶 Hugging Face 趋势榜，以 **1679 分登顶 Frontend Code Arena 前端编程榜单**，为中国大模型首次。
+
+更关键的是商业化节奏：F 轮融资超 35 亿美元、估值 350 亿美元，G 轮（Pre-IPO）已提前启动、投前估值 **500 亿美元**，机构认购踊跃。年内六轮融资，累计超 376 亿元，并传出最早 6 个月内赴港上市的消息。
+
+### GPT-5.6 大降价：Luna 降 80%，价格战正式开打
+
+7月30日，OpenAI 官方宣布 GPT-5.6 系列降价：**Luna 降价 80%、Terra 降价 20%**。Luna 本就定位最高性价比（$1/$6 每百万 token），再降八成后直接杀入端侧/高频调用区间。配合 7月9日发布的 Sol/Terra/Luna 三档布局和 ultra 档并行 4 agent 能力，OpenAI 正在用价格把推理成本打穿。
+
+同期旧模型退役倒计时：**o3 将于 8月26日 从 ChatGPT 停用**，GPT-4.5 已于 6月27日停用。
+
+### Qwen3.8-Max-Preview 上线：2.4万亿参数巨兽
+
+7月19日起，阿里千问 **Qwen3.8-Max-Preview** 首发上线 PC 端与 Web 端，参数量高达 **2.4 万亿**，仅次于 Anthropic Claude Fable 5，是 Qwen 史上最大规模模型。千问同时发布 Token Plan 个人版，走"模型 + 配额"的云化路线。作为对比，Qwen 系列累计下载量已接近 10 亿次，占全球开源模型下载量 50% 以上。
+
+### DeepSeek V4 GA 再度延期，第二轮融资暂停
+
+DeepSeek V4 正式版发布再推迟至 **8月10日-20日之间**（原计划 7 月中旬，已两度延期）。7月26日彭博报道，DeepSeek 已口头通知部分投资者暂停签署第二轮融资协议，第二轮计划募资至少 **100 亿元人民币**、投前估值超 4800 亿元。V4-Pro 预览版在榜单排名跌至第 25 位，压力来自 Kimi K3 和即将到来的 GPT-6、GLM-5.5。
+
+### Gemini 3.6 Flash 发布，3.5 Pro 仍在跳票
+
+7月21日 Google 发布三款新模型：**Gemini 3.6 Flash**（通用工作马，多步 Agent 任务最高省 65-71% token）、**Gemini 3.5 Flash-Lite**（约 350 tokens/秒，$0.30/$2.50 每百万 token）和 **Gemini 3.5 Flash Cyber**（网络安全专用，仅限政府试点）。3.5 Pro 错过 6 月承诺后仍在跳票，官方称"正在与合作伙伴测试"，同时确认 **Gemini 4 已开始预训练**。
+
+---
+
+## 智能体板块
+
+### MCP 新规范发布：无状态核心 + OAuth 2.0 强化
+
+7月28日，Anthropic 联合生态发布 MCP 2026 新规范：**无状态核心**（适配 serverless 架构）、强化 **OAuth 2.0/OIDC 企业认证**、Apps/Tasks 版本化扩展。MCP 月 SDK 下载量已超 **4 亿次**（今年增长 4 倍），连接器目录已有 950+ MCP 服务器。这标志着 Agent 互操作协议从"能用"走向"企业级可用"。
+
+### Manus 拆分进入尾声，拟融资 10 亿美元赎回自身
+
+Meta 收购 Manus 被发改委叫停后，Meta 已完成运营分离和数据防火墙。据彭博报道，Manus 两位联合创始人正与外部投资者讨论融资约 **10 亿美元**，以从 Meta 手中收回公司，可能的路径是中国合资结构 + 香港上市。产品侧 7 月密集更新：Supabase 连接器（7/24）、Plan Mode 先规划后执行（7/22）、自动发布功能（7/13）。
+
+### 扣子 Coze 3.0：本地 Agent 一键接入
+
+字节扣子 3.0 的核心升级是 **AI 团队协作架构**：Agent 可创建、接入、随时调度，任务放入项目空间拆解分配。支持本地 Agent 一键接入——**Claude Code、Codex CLI、OpenClaw 等可接入同一项目空间协作**，另有云端 Agent 7×24 在线。三端协同、编程项目多人协作、视频项目基于 Seedance 2.0 全流程生成。
+
+### 词元无限 InfCode 登顶 SWE-Bench
+
+7月29日钛媒体报道，成立 1 年融资 3 轮的前字节高管创业公司"词元无限"发布编程智能体 **InfCode**：SWE-Bench Verified 得分 **79.4% Pass@1**，超过 GPT-5 和 Claude。企业级 AI Agent 赛道正在快速洗牌，编程 Agent 成为最硬核的角斗场。
+
+---
+
+## 编程软件板块
+
+### GitHub Copilot：Grok 4.5 与 Claude Opus 5 双上线
+
+7月28日 **Grok 4.5 上线 Copilot**：50 万 token 上下文，支持文本+图像输入，低/中/高三档推理强度，覆盖 VS Code、Visual Studio、CLI、云代理、JetBrains 等全平台。7月24日 **Claude Opus 5 也进入 Copilot**。加上 7月30日 VS Code/Visual Studio 双版本更新（Agents 窗口改版、Copilot Vision 支持图片 PDF、多聊天会话），Copilot 正在变成"模型自助餐"。
+
+同步推进的还有计费变革：6月起从按用户转向 **GitHub AI Credits 用量计费**，按每模型 token 费率收费，代码补全仍无限量。
+
+### Claude Code：云端调度任务 + 手机远程查看
+
+7月30日，Claude Code 支持在 Anthropic 托管云上跑**定时循环任务**，无需笔记本常开；支持手机端查看运行中会话。配合 7月24日发布的 **Sonnet 5**（迄今最智能体化的 Sonnet，编程与专业工作顶级智能），Anthropic 的 Agent 基础设施正在成型。5月"Code with Claude"大会上宣布的 Auto Mode、Routines、Dynamic Workflows 已陆续落地。
+
+### Cursor 3.11：Side Chats 与对话搜索
+
+Cursor 3.11 新增**侧边聊天**（/side、/btw）、Cmd+K 全局搜索 Agent 对话记录、重构项目/仓库选择器，并加入 cloud agent hooks。Cursor Router 的 Auto 模式改用智能模型路由，按请求复杂度分派模型。背景是 SpaceX 以 600 亿美元收购 Cursor 母公司 Anysphere 预计 Q3 完成，双方计划发布首个联合模型（约 1.5 万亿参数，对标 Opus 4.8 和 GPT-5.5）。
+
+### Trae 3.3.80 更新
+
+字节 AI IDE Trae 7月底连发 3.3.80（7-28）和 3.3.79（7-24）两个版本。此前 Trae 已登顶 2026 Q2 AI 编程工具榜（98% 代码生成准确率 + 永久免费，注册用户突破 600 万），Builder 使用率 80% 反超 Chat，Bugfix 场景占比 35-38% 超过代码生成（30%）。

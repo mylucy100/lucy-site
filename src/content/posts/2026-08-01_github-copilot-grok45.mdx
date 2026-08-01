@@ -1,0 +1,62 @@
+---
+title: 'GitHub Copilot 变成模型自助餐：Grok 4.5 与 Claude Opus 5 双双上线，AI Credits 计费落地'
+description: '7月底 GitHub Copilot 连上 Grok 4.5 与 Claude Opus 5，VS Code/Visual Studio 双版本更新，Agents 窗口改版、Copilot Vision 支持图片。AI Credits 用量计费从6月起落地，编程工具进入多模型竞争时代。'
+image: https://placehold.co/1200x630/1a1a2e/e0e0e0?text=Copilot+Model+Menu
+createdAt: '2026-08-01T08:00:00.000Z'
+draft: false
+tags:
+  - github
+  - copilot
+  - grok
+  - ai-coding
+  - "2026"
+---
+
+7月的最后一周，GitHub Copilot 的模型菜单一口气加了两个重磅选手：**7月28日 Grok 4.5 上线，7月24日 Claude Opus 5 上线**。加上 7月30日 VS Code / Visual Studio 双版本更新，Copilot 正在从一个"补全工具"变成名副其实的**模型自助餐**——同一份 IDE，想用谁家的推理引擎都行。
+
+## Grok 4.5：50 万 token 的硬核选手
+
+Grok 4.5 是 xAI 最新推理模型，几个关键指标值得注意：
+
+- **50 万 token 上下文**，支持文本+图像输入
+- 低/中/高三档推理强度可调
+- 官方称在 VS Code / Copilot CLI 终端编码任务中"并行派发工具、直接采取行动"表现突出
+- 覆盖 VS Code、Visual Studio、CLI、云代理、App、JetBrains、Xcode、Eclipse 全平台
+
+面向 Pro/Pro+/Max/Business/Enterprise 用户，按**使用量计费的厂商列表价**计费。Business/Enterprise 管理员需手动开启策略，默认关闭——企业用户不会被突然多出来的模型打乱预算。
+
+同一周，**Claude Opus 5** 也进入 Copilot。Anthropic 7月24日发布的 Opus 5 主打"以 Fable 5 一半价格接近其前沿智能"，成为 Claude Max 默认模型。现在 Copilot 用户可以在 GPT 系、Claude 系、Grok 系之间自由切换，按任务选模型。
+
+## VS Code 版 7 月更新：Agents 窗口大改版
+
+7月30日发布的 VS Code 版 Copilot 更新（覆盖 v1.127-v1.131）有几个硬货：
+
+- **Agents 窗口改版（公开预览）**：可在聊天旁并排打开文件/diff 审查，支持任意 harness 的 Git worktree 隔离会话，可跟踪每个子代理的模型、耗时、活动工具调用
+- **多聊天会话**：Claude 支持一个 agent 会话内多个并行聊天，可 fork 出 peer chat，全部键盘驱动
+- **Copilot Vision 正式可用**：聊天中可粘贴/拖入图片和 PDF——截图问 bug 终于不需要先转文字
+- **AI Credits 用量可见**：Business/Enterprise 用户可在状态菜单查看当前计费周期总 Credits
+- **BYOK 模型进入 Agents 窗口**，`!` 前缀直接在聊天中执行终端命令
+
+Visual Studio 版同步更新：新 Agent 基于 GitHub Copilot SDK 构建（与 Copilot CLI 同源），内置 .NET 与 Azure 技能，选中代码右键即可触发 Copilot 代码审查。
+
+## AI Credits：计费模式的地震
+
+比模型更新更深远的变化是计费。**6月1日起，Copilot 从按用户席位转向基于用量的 GitHub AI Credits**，按每模型 token 费率计费：
+
+- 席位价不变：Pro $10/月、Business $19/用户/月、Enterprise $39/用户/月
+- **代码补全与 NES 仍无限量**——基础体验不受影响
+- 6-8月过渡期促销 Credits：Business $30/用户/月、Enterprise $70/用户/月
+- 年度方案退役、月度 Credits 不结转、组织内池化
+- 6月1日起私有仓库 Copilot 代码审查开始消耗 GitHub Actions 分钟数（公共仓库仍免费）
+
+这意味着"你用的是哪个模型"直接决定账单。GPT-5.5 以 7.5× premium 倍数促销定价上线，Grok 4.5 按列表价计费——模型选择从工程师的个人偏好，变成了 CFO 关注的事项。多模型竞争 + 用量计费，正在重塑整个 AI 编程工具的商业模式。
+
+## 数据政策提醒
+
+4月24日起，Copilot Free/Pro/Pro+ 用户的互动数据（输入、输出、代码片段、上下文、点赞点踩等）**默认自动用于 AI 模型训练**，除非主动退出。Business/Enterprise 及企业仓库不受影响。退出方式：GitHub 设置 → 隐私 → 关闭"Allow GitHub to use my data for AI model training"。在意数据的使用者值得去设置里看一眼。
+
+## 为什么这比"又一个更新"重要
+
+三件事叠加：**多模型可选、用量计费、数据训练默认开启**——GitHub 正在把 Copilot 从微软的附属品，变成一个独立的 AI 平台生意。模型之争不再发生在"IDE 厂商 vs 模型厂商"之间，而是发生在 IDE 内部：用户今天选 Grok，明天换 Opus 5，后天切回 GPT-5.3-Codex，谁的推理强、谁便宜、谁快，谁就拿到流量。
+
+对开发者来说，这是最好的时代：工具链的绑定被拆开，选择权回到自己手里。对模型厂商来说，Copilot 的模型菜单变成了新一轮角斗场——xAI、Anthropic、OpenAI 在同一条赛道上抢同一个 IDE 里的用户。
